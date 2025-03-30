@@ -19,7 +19,7 @@ public class UserService {
 	
 	public void create(User user) {
 		userDao.findByEmail(user.getEmail())
-			.orElseThrow(() -> ConflictException.build("El usuario ya existe en el sistema."));
+			.orElseThrow(() -> ConflictException.build(Exceptions.CONFLICT));
 		
 		userDao.save(user);
     }
