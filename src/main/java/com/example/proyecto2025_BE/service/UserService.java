@@ -1,6 +1,8 @@
 package com.example.proyecto2025_BE.service;
 
 
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
@@ -18,8 +20,11 @@ public class UserService {
 	private final UserDao userDao;
 	
 	public void create(User user) {
-		userDao.findByEmail(user.getEmail())
-			.orElseThrow(() -> ConflictException.build(Exceptions.CONFLICT));
+		Optional<User> fetched = userDao.findByEmail(user.getEmail());
+		
+		if(fetched.isPresent()) {
+			throw ConflictException.build(Exceptions.CONFLICT);
+		}
 		
 		userDao.save(user);
     }
