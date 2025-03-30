@@ -1,0 +1,12 @@
+services:
+  db:
+    image: mongo:5
+    container_name: mongo-flashcards
+    restart: always
+    environment:
+      MONGODB_DATABASE: flashcards
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
