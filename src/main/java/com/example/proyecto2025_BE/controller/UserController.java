@@ -53,7 +53,7 @@ public class UserController {
 		return ResponseEntity.ok(Strings.EMPTY);
 	}
 	
-	@PostMapping
+	@PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User user) {
 		User logged = this.userService.findByEmailAndPassword(user);
         
