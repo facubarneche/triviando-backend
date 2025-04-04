@@ -4,7 +4,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,10 +17,8 @@ import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -69,18 +66,6 @@ public class UserControllerTest {
 	}
 	
 	@Test
-	@DisplayName("Se crea un cliente de manera exitosa")
-	void createTest() throws Exception {
-		String requestBody = mapper.writeValueAsString(user);
-		
-		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
-					.contentType("application/json")
-					.content(requestBody))
-			.andExpect(content().contentType("application/json"))
-			.andExpect(status().isOk());
-	}
-	
-	@Test
 	@DisplayName("Se actualiza un user de manera exitosa")
 	void updateTest() throws Exception {
 		user.setId(EXISTENT_USER_ID);
@@ -99,5 +84,23 @@ public class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			.andExpect(jsonPath("$.phoneNumber").value("1234567890"));
+	}
+	
+	@Test
+	@DisplayName("Se crea un user de manera exitosa")
+	void createTest() throws Exception {
+		User userToCreate = User.builder()
+				.fullName("Pancho Rancho")
+				.age(21)
+				.email("panch.rancho@mail.com")
+				.build();
+		
+		String requestBody = mapper.writeValueAsString(userToCreate);
+		
+		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
+					.contentType("application/json")
+					.content(requestBody))
+			.andExpect(content().contentType("application/json"))
+			.andExpect(status().isOk());
 	}
 }
