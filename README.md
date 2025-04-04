@@ -83,8 +83,9 @@ El backend está construido con:
 
 ---
 
-Buenas Prácticas
-Ramas y Commits
+## Buenas Prácticas
+
+## Ramas y Commits
 
 Crearemos ramas siguiendo esta convención de nombres:
 
@@ -110,7 +111,7 @@ Para mantener la claridad en el historial de commits, utilizaremos los siguiente
 
 [HOTFIX] → Corrección en producción
 
-✅ Ejemplos de Mensajes de Commit:
+## ✅ Ejemplos de Mensajes de Commit:
 
 git commit -m "[FEATURE] Implementar autenticación de usuario" git commit -m "[FIX] Resolver problema con validación de inicio de sesión" git commit -m "[IMPROVEMENT] Actualizar dependencias a las versiones más recientes" Flujo de Trabajo en Git (Git Flow)
 
@@ -138,7 +139,7 @@ Seguiremos un enfoque estructurado de Git Flow para mantener nuestro proceso de 
 
     Los lanzamientos de producción se gestionan desde la rama main.
 
-✅ Ejemplo de Comandos de Flujo de Trabajo:
+## ✅ Ejemplo de Comandos de Flujo de Trabajo:
 
 git checkout develop git pull origin develop git checkout -b DOCS/SCRUM-9-definir-convencion
 
@@ -169,7 +170,7 @@ Patch (Parche): Corrección de errores y mejoras menores compatibles con la vers
 
     Ejemplo: v1.0.0 a v1.0.1.
 
-Tablero de Gestión de Tareas (JIRA)
+## Tablero de Gestión de Tareas (JIRA)
 
 Para hacer un seguimiento de nuestro progreso de desarrollo, usamos JIRA con un flujo de trabajo estructurado que consta de cinco estados clave:
 
@@ -185,7 +186,7 @@ Para hacer un seguimiento de nuestro progreso de desarrollo, usamos JIRA con un 
 
 * Main 🚀 – La tarea está completada y ha sido fusionada con la rama main (lista para producción).
 
-Ejemplo de Flujo de Trabajo:
+## Ejemplo de Flujo de Trabajo:
 
 * Se crea una nueva tarea y se coloca en To-Do.
 
@@ -204,7 +205,6 @@ Este enfoque estructurado asegura una clara visibilidad de las tareas, una colab
 ## 👨‍💻 Equipo
 
 - Barneche Facundo
-- Menini Alejo
 - Gibelli Julian
 - Guarino Alan
 - Caceffo Juan
