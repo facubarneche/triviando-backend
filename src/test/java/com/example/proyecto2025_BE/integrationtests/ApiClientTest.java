@@ -24,7 +24,7 @@ public class ApiClientTest {
 	private ObjectMapper objectMapper;
 
 	@Test
-	void zzzz() {
+	void apiCallTest() {
 		objectMapper = new ObjectMapper();
 		httpClient = HttpClient.newHttpClient();
 		apiClient = new ApiClient(httpClient, objectMapper);

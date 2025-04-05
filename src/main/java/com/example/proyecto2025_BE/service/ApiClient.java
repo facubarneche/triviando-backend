@@ -6,6 +6,7 @@ import dev.langchain4j.model.chat.ChatLanguageModel;
 import dev.langchain4j.model.chat.response.ChatResponse;
 import dev.langchain4j.model.output.TokenUsage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -16,6 +17,7 @@ import java.util.concurrent.CompletableFuture;
 
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ApiClient implements ChatLanguageModel {
@@ -34,16 +36,21 @@ public class ApiClient implements ChatLanguageModel {
                     .header("Content-Type", "application/json")
                     .POST(HttpRequest.BodyPublishers.ofString(requestBody))
                     .build();
-
+            long init = System.currentTimeMillis();
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-
-            if (response.statusCode() == 200) {
-                return response.body();
-            } else {
-                throw new RuntimeException("Ollama API request failed: " + response.statusCode() + " " + response.body());
+            long end = System.currentTimeMillis();
+            
+            if (response.statusCode() != 200) {
+            	log.error("Ollama API request failed: {}", response.statusCode() + " " + response.body());
             }
+            
+            log.info("Success response: {}", response.body());
+            log.info("Request time spend in miliseconds: {}", end - init);
+            
+            return response.body();
         } catch (Exception e) {
-            throw new RuntimeException("Error calling Ollama API", e);
+        	log.error("Error calling Ollama API: {}", e.getMessage());
+        	return e.getMessage();
         }
     }
 }
