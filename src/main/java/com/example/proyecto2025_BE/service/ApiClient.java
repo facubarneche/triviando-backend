@@ -21,7 +21,7 @@ public class ApiClient implements ChatLanguageModel {
     public String post() {
         try {
         	String modelName = "gemma3";
-            String prompt = "Build me 3 questions about the stars";
+            String prompt = "Build me 2 short questions about the stars";
             String requestBody = String.format("{\"model\": \"%s\", \"prompt\": \"%s\"}", modelName, prompt);
 
             HttpRequest request = HttpRequest.newBuilder()
@@ -37,10 +37,11 @@ public class ApiClient implements ChatLanguageModel {
             	log.error("Ollama API request failed: {}", response.statusCode() + " " + response.body());
             }
             
-            log.info("Success response: {}", response.body());
             log.info("Request time spend in miliseconds: {}", end - init);
+            String parsedResponse = parseResponse(response.body());
+            log.info("Success response: {}", parsedResponse);
             
-            return parseResponse(response.body());
+            return parsedResponse;
         } catch (Exception e) {
         	log.error("Error calling Ollama API: {}", e.getMessage());
         	return e.getMessage();
@@ -54,8 +55,6 @@ public class ApiClient implements ChatLanguageModel {
 	private String parseObjects(String bodyResponse) {
 		String chainedObjects = bodyResponse.replace("}", "},");
 		
-		return new StringBuilder(chainedObjects)
-				.deleteCharAt(chainedObjects.length() - 1)
-				.toString();
+		return chainedObjects.substring(0, chainedObjects.length() - 2);
 	}
 }
