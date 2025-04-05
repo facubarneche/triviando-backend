@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import com.example.proyecto2025_BE.service.ApiClient;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -21,13 +20,11 @@ public class ApiClientTest {
 	
 	private ApiClient apiClient;
 	private HttpClient httpClient;
-	private ObjectMapper objectMapper;
-
+	
 	@Test
 	void apiCallTest() {
-		objectMapper = new ObjectMapper();
 		httpClient = HttpClient.newHttpClient();
-		apiClient = new ApiClient(httpClient, objectMapper);
+		apiClient = new ApiClient(httpClient);
 		
 		String response = apiClient.post();
 		
