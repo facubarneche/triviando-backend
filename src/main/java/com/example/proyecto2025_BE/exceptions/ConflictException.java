@@ -8,12 +8,7 @@ public class ConflictException extends RuntimeException {
 
     private static final long serialVersionUID = 161986165551L;
 
-
     public ConflictException(String message) {
         super(message);
-    }
-
-    public static ConflictException build(String message) {
-        return new ConflictException(message);
     }
 }

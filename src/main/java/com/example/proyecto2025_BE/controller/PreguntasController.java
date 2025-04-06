@@ -3,24 +3,22 @@ package com.example.proyecto2025_BE.controller;
 
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
-import com.example.proyecto2025_BE.service.PreguntasService;
+import com.example.proyecto2025_BE.service.PreguntaService;
 import jakarta.validation.Valid;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "*") //
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/preguntas")
-@CrossOrigin(origins = "*") // TODO: Cambiar luego por los dominios que permitiremos que consuman esta api
 public class PreguntasController {
 
-    @Autowired
-    private PreguntasService preguntasService;
+    private final PreguntaService preguntasService;
 
     @GetMapping
     public List<Pregunta> getPreguntas(@RequestParam(value = "topico", required = false) String topico) {

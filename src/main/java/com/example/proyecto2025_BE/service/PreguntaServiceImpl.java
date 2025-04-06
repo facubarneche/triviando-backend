@@ -13,33 +13,34 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-@AllArgsConstructor
-public class PreguntasService {
+@RequiredArgsConstructor
+public class PreguntaServiceImpl implements PreguntaService{
 
-    @Autowired
-    private PreguntaDao preguntaDao;
+    private final PreguntaDao preguntaDao;
 
-    public List<Pregunta> getAllPreguntas() throws Exception {
-        return preguntaDao
-                .findAll();
+
+    @Override
+    public List<Pregunta> getAllPreguntas() {
+        return preguntaDao.findAll();
     }
 
+    @Override
     public Pregunta getPreguntaById(String id) {
         return preguntaDao
                 .findById(id)
                 .orElseThrow(() -> new NotFoundException("No se encontro la pregunta con id: " + id));
     }
 
+    @Override
+    public String createPregunta(PreguntaRequest preguntaRequest) {
+        return "this action should create a new pregunta";
+    }
+
+    @Override
     public List<Pregunta> getPreguntasByTopico(String topico) {
         return preguntaDao
                 .findByTopico(topico)
                 .flatMap(lista -> lista.isEmpty() ? Optional.empty() : Optional.of(lista))
                 .orElseThrow(() -> new NotFoundException("No se encontraron preguntas con topico: " + topico));
-    }
-
-
-    public String createPregunta(PreguntaRequest preguntaRequest) {
-        return "this action should create a new pregunta";
-//        return preguntaDao.save(new Pregunta());
     }
 }
