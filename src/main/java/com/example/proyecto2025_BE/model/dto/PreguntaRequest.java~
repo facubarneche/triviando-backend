@@ -1,13 +1,9 @@
 package com.example.proyecto2025_BE.model.dto;
 
-import com.example.proyecto2025_BE.model.Opcion;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import lombok.Builder;
 
-import java.util.List;
-
+@Builder
 public class PreguntaRequest {
 
     @NotEmpty(message = "El tópico no puede estar vacío")

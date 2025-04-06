@@ -4,9 +4,7 @@ import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
