@@ -17,8 +17,11 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -136,5 +139,36 @@ class PreguntasControllerTest {
                         .content(preguntaRequestJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    @DisplayName("Get cantidad de preguntas por topico")
+    void getCantidadPreguntasPorTopico() throws Exception {
+        List<Map<String, Object>> resultadoDao = preguntas.stream()
+                .collect(Collectors.groupingBy(Pregunta::getTopico, Collectors.counting()))
+                .entrySet().stream()
+                .map(entry -> {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("_id", entry.getKey());
+                    map.put("cantidad", entry.getValue().intValue());
+                    return map;
+                })
+                .toList()
+                ;
+
+        when(preguntaDao.contarPreguntasPorTopico()).thenReturn(resultadoDao);
+
+        List<Map<String, Integer>> resultadoEsperado = resultadoDao.stream()
+                .map(doc -> Map.of(
+                        (String) doc.get("_id"),
+                        (Integer) doc.get("cantidad")
+                ))
+                .toList();
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/cantidad-por-topico"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
+
     }
 }

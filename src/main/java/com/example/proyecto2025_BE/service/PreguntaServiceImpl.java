@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -41,4 +42,19 @@ public class PreguntaServiceImpl implements PreguntaService{
                 .flatMap(lista -> lista.isEmpty() ? Optional.empty() : Optional.of(lista))
                 .orElseThrow(() -> new NotFoundException("No se encontraron preguntas con topico: " + topico));
     }
+
+    @Override
+    public List<Map<String, Integer>> contarPreguntasPorTopico() {
+
+        List<Map<String, Object>> cantidadPorTopicoEsperada = preguntaDao.contarPreguntasPorTopico();
+
+
+          return preguntaDao.contarPreguntasPorTopico().stream()
+                .map(map -> Map.of(
+                        (String) map.get("_id"),
+                        (Integer) map.get("cantidad")
+                ))
+                .toList();
+    }
+
 }
