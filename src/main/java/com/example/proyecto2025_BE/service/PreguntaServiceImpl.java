@@ -45,10 +45,6 @@ public class PreguntaServiceImpl implements PreguntaService{
 
     @Override
     public List<Map<String, Integer>> contarPreguntasPorTopico() {
-
-        List<Map<String, Object>> cantidadPorTopicoEsperada = preguntaDao.contarPreguntasPorTopico();
-
-
           return preguntaDao.contarPreguntasPorTopico().stream()
                 .map(map -> Map.of(
                         (String) map.get("_id"),
@@ -56,5 +52,4 @@ public class PreguntaServiceImpl implements PreguntaService{
                 ))
                 .toList();
     }
-
 }

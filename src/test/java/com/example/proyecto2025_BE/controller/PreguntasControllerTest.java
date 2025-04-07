@@ -153,8 +153,7 @@ class PreguntasControllerTest {
                     map.put("cantidad", entry.getValue().intValue());
                     return map;
                 })
-                .toList()
-                ;
+                .toList();
 
         when(preguntaDao.contarPreguntasPorTopico()).thenReturn(resultadoDao);
 
@@ -169,6 +168,5 @@ class PreguntasControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
-
     }
 }
