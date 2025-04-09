@@ -12,6 +12,10 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.example.proyecto2025_BE.service.ApiClient;
 
+import dev.langchain4j.data.message.AiMessage;
+import dev.langchain4j.model.chat.response.ChatResponse;
+import reactor.core.publisher.Flux;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
@@ -19,15 +23,35 @@ import com.example.proyecto2025_BE.service.ApiClient;
 public class ApiClientTest {
 	
 	private ApiClient apiClient;
-	private HttpClient httpClient;
+//	private HttpClient httpClient;
 	
 	@Test
-	void apiCallTest() {
-		httpClient = HttpClient.newHttpClient();
-		apiClient = new ApiClient(httpClient);
+	void customApiCallTest() {
+//		httpClient = HttpClient.newHttpClient();
+//		apiClient = new ApiClient(httpClient);
+//		
+//		String response = apiClient.post();
+//		
+//		assertNotNull(response);
 		
-		String response = apiClient.post();
+		apiClient = new ApiClient();
+		Flux<Object> resp = apiClient.post("cars");
 		
-		assertNotNull(response);
+		System.out.println(resp.blockFirst());
 	}
+	
+//	@Test
+//	void libraryApiCallTest() {
+//		httpClient = HttpClient.newHttpClient();
+//		apiClient = new ApiClient(httpClient);
+//		
+//		ChatResponse chatResponse = apiClient.post("maths");
+//		AiMessage aiMessage = chatResponse.aiMessage();
+//		String response = aiMessage.text();
+//		
+//		
+//		System.out.println(response);
+//		
+//		assertNotNull(response);
+//	}
 }

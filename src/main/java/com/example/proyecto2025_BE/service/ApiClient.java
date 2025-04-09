@@ -1,60 +1,71 @@
 package com.example.proyecto2025_BE.service;
 
-import dev.langchain4j.model.chat.ChatLanguageModel;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Service;
 
+import dev.langchain4j.http.client.jdk.JdkHttpClient;
+import dev.langchain4j.http.client.jdk.JdkHttpClientBuilder;
+import dev.langchain4j.memory.ChatMemory;
+import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.chat.ChatLanguageModel;
+import dev.langchain4j.model.chat.StreamingChatLanguageModel;
+import dev.langchain4j.model.ollama.OllamaStreamingChatModel;
+import dev.langchain4j.service.AiServices;
+import dev.langchain4j.service.TokenStream;
+import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Flux;
+
 @Slf4j
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class ApiClient implements ChatLanguageModel {
 	
-	private final HttpClient httpClient;
-
-    public String post() {
-        try {
-        	String modelName = "gemma3";
-            String prompt = "Build me 2 short questions about the stars";
-            String requestBody = String.format("{\"model\": \"%s\", \"prompt\": \"%s\"}", modelName, prompt);
-
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create("https://busy-smooth-sunbeam.ngrok-free.app/api/generate"))
-                    .header("Content-Type", "application/json")
-                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
-                    .build();
-            long init = System.currentTimeMillis();
-            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            long end = System.currentTimeMillis();
-            
-            if (response.statusCode() != 200) {
-            	log.error("Ollama API request failed: {}", response.statusCode() + " " + response.body());
-            }
-            
-            log.info("Request time spend in miliseconds: {}", end - init);
-            String parsedResponse = parseResponse(response.body());
-            log.info("Success response: {}", parsedResponse);
-            
-            return parsedResponse;
-        } catch (Exception e) {
-        	log.error("Error calling Ollama API: {}", e.getMessage());
-        	return e.getMessage();
-        }
-    }
-
-	private String parseResponse(String bodyResponse) {
-		return "[" + parseObjects(bodyResponse) + "]";
-	}
+	private static final String TEMPLATE_PROMPT = "Build me 3 short questions about ";
 	
-	private String parseObjects(String bodyResponse) {
-		String chainedObjects = bodyResponse.replace("}", "},");
-		
-		return chainedObjects.substring(0, chainedObjects.length() - 2);
-	}
+    public Flux<Object> post(String topic) {
+    	 return Flux.create(sink -> {
+    		 String prompt = TEMPLATE_PROMPT + topic;
+	    	 TokenStream tokenStream = chatWithModel(prompt);
+	    	 StringBuilder fullResponse = new StringBuilder("");
+    	    	
+             tokenStream.onPartialResponse(partialResponse -> {
+                         sink.next(partialResponse); 
+                         fullResponse.append(partialResponse);
+                     })
+                     .onCompleteResponse(response -> {
+                         sink.complete();
+                         log.info("Respuesta completa (TokenStream): {}", fullResponse.toString());
+                     })
+                     .onError(sink::error)
+                     .start();
+         });
+    }
+    
+    private TokenStream chatWithModel(String message) {
+    	ChatMemory chatMemory = MessageWindowChatMemory.withMaxMessages(10);
+    	ModelCommunication modelCommunication = AiServices.builder(ModelCommunication.class)
+                .streamingChatLanguageModel(model())
+                .chatMemory(chatMemory)
+                .build();
+    	
+        return modelCommunication.chatWithModel(message);
+    }
+    
+    
+    private StreamingChatLanguageModel model() {
+    	HttpClient.Builder httpClientBuilder = HttpClient.newBuilder();
+    	JdkHttpClientBuilder jdkHttpClientBuilder = JdkHttpClient.builder()
+    	        .httpClientBuilder(httpClientBuilder);
+    	
+    	return OllamaStreamingChatModel.builder()
+    	        .baseUrl("https://busy-smooth-sunbeam.ngrok-free.app/api/generate")
+    	        .modelName("gemma3")
+    	        .httpClientBuilder(jdkHttpClientBuilder)
+    	        .timeout(Duration.ofSeconds(30))
+    	        .build();
+    }
 }
