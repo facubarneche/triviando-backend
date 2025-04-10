@@ -29,7 +29,6 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage() == null ? "Ocurrio un error inesperado." : ex.getMessage());
         ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
-        HttpStatus status = responseStatus != null ? responseStatus.value() : HttpStatus.CONFLICT;
-        return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(errors, responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }
