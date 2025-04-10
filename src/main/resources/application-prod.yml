@@ -1,0 +1,20 @@
+server:
+  port: ${PORT:8080}
+spring:
+  datasource:
+    url: 
+    username: 
+    password: 
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+    logging:
+      level:
+        org.hibernate.SQL: INFO
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: update
+      format_sql: true
