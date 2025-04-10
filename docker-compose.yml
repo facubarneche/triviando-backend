@@ -1,5 +1,5 @@
 services:
-  db:
+  mongodb:
     image: mongo:5
     container_name: mongo-flashcards
     restart: always
