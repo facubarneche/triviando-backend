@@ -3,10 +3,10 @@ services:
   app:
       build: .
       environment:
-        - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/mydatabase
+        - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/flashcards
         - SPRING_DATASOURCE_USERNAME=admin
         - SPRING_DATASOURCE_PASSWORD=admin
-#        - SPRING_DATA_MONGODB_URI=mongodb://mongo-db:27017/mydatabase
+#        - SPRING_DATA_MONGODB_URI=mongodb://mongo-db:27017/flashcards_mongo
       ports:
         - "8080:8080"
       depends_on:
