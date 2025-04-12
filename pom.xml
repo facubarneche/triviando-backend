@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>proyecto2025-BE</artifactId>
+	<artifactId>proyecto2025-be</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>proyecto2025-BE</name>
+	<name>proyecto2025-be</name>
 	<description>Proyecto final asignatura Proyecto Software 2025 BE</description>
 	<url/>
 	<licenses>
@@ -118,7 +118,7 @@
     		<version>2.0.1.Final</version>
 		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<plugin>
