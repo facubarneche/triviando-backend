@@ -23,7 +23,7 @@ public class UserService {
 		Optional<User> fetched = userDao.findByEmail(user.getEmail());
 		
 		if(fetched.isPresent()) {
-			throw ConflictException.build(Exceptions.CONFLICT);
+			throw ConflictException.build("El usuario ya existe en el sistema");
 		}
 		
 		userDao.save(user);
@@ -52,6 +52,5 @@ public class UserService {
 	public User findByEmailAndPassword(User user) {
 		return this.userDao.findByEmailAndPassword(user.getEmail(), user.getPassword())
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
-		
 	}
 }
