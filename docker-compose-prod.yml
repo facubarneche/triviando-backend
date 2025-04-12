@@ -1,5 +1,3 @@
-docker-compose-dev:
-  yml:
 services:
   mongodb:
     ports:
