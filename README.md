@@ -220,8 +220,7 @@ Este enfoque estructurado asegura una clara visibilidad de las tareas, una colab
 ### 💻 Ejecutar en desarrollo
 
 - Clonar el repositorio
-- Levantar la base no relacional ```docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d```
-- Levantar la aplicacion desde el IDE.
+- Levantar backend: Parados desde el root del repo ejecutar ```docker-compose up --build```
 
 ---
 
