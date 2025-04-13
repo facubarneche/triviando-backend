@@ -24,12 +24,21 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, status);
     }
 
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(Throwable.class)
     public ResponseEntity<Object> handleGeneralExceptions(Exception ex) {
         log.error("Ocurrió una excepción no controlada: ", ex);
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage() == null ? "Ocurrio un error inesperado." : ex.getMessage());
         ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
         return new ResponseEntity<>(errors, responseStatus != null ? responseStatus.value() : HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<Object> handleNotFoundtException(NotFoundException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
+        HttpStatus status = responseStatus != null ? responseStatus.value() : HttpStatus.NOT_FOUND;
+        return new ResponseEntity<>(errors, status);
     }
 }
