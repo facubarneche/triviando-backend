@@ -59,13 +59,15 @@ public class ApiClient implements ChatLanguageModel {
     private StreamingChatLanguageModel model() {
     	HttpClient.Builder httpClientBuilder = HttpClient.newBuilder();
     	JdkHttpClientBuilder jdkHttpClientBuilder = JdkHttpClient.builder()
-    	        .httpClientBuilder(httpClientBuilder);
-    	
+    	        .httpClientBuilder(httpClientBuilder)
+				.connectTimeout(Duration.ofMinutes(2))
+				.readTimeout(Duration.ofMinutes(2));
+
     	return OllamaStreamingChatModel.builder()
-    	        .baseUrl("https://busy-smooth-sunbeam.ngrok-free.app/api/generate")
+    	        .baseUrl("https://busy-smooth-sunbeam.ngrok-free.app")
     	        .modelName("gemma3")
     	        .httpClientBuilder(jdkHttpClientBuilder)
-    	        .timeout(Duration.ofSeconds(30))
+//    	        .timeout(Duration.ofMinutes(2))
     	        .build();
     }
 }
