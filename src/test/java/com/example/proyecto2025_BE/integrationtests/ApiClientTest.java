@@ -35,7 +35,7 @@ public class ApiClientTest {
 //		assertNotNull(response);
 		
 		apiClient = new ApiClient();
-		Flux<Object> resp = apiClient.post("cars");
+		Flux<Object> resp = apiClient.post("motorcycle yamaha R3");
 		
 		System.out.println(resp.blockFirst());
 	}

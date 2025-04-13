@@ -1,5 +1,7 @@
 package com.example.proyecto2025_BE.service;
 
+import java.net.Authenticator;
+import java.net.PasswordAuthentication;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.concurrent.CountDownLatch;
@@ -55,17 +57,27 @@ public class ApiClient implements ChatLanguageModel {
         return modelCommunication.chatWithModel(message);
     }
     
-    
+
+	//TODO: pasar credenciales a el application.yml
     private StreamingChatLanguageModel model() {
-    	HttpClient.Builder httpClientBuilder = HttpClient.newBuilder();
+		HttpClient.Builder httpClientBuilder = HttpClient.newBuilder()
+				.authenticator(new Authenticator() {
+					@Override
+					protected PasswordAuthentication getPasswordAuthentication() {
+						return new PasswordAuthentication("gemma3", ("LosPibitosDeLaUnsamMandan.".toCharArray()));
+					}
+				});
     	JdkHttpClientBuilder jdkHttpClientBuilder = JdkHttpClient.builder()
     	        .httpClientBuilder(httpClientBuilder)
 				.connectTimeout(Duration.ofMinutes(2))
 				.readTimeout(Duration.ofMinutes(2));
 
+		//TODO: posibilidad de agregar la authenticacion por medio del metodo customHeader dado por el builder sin necesidad de crear un JdkHttpClientBuilder
     	return OllamaStreamingChatModel.builder()
     	        .baseUrl("https://busy-smooth-sunbeam.ngrok-free.app")
     	        .modelName("gemma3")
+				.logRequests(Boolean.TRUE)
+				.logResponses(Boolean.TRUE)
     	        .httpClientBuilder(jdkHttpClientBuilder)
 //    	        .timeout(Duration.ofMinutes(2))
     	        .build();
