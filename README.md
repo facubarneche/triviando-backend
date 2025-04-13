@@ -216,6 +216,13 @@ Este enfoque estructurado asegura una clara visibilidad de las tareas, una colab
 - Pablo Andrés Núñez Monzon
 - Mariano Cristobo
 
+
+### 💻 Ejecutar en desarrollo
+
+- Clonar el repositorio
+- Levantar la base no relacional ```docker-compose -f docker-compose.yml -f docker-compose-dev.yml up -d```
+- Levantar la aplicacion desde el IDE.
+
 ---
 
 > Proyecto desarrollado en el marco de la materia **Proyecto de Software – TPI** en la **Universidad Nacional de San Martín (UNSAM)**

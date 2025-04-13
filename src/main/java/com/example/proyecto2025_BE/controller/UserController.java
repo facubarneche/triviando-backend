@@ -24,7 +24,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/users")
 @CrossOrigin(origins = "*")	// TODO: Cambiar luego por los dominios que permitiremos que consuman esta api
 @RequiredArgsConstructor
 @Tag(name = "User Controller", description = "API para la gestión de usuarios")
@@ -37,11 +37,11 @@ public class UserController {
 	responses = {
 	    @ApiResponse(responseCode = "200", description = "Usuario creado exitosamente",
 	                  content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-	    @ApiResponse(responseCode = "409", description = Exceptions.CONFLICT)
+	    @ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema")
 	})
     public ResponseEntity<User> create(@RequestBody User user) {
     	this.userService.create(user);
-        
+
         return ResponseEntity.ok(user);
     }
 	
@@ -54,7 +54,7 @@ public class UserController {
     })
     public ResponseEntity<User> retrieve(@PathVariable Long id) {
 		User user = this.userService.retrieve(id);
-		
+
 		return ResponseEntity.ok(user);
 	}
 	

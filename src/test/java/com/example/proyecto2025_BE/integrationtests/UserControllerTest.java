@@ -51,7 +51,7 @@ public class UserControllerTest {
 	@Test
 	@DisplayName("Cuando busco un user por id, y este existe, obtengo dicho recurso")
 	void retrieveTest() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/users/{id}", EXISTENT_USER_ID))
+		mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			.andExpect(jsonPath("$.fullName").value("Pepe Palala"));
@@ -61,7 +61,7 @@ public class UserControllerTest {
 	@DisplayName("Cuando busco un user por id y este no es encontrado el sistema devuelve Not Found")
 	void findByIdNotFoundTest() throws Exception {
 		mockMvc
-			.perform(MockMvcRequestBuilders.get("/api/v1/users/{id}", INEXISTENT_USER_ID))
+			.perform(MockMvcRequestBuilders.get("/users/{id}", INEXISTENT_USER_ID))
 			.andExpect(status().isNotFound());
 	}
 	
@@ -73,14 +73,14 @@ public class UserControllerTest {
 		String requestBody = mapper.writeValueAsString(user);
 		
 		mockMvc
-			.perform(MockMvcRequestBuilders.put("/api/v1/users")
+			.perform(MockMvcRequestBuilders.put("/users")
 					.contentType("application/json")
 					.content(requestBody))
 			.andExpect(content().contentType("application/json"))
 			.andExpect(status().isOk());
 		
 		mockMvc
-			.perform(MockMvcRequestBuilders.get("/api/v1/users/{id}", EXISTENT_USER_ID))
+			.perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType("application/json"))
 			.andExpect(jsonPath("$.phoneNumber").value("1234567890"));
@@ -97,7 +97,7 @@ public class UserControllerTest {
 		
 		String requestBody = mapper.writeValueAsString(userToCreate);
 		
-		mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/users")
+		mockMvc.perform(MockMvcRequestBuilders.post("/users")
 					.contentType("application/json")
 					.content(requestBody))
 			.andExpect(content().contentType("application/json"))
