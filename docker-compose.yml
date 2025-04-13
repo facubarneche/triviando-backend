@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 version: '3.8'
 services:
   app:
@@ -46,3 +47,17 @@ volumes:
     driver: local
 #  mongo_data:
 #    driver: local
+=======
+services:
+  mongodb:
+    image: mongo:5
+    container_name: mongo-flashcards
+    restart: always
+    environment:
+      MONGODB_DATABASE: flashcards
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:
+>>>>>>> origin/develop
