@@ -18,4 +18,5 @@ public class Pregunta {
     private String topico;
     private String enunciado;
     private List<Opcion> opciones;
+    private String explicacion;
 }

@@ -7,8 +7,6 @@ import lombok.Data;
 @Data
 @Builder
 public class Opcion {
-
     String opcion;
     boolean correcta;
-    String explicacion;
 }

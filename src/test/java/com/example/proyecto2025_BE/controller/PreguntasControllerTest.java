@@ -2,7 +2,9 @@ package com.example.proyecto2025_BE.controller;
 
 import com.example.proyecto2025_BE.PreguntasData;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
+import com.example.proyecto2025_BE.dao.TopicoDao;
 import com.example.proyecto2025_BE.model.Pregunta;
+import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +19,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.mockito.Mockito.when;
@@ -38,6 +37,8 @@ class PreguntasControllerTest {
     private MockMvc mockMvc;
     @MockitoBean
     private PreguntaDao preguntaDao;
+    @MockitoBean
+    private TopicoDao topicoDao;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -144,29 +145,16 @@ class PreguntasControllerTest {
     @Test
     @DisplayName("Get cantidad de preguntas por topico")
     void getCantidadPreguntasPorTopico() throws Exception {
-        List<Map<String, Object>> resultadoDao = preguntas.stream()
-                .collect(Collectors.groupingBy(Pregunta::getTopico, Collectors.counting()))
-                .entrySet().stream()
-                .map(entry -> {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("_id", entry.getKey());
-                    map.put("cantidad", entry.getValue().intValue());
-                    return map;
-                })
-                .toList();
+        List<Topico> resultadoDao = Arrays.asList(
+            new Topico(UUID.randomUUID().toString(),"Microservicios", 10),
+            new Topico(UUID.randomUUID().toString(),"Patrones", 3)
+        );
 
-        when(preguntaDao.contarPreguntasPorTopico()).thenReturn(resultadoDao);
+        when(topicoDao.findAll()).thenReturn(resultadoDao);
 
-        List<Map<String, Integer>> resultadoEsperado = resultadoDao.stream()
-                .map(doc -> Map.of(
-                        (String) doc.get("_id"),
-                        (Integer) doc.get("cantidad")
-                ))
-                .toList();
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/cantidad-por-topico"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
+                .andExpect(content().json(objectMapper.writeValueAsString(resultadoDao)));
     }
 }
