@@ -13,9 +13,9 @@
 	</parent>
 
 	<groupId>com.example</groupId>
-	<artifactId>proyecto2025-BE</artifactId>
+	<artifactId>proyecto2025-be</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>proyecto2025-BE</name>
+	<name>proyecto2025-be</name>
 	<description>Proyecto final asignatura Proyecto Software 2025 BE</description>
 
 	<properties>
@@ -88,7 +88,7 @@
 			</exclusions>
 		</dependency>
 	</dependencies>
-
+	
 	<build>
 		<plugins>
 			<!-- Compilador -->
