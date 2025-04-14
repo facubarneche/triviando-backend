@@ -15,7 +15,3 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  data:
-    mongodb:
-      uri: mongodb://mongodb:27017/flashcards
-      auto-index-creation: true
