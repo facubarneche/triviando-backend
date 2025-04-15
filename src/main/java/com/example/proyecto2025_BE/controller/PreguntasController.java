@@ -2,6 +2,7 @@ package com.example.proyecto2025_BE.controller;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.Pregunta;
+import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.PreguntaService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -76,7 +77,7 @@ public class PreguntasController {
         return ResponseEntity.ok(preguntasService.createPregunta(preguntaRequest));
     }
 
-    @GetMapping("/cantidad-por-topico")
+    @GetMapping("/topicos")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Cuenta la cantidad de preguntas por tópico",
             description = "Devuelve una lista con la cantidad de preguntas agrupadas por tópico.")
@@ -84,7 +85,7 @@ public class PreguntasController {
             @ApiResponse(responseCode = "200", description = "Conteo obtenido exitosamente",
                     content = @Content(mediaType = "application/json"))
     })
-    public List<Map<String, Integer>> cantidadPreguntasPorTopico() {
+    public List<Topico> cantidadPreguntasPorTopico() {
         return preguntasService.contarPreguntasPorTopico();
     }
 }

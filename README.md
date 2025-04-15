@@ -220,7 +220,7 @@ Este enfoque estructurado asegura una clara visibilidad de las tareas, una colab
 ### 💻 Ejecutar en desarrollo
 
 - Clonar el repositorio
-- Levantar backend: Parados desde el root del repo ejecutar ```docker-compose up --build```
+- Levantar backend: Parados desde el root del repo ejecutar ```docker-compose up --build -d```
 
 ---
 
