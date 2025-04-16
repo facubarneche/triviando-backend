@@ -3,6 +3,7 @@ package com.example.proyecto2025_BE.service;
 
 import java.util.Optional;
 
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
@@ -50,7 +51,14 @@ public class UserService {
     }
 	
 	public User findByEmailAndPassword(User user) {
+		validateLoginInfo(user);
 		return this.userDao.findByEmailAndPassword(user.getEmail(), user.getPassword())
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
+	}
+
+	private void validateLoginInfo(User user) {
+		if (user.getEmail() == null || user.getPassword() == null) {
+			throw ValidationException.build(Exceptions.VALIDATION_ERROR);
+		}
 	}
 }

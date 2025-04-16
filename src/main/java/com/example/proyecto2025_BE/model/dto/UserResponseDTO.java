@@ -1,0 +1,29 @@
+package com.example.proyecto2025_BE.model.dto;
+
+import com.example.proyecto2025_BE.model.User;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class UserResponseDTO {
+
+    private Long id;
+    private String fullName;
+    private int age;
+    private String email;
+    private String phoneNumber;
+
+
+    public static UserResponseDTO fromUser(User user) {
+        UserResponseDTO userDTOResponse = new UserResponseDTO();
+        userDTOResponse.setId(user.getId());
+        userDTOResponse.setFullName(user.getFullName().isEmpty() ? "" : user.getFullName());
+        userDTOResponse.setAge(user.getAge());
+        userDTOResponse.setEmail(user.getEmail().isEmpty() ? "" : user.getEmail());
+        userDTOResponse.setPhoneNumber(user.getPhoneNumber().isEmpty() ? "" : user.getPhoneNumber());
+        return userDTOResponse;
+    }
+
+
+}
