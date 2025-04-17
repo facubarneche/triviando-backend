@@ -18,10 +18,10 @@ public class UserResponseDTO {
     public static UserResponseDTO fromUser(User user) {
         UserResponseDTO userDTOResponse = new UserResponseDTO();
         userDTOResponse.setId(user.getId());
-        userDTOResponse.setFullName(user.getFullName().isEmpty() ? "" : user.getFullName());
+        userDTOResponse.setFullName((user.getFullName() == null || user.getFullName().isEmpty()) ? "" : user.getFullName());
         userDTOResponse.setAge(user.getAge());
-        userDTOResponse.setEmail(user.getEmail().isEmpty() ? "" : user.getEmail());
-        userDTOResponse.setPhoneNumber(user.getPhoneNumber().isEmpty() ? "" : user.getPhoneNumber());
+        userDTOResponse.setEmail((user.getEmail() == null || user.getEmail().isEmpty()) ? "" : user.getEmail());
+        userDTOResponse.setPhoneNumber((user.getPhoneNumber() == null || user.getPhoneNumber().isEmpty()) ? "" : user.getPhoneNumber());
         return userDTOResponse;
     }
 
