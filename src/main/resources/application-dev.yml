@@ -21,3 +21,8 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/flashcards
+      auto-index-creation: true
