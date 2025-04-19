@@ -6,6 +6,8 @@ import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.ApiClient;
 import com.example.proyecto2025_BE.service.PreguntaService;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -94,7 +96,7 @@ public class PreguntasController {
     }
     
     @PostMapping("/generate")
-    public Mono<String> generate(@RequestParam String topic) {
+    public Mono<ObjectNode> generate(@RequestParam String topic) {
     	ApiClient client = new ApiClient();
         return client.postReactive(topic);
     }
