@@ -1,4 +1,4 @@
-package com.example.proyecto2025_BE.model.dto;
+package com.example.proyecto2025_BE.model.dto.login;
 
 import com.example.proyecto2025_BE.model.User;
 import lombok.Getter;

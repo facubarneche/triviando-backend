@@ -4,12 +4,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
@@ -19,6 +21,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 import org.springframework.test.web.servlet.MockMvc;
+
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -67,13 +73,15 @@ public class UserControllerTest {
 	
 	@Test
 	@DisplayName("Se actualiza un user de manera exitosa")
+	@DirtiesContext
 	void updateTest() throws Exception {
-		user.setId(EXISTENT_USER_ID);
-		user.setPhoneNumber("1234567890");
-		String requestBody = mapper.writeValueAsString(user);
+		Map<String,Object> map = new HashMap<>();
+		map.put("fullName","Emiliano");
+		map.put("phoneNumber","1234567890");
+		String requestBody = mapper.writeValueAsString(map);
 		
 		mockMvc
-			.perform(MockMvcRequestBuilders.put("/users")
+			.perform(MockMvcRequestBuilders.patch("/users/{id}", EXISTENT_USER_ID, requestBody)
 					.contentType("application/json")
 					.content(requestBody))
 			.andExpect(content().contentType("application/json"))
@@ -89,13 +97,13 @@ public class UserControllerTest {
 	@Test
 	@DisplayName("Se crea un user de manera exitosa")
 	void createTest() throws Exception {
-		User userToCreate = User.builder()
-				.fullName("Pancho Rancho")
-				.age(21)
-				.email("panch.rancho@mail.com")
-				.build();
+		UserRequestDTO userRequestDTO = new UserRequestDTO();
+		userRequestDTO.setFullName("Pepe Palala");
+		userRequestDTO.setEmail("pepe.palala@gmail.com");
+		userRequestDTO.setPassword("123456");
+		userRequestDTO.setBirthday(LocalDate.of(1990, 1, 1));
 		
-		String requestBody = mapper.writeValueAsString(userToCreate);
+		String requestBody = mapper.writeValueAsString(userRequestDTO);
 		
 		mockMvc.perform(MockMvcRequestBuilders.post("/users")
 					.contentType("application/json")

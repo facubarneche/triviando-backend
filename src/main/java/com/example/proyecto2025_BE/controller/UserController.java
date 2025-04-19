@@ -2,19 +2,25 @@ package com.example.proyecto2025_BE.controller;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
-import com.example.proyecto2025_BE.model.dto.LoginResponseDTO;
-import com.example.proyecto2025_BE.model.dto.UserResponseDTO;
+import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
+import com.example.proyecto2025_BE.model.dto.login.LoginResponseDTO;
+import com.example.proyecto2025_BE.model.dto.register.UserResponseDTO;
+import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.example.proyecto2025_BE.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
+import org.hibernate.mapping.Any;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
@@ -31,16 +37,17 @@ public class UserController {
 	}
 
 	@PostMapping
-	@Operation(summary = "Crear usuario", description = "Crea un nuevo usuario en el sistema",
+	@Operation(summary = "Registrar usuario", description = "Se registra un nuevo usuario en el sistema",
 	responses = {
 	    @ApiResponse(responseCode = "200", description = "Usuario creado exitosamente",
 	                  content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
 	    @ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema")
 	})
-    public ResponseEntity<UserResponseDTO> create(@RequestBody User user) {
-    	this.userService.create(user);
+    public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserRequestDTO user) {
 
-        return ResponseEntity.ok(UserResponseDTO.fromUser(user));
+    	var userCreated = this.userService.create(UserRequestDTO.toEntity(user));
+
+        return ResponseEntity.ok(UserResponseDTO.fromUser(userCreated));
     }
 	
 	@GetMapping("/{id}")
@@ -56,17 +63,19 @@ public class UserController {
 		return ResponseEntity.ok(UserResponseDTO.fromUser(user));
 	}
 	
-	@PutMapping
+	@PatchMapping("/{id}")
 	@Operation(summary = "Actualizar usuario", description = "Actualiza los detalles de un usuario existente",
     responses = {
         @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente",
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
         @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
     })
-    public ResponseEntity<UserResponseDTO> update(@RequestBody User user) {
-    	this.userService.update(user);
+    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody Map<String, Object> properties) {
+		var userToUpdate = this.userService.retrieve(id);
 
-		return ResponseEntity.ok(UserResponseDTO.fromUser(user));
+    	var updatedUser = this.userService.update(userToUpdate, properties);
+
+		return ResponseEntity.ok(UserResponseDTO.fromUser(updatedUser));
     }
 	
 	@DeleteMapping("/{id}")
@@ -88,8 +97,8 @@ public class UserController {
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDTO.class))),
         @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
     })
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody User user) {
-		User logged = this.userService.findByEmailAndPassword(user);
+    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginInfo) {
+		User logged = this.userService.findByEmailAndPassword(loginInfo);
         
         return ResponseEntity.ok(LoginResponseDTO.fromEntity(logged));
     }
