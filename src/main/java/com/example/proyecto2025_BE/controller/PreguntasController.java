@@ -4,6 +4,7 @@ import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
+import com.example.proyecto2025_BE.service.ApiClient;
 import com.example.proyecto2025_BE.service.PreguntaService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -13,6 +14,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -20,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -87,5 +91,11 @@ public class PreguntasController {
     })
     public List<Topico> cantidadPreguntasPorTopico() {
         return preguntasService.contarPreguntasPorTopico();
+    }
+    
+    @PostMapping("/generate")
+    public Mono<String> generate(@RequestParam String topic) {
+    	ApiClient client = new ApiClient();
+        return client.postReactive(topic);
     }
 }

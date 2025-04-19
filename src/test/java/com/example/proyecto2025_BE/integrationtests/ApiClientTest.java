@@ -34,8 +34,8 @@ public class ApiClientTest {
 //		
 //		assertNotNull(response);
 		
-		apiClient = new ApiClient();
-		apiClient.post("motorcycle yamaha R3").join();
+//		apiClient = new ApiClient();
+//		apiClient.post("motorcycle yamaha R3").join();
 	}
 	
 //	@Test

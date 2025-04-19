@@ -15,6 +15,7 @@ import dev.langchain4j.model.ollama.OllamaStreamingChatModel;
 import dev.langchain4j.service.AiServices;
 import dev.langchain4j.service.TokenStream;
 import lombok.extern.slf4j.Slf4j;
+import reactor.core.publisher.Mono;
 
 @Slf4j
 @Service
@@ -49,22 +50,18 @@ public class ApiClient implements ChatLanguageModel {
 		return assistant.chatWithModel(message);
 	}
 
-	public CompletableFuture<Void> post(String topic) {
+	public Mono<String> postReactive(String topic) {
+        String prompt = TEMPLATE_PROMPT + topic;
+        TokenStream tokenStream = chatWithModel(prompt);
+        StringBuilder fullResponse = new StringBuilder();
 
-	 	String prompt = TEMPLATE_PROMPT + topic;
-		TokenStream tokenStream = chatWithModel(prompt);
-
-		CompletableFuture<Void> future = new CompletableFuture<>();
-
-		tokenStream.onPartialResponse(System.out::print)
-				.onCompleteResponse(lal -> {
-					System.out.println();
-					future.complete(null);
-				})
-				.onError(Throwable::printStackTrace)
-				.start();
-		return future;
-	}
+        return Mono.<String>create(sink -> {
+            tokenStream.onPartialResponse(fullResponse::append)
+                    .onCompleteResponse(response -> sink.success(fullResponse.toString()))
+                    .onError(sink::error)
+                    .start();
+        });
+    }
 
 	//TODO: pasar credenciales a el application.yml
     private StreamingChatLanguageModel connectModel(String modelUrl, String modelName) {
@@ -76,6 +73,9 @@ public class ApiClient implements ChatLanguageModel {
 				.logResponses(Boolean.TRUE)
     	        .timeout(Duration.ofMinutes(1))
     	        .responseFormat(ResponseFormat.JSON)
+    	        .topK(1)
+    	        .topP(0.1)
+    	        .temperature(0.0)
     	        .build();
     }
 }
