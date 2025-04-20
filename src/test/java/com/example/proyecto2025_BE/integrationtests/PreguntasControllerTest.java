@@ -1,12 +1,14 @@
 package com.example.proyecto2025_BE.integrationtests;
 
-import com.example.proyecto2025_BE.PreguntasData;
-import com.example.proyecto2025_BE.dao.PreguntaDao;
-import com.example.proyecto2025_BE.dao.TopicoDao;
-import com.example.proyecto2025_BE.model.Pregunta;
-import com.example.proyecto2025_BE.model.Topico;
-import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,12 +21,13 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import com.example.proyecto2025_BE.PreguntasData;
+import com.example.proyecto2025_BE.dao.PreguntaDao;
+import com.example.proyecto2025_BE.dao.TopicoDao;
+import com.example.proyecto2025_BE.model.Pregunta;
+import com.example.proyecto2025_BE.model.Topico;
+import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 
 @SpringBootTest
