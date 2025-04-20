@@ -1,4 +1,4 @@
-package com.example.proyecto2025_BE.controller;
+package com.example.proyecto2025_BE.integrationtests;
 
 import com.example.proyecto2025_BE.PreguntasData;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
