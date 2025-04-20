@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.example.proyecto2025_BE.service.ApiClient;
+import com.example.proyecto2025_BE.service.LLMApiClient;
 
 import dev.langchain4j.data.message.AiMessage;
 import dev.langchain4j.model.chat.response.ChatResponse;
@@ -22,7 +22,7 @@ import reactor.core.publisher.Flux;
 @DisplayName("Ollama Api Client Tests")
 public class ApiClientTest {
 	
-	private ApiClient apiClient;
+	private LLMApiClient lLMApiClient;
 //	private HttpClient httpClient;
 	
 	@Test
