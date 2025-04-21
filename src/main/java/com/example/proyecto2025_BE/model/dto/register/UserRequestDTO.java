@@ -3,11 +3,13 @@ package com.example.proyecto2025_BE.model.dto.register;
 import com.example.proyecto2025_BE.model.User;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
 
 @Data
+@Builder
 public class UserRequestDTO {
 
     @NotBlank
@@ -21,12 +23,13 @@ public class UserRequestDTO {
 
 
     public static User toEntity(UserRequestDTO userRequestDTO) {
-        User user = new User();
-        user.setFullName(userRequestDTO.getFullName());
-        user.setEmail(userRequestDTO.getEmail());
-        user.setPassword(userRequestDTO.getPassword());
-        user.setBirthDate(userRequestDTO.getBirthday());
-        return user;
+
+        return User.builder()
+                .fullName(userRequestDTO.getFullName())
+                .email(userRequestDTO.getEmail())
+                .password(userRequestDTO.getPassword())
+                .birthDate(userRequestDTO.getBirthday())
+                .build();
     }
 
 }

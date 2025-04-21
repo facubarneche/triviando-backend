@@ -1,11 +1,13 @@
 package com.example.proyecto2025_BE.model.dto.login;
 
 import com.example.proyecto2025_BE.model.User;
+import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 
-@Getter
-@Setter
+@Data
+@Builder
 public class LoginResponseDTO {
 
     private Long id;
@@ -14,11 +16,11 @@ public class LoginResponseDTO {
 
 
     public static LoginResponseDTO fromEntity(User user) {
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-        loginResponseDTO.setId(user.getId());
-        loginResponseDTO.setEmail(user.getEmail().isEmpty() ? "" : user.getEmail());
-        loginResponseDTO.setFullName(user.getFullName().isEmpty() ? "" : user.getFullName());
-        return loginResponseDTO;
+        return LoginResponseDTO.builder()
+                .id(user.getId())
+                .email(user.getEmail().isEmpty() ? "" : user.getEmail())
+                .fullName(user.getFullName().isEmpty() ? "" : user.getFullName())
+                .build();
     }
 
 
