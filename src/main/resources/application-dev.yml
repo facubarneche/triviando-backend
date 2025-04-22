@@ -3,8 +3,8 @@ server:
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/flashcards
-    username: root
-    password: root
+    username: admin
+    password: admin
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 5
@@ -26,3 +26,8 @@ spring:
     mongodb:
       uri: mongodb://localhost:27017/flashcards
       auto-index-creation: true
+llm:
+  url: https://busy-smooth-sunbeam.ngrok-free.app
+  auth: Basic Z2VtbWEzOkxvc1BpYml0b3NEZUxhVW5zYW1NYW5kYW4u
+  logRequests: true
+  logResponses: true

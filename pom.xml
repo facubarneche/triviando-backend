@@ -53,6 +53,10 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.33</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
+		</dependency>
 
 		<!-- Lombok -->
 		<dependency>
@@ -86,6 +90,36 @@
 					<artifactId>junit-vintage-engine</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		
+		<!-- LLM -->
+		<dependency>
+	        <groupId>dev.langchain4j</groupId>
+	        <artifactId>langchain4j</artifactId>
+	        <version>1.0.0-beta2</version>
+    	</dependency>
+    	<dependency>
+        	<groupId>dev.langchain4j</groupId>
+        	<artifactId>langchain4j-open-ai</artifactId>
+        	<version>1.0.0-beta3</version>
+    	</dependency>
+    	<dependency>
+		    <groupId>dev.langchain4j</groupId>
+		    <artifactId>langchain4j-spring-boot-starter</artifactId>
+		    <version>1.0.0-beta3</version>
+		</dependency>
+	    <dependency>
+	        <groupId>org.apache.httpcomponents.client5</groupId>
+	        <artifactId>httpclient5</artifactId>
+	    </dependency>
+	    <dependency>
+		    <groupId>dev.langchain4j</groupId>
+		    <artifactId>langchain4j-ollama</artifactId>
+		    <version>1.0.0-beta3</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-webflux</artifactId>
 		</dependency>
 	</dependencies>
 	

@@ -1,10 +1,28 @@
 package com.example.proyecto2025_BE.controller;
 
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
+import com.example.proyecto2025_BE.service.LLMApiClient;
 import com.example.proyecto2025_BE.service.PreguntaService;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -13,13 +31,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Map;
+import reactor.core.publisher.Mono;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -29,6 +41,7 @@ import java.util.Map;
 public class PreguntasController {
 
     private final PreguntaService preguntasService;
+    private final LLMApiClient llmApiClient;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -87,5 +100,15 @@ public class PreguntasController {
     })
     public List<Topico> cantidadPreguntasPorTopico() {
         return preguntasService.contarPreguntasPorTopico();
+    }
+    
+    @PostMapping("/generate")
+    @Operation(summary = "Generar respuesta del LLM", description = "Generacion de preguntas según tópico",
+	responses = {
+	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente",
+	                  content = @Content(mediaType = "application/json")),
+	})
+    public Mono<ObjectNode> generate(@RequestParam String topic) {
+        return llmApiClient.generate(topic);
     }
 }
