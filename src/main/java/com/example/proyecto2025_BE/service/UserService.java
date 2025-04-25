@@ -5,19 +5,18 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
-import com.example.proyecto2025_BE.exceptions.ValidationException;
-import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
-import org.hibernate.mapping.Any;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor

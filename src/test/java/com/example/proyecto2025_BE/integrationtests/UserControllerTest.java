@@ -4,7 +4,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,18 +15,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
-
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -101,7 +98,6 @@ public class UserControllerTest {
                 .fullName("Pepe Palala")
                 .email("pepe.palala@gmail.com")
                 .password("123456")
-                .birthday(LocalDate.of(1990, 1, 1))
                 .build();
 
         String requestBody = mapper.writeValueAsString(userRequestDTO);

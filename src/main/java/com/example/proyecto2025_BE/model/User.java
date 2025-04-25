@@ -1,8 +1,10 @@
 package com.example.proyecto2025_BE.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.util.List;
 
 import com.example.proyecto2025_BE.constants.DatePattern;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -38,11 +40,22 @@ public class User {
 	private LocalDateTime createdAt;
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+	@OneToMany(cascade = CascadeType.ALL)
+	private List<Answer> answers;
+	private BigDecimal score;
 
-	public Integer getAge(){
+	public Integer getAge() {
 		if (birthDate == null){
 			return null;
 		}
 		return Period.between(birthDate, LocalDate.now()).getYears();
+	}
+
+	public void add(Answer answer) {
+		answers.add(answer);
+	}
+	
+	public void add(BigDecimal score) {
+		score.add(score);
 	}
 }

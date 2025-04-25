@@ -1,15 +1,19 @@
 package com.example.proyecto2025_BE.model.dto.register;
 
+import java.time.LocalDate;
+
 import com.example.proyecto2025_BE.model.User;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
-import java.time.LocalDate;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class UserRequestDTO {
 
     @NotBlank
@@ -18,7 +22,6 @@ public class UserRequestDTO {
     private String email;
     @NotBlank
     private String password;
-    @NotNull
     private LocalDate birthday;
 
 
