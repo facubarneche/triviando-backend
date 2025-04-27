@@ -1,11 +1,10 @@
 package com.example.proyecto2025_BE.service;
 
+import java.util.List;
+
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
-
-import java.util.List;
-import java.util.Map;
 
 public interface PreguntaService {
 

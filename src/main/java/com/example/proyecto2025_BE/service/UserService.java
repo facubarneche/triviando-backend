@@ -5,27 +5,26 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
-import com.example.proyecto2025_BE.exceptions.ValidationException;
-import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
-import org.hibernate.mapping.Any;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 	
 	private final UserDao userDao;
 
-	@Transactional
 	public User create(User user) {
 		Optional<User> fetched = userDao.findByEmail(user.getEmail());
 		
@@ -42,7 +41,6 @@ public class UserService {
 			.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	@Transactional
 	public User update(User user, Map<String, Object> properties) {
 
 		properties.forEach((key, value) -> {
@@ -58,8 +56,11 @@ public class UserService {
 
 		return userDao.save(user);
     }
+	
+	public User update(User user) {
+		return userDao.save(user);
+	}
 
-	@Transactional
 	public void delete(Long id) {
 		User user = retrieve(id);
 		userDao.delete(user);
@@ -70,6 +71,4 @@ public class UserService {
 		return this.userDao.findByEmailAndPassword(loginInfo.getEmail(), loginInfo.getPassword())
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
-
-
 }
