@@ -1,6 +1,8 @@
 package com.example.proyecto2025_BE.model;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -10,8 +12,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Transient;
 import lombok.Data;
+import lombok.Builder;
 
 @Data
+@Builder
 @Entity
 public class Answer {
 	
@@ -19,6 +23,8 @@ public class Answer {
 	private static final long LATENCY_UNSUCCESSFULL_LIMIT = 50000;
 	private static final BigDecimal PENALTY_FACTOR = BigDecimal.valueOf(0.1);
 	private static final BigDecimal BASE_SCORE = BigDecimal.valueOf(LATENCY_PENALTY_LIMIT * 2);
+	private static final MathContext DECIMAL_SCALE = new MathContext(1, RoundingMode.HALF_UP);
+	private static final MathContext ROUNDING_MODE = new MathContext(0, RoundingMode.HALF_UP);
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,7 +34,7 @@ public class Answer {
 	private Long userId;
 	@OneToOne(cascade = CascadeType.ALL)
 	private Opcion optionSelected;
-	private long millisecondsSpent;	// TODO: Me gustaria que no lo mande al FE. Es parte del calculo del puntaje.
+	private long millisecondsSpent;	// TODO: Me gustaria que no lo mande el FE. Es parte del calculo del puntaje.
 	
 	public BigDecimal getScoreBy(Pregunta question) {
 		return isSuccess(question) ? calculateScoreBy(question) : BigDecimal.ZERO;
@@ -49,7 +55,7 @@ public class Answer {
 	}
 	
 	private BigDecimal baseScore() {
-		return BASE_SCORE.divide(BigDecimal.valueOf(millisecondsSpent));
+		return BASE_SCORE.divide(BigDecimal.valueOf(millisecondsSpent), DECIMAL_SCALE).round(ROUNDING_MODE);
 	}
 	
 	private boolean isPenalized() {

@@ -8,7 +8,7 @@ import java.util.List;
 
 import com.example.proyecto2025_BE.constants.DatePattern;
 import com.fasterxml.jackson.annotation.JsonFormat;
-
+import java.util.ArrayList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -40,8 +40,9 @@ public class User {
 	private LocalDateTime createdAt;
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+	@Builder.Default
 	@OneToMany(cascade = CascadeType.ALL)
-	private List<Answer> answers;
+	private List<Answer> answers = new ArrayList<>();
 	private BigDecimal score;
 
 	public Integer getAge() {
