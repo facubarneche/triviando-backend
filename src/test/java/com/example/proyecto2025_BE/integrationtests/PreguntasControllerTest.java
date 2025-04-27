@@ -21,7 +21,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.example.proyecto2025_BE.PreguntasData;
+import com.example.proyecto2025_BE.configuration.PreguntasData;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.dao.TopicoDao;
 import com.example.proyecto2025_BE.model.Pregunta;
@@ -50,7 +50,7 @@ class PreguntasControllerTest {
 
     @BeforeEach
     void setUp() {
-        preguntas = preguntasData.getPreguntas();
+        preguntas = PreguntasData.PREGUNTAS;
     }
     @Test
     @DisplayName("Get all preguntas")

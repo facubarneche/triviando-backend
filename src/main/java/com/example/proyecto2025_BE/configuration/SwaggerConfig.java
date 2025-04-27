@@ -1,4 +1,4 @@
-package com.example.proyecto2025_BE.config;
+package com.example.proyecto2025_BE.configuration;
 
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;

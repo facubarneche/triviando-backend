@@ -14,7 +14,6 @@ public class Proyecto2025BeApplication implements CommandLineRunner {
 	@Value("${spring.profiles.active}")
     private String profile;
 
-
 	public static void main(String[] args) {
 		SpringApplication.run(Proyecto2025BeApplication.class, args);
 	}
