@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 @Configuration
-@Profile({"dev", "test"})
+@Profile("dev")
 public class MongoConfig {
 
     @Bean
