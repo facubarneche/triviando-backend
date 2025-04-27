@@ -27,6 +27,8 @@ public class AnswerService {
 		user.add(answer);
 		user.add(score);
 		
+		userService.update(user);
+		
 		return score;
 	}
 	

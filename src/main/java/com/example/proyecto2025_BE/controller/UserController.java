@@ -22,6 +22,8 @@ import com.example.proyecto2025_BE.model.dto.login.LoginResponseDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserResponseDTO;
 import com.example.proyecto2025_BE.service.UserService;
+import com.example.proyecto2025_BE.views.Views;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -111,4 +113,18 @@ public class UserController {
         
         return ResponseEntity.ok(LoginResponseDTO.fromEntity(logged));
     }
+	
+	@GetMapping("/{userId}/score")
+	@JsonView(Views.Score.class)
+	@Operation(summary = "Obtener puntaje de un usuario", description = "Obtiene el puntaje de un usuario",
+    responses = {
+        @ApiResponse(responseCode = "200", description = "Puntaje encontrado",
+                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+        @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
+    })
+    public ResponseEntity<User> retrieveScore(@PathVariable Long userId) {
+		User user = this.userService.retrieve(userId);
+
+		return ResponseEntity.ok(user);
+	}
 }

@@ -7,7 +7,10 @@ import java.time.Period;
 import java.util.List;
 
 import com.example.proyecto2025_BE.constants.DatePattern;
+import com.example.proyecto2025_BE.views.Views;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import java.util.ArrayList;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -27,6 +30,7 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+	@JsonView(Views.Score.class)
 	private Long id;
 	private String fullName;
 	@Transient
@@ -41,9 +45,11 @@ public class User {
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	@Builder.Default
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	private List<Answer> answers = new ArrayList<>();
-	private BigDecimal score;
+	@Builder.Default
+	@JsonView(Views.Score.class)
+	private BigDecimal score = BigDecimal.ZERO;
 
 	public Integer getAge() {
 		if (birthDate == null){
@@ -57,6 +63,6 @@ public class User {
 	}
 	
 	public void add(BigDecimal score) {
-		score.add(score);
+		this.score = this.score.add(score);
 	}
 }
