@@ -1,15 +1,15 @@
 package com.example.proyecto2025_BE.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.dao.PreguntaDao;
-import com.example.proyecto2025_BE.dao.TopicoDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Pregunta;
-import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 
 import lombok.RequiredArgsConstructor;
@@ -19,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 public class PreguntaServiceImpl implements PreguntaService{
 
     private final PreguntaDao preguntaDao;
-    private final TopicoDao topicoDao;
-
 
     @Override
     public List<Pregunta> getAllPreguntas() {
@@ -48,7 +46,11 @@ public class PreguntaServiceImpl implements PreguntaService{
     }
 
     @Override
-    public List<Topico> contarPreguntasPorTopico() {
-        return topicoDao.findAll();
+    public Map<String, Number> contarPreguntasPorTopico() {
+        return preguntaDao.contarPreguntasPorTopico().stream()
+                .collect(Collectors.toMap(
+                        m -> (String) m.get("_id"),
+                        m -> (Number) m.get("cantidadPreguntas")
+                ));
     }
 }
