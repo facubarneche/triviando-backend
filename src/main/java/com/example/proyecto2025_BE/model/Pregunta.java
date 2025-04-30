@@ -21,9 +21,9 @@ public class Pregunta {
     private String id;
     private String topico;
     private String enunciado;
-    private List<Opcion> incorrectOptions;
+    private List<Option> incorrectOptions;
     @JsonIgnore
-    private Opcion correctOption;
+    private Option correctOption;
     private String explicacion;
     private Difficulty difficulty;
     
@@ -31,7 +31,7 @@ public class Pregunta {
     	return difficulty.getDifficultyFactor();
     }
 
-	public boolean isSuccess(Opcion option) {
+	public boolean isSuccess(Option option) {
 		return correctOption.getLetter().equals(option.getLetter());
 	}
 }

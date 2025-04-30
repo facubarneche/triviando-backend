@@ -51,4 +51,9 @@ public class PreguntaServiceImpl implements PreguntaService{
     public List<Topico> contarPreguntasPorTopico() {
         return topicoDao.findAll();
     }
+    
+    @Override
+    public List<Pregunta> saveAll(List<Pregunta> preguntas) {
+    	return preguntaDao.saveAll(preguntas);
+    }
 }

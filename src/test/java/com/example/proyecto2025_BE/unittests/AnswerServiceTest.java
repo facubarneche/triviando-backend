@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Difficulty;
 import com.example.proyecto2025_BE.model.LetterOption;
-import com.example.proyecto2025_BE.model.Opcion;
+import com.example.proyecto2025_BE.model.Option;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.service.AnswerService;
@@ -29,7 +29,7 @@ public class AnswerServiceTest {
 	private static AnswerService answerService;
 	private static UserService userServiceMock;
 	private static PreguntaService preguntaServiceMock;
-	private static Opcion correctOption;
+	private static Option correctOption;
 	private static Answer.AnswerBuilder answerbuilder;
 	
 	@BeforeAll
@@ -41,7 +41,7 @@ public class AnswerServiceTest {
 		User user = User.builder()
 				.build();
 		
-		correctOption = Opcion.builder()
+		correctOption = Option.builder()
 				.letter(LetterOption.A)
 				.build();
 		
@@ -102,7 +102,7 @@ public class AnswerServiceTest {
 	@Test
 	@DisplayName("Unsuccess answer by incorrect option selected")
 	void unsaccessAnswerTest() {
-		Opcion incorrectOption = Opcion.builder()
+		Option incorrectOption = Option.builder()
 				.letter(LetterOption.B)
 				.build();
 		

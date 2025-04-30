@@ -21,7 +21,6 @@ import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.LLMApiClient;
 import com.example.proyecto2025_BE.service.PreguntaService;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -108,7 +107,7 @@ public class PreguntasController {
 	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente",
 	                  content = @Content(mediaType = "application/json")),
 	})
-    public Mono<ObjectNode> generate(@RequestParam String topic) {
+    public Mono<List<Pregunta>> generate(@RequestParam String topic) {
         return llmApiClient.generate(topic);
     }
 }

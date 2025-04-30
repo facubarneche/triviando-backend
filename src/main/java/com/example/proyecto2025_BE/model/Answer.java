@@ -37,7 +37,7 @@ public class Answer {
 	@Transient
 	private Long userId;
 	@OneToOne(cascade = CascadeType.ALL)
-	private Opcion optionSelected;
+	private Option optionSelected;
 	private long millisecondsSpent;	// TODO: Me gustaria que no lo mande el FE. Es parte del calculo del puntaje.
 	
 	public BigDecimal getScoreBy(Pregunta question) {
