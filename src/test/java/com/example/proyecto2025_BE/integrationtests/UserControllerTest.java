@@ -1,5 +1,6 @@
 package com.example.proyecto2025_BE.integrationtests;
 
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -15,13 +16,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -40,11 +46,17 @@ public class UserControllerTest {
     private ObjectMapper mapper;
     private User user;
 
+    @MockitoBean
+    private RespuestasDao respuestasDao;
+
     @BeforeEach
     void beforeEach() {
         user = User.builder()
                 .fullName("Pepe Palala")
                 .build();
+
+        mapper.registerModule(new JavaTimeModule());
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 
         dao.save(user);
         dao.save(User.builder().build());
@@ -107,5 +119,31 @@ public class UserControllerTest {
                         .content(requestBody))
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("Estadisticas de un user que ha respondido preguntas")
+    void estadisticasTest() throws Exception {
+        when(respuestasDao.countByUsuarioId(EXISTENT_USER_ID)).thenReturn(50);
+        when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(35);
+        StatsResponse response = new StatsResponse(10, 35, 50);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}/statistics", EXISTENT_USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(mapper.writeValueAsString(response)));
+    }
+
+    @Test
+    @DisplayName("Estadisticas de un user que no ha respondido preguntas")
+    void estadisticasInexistentUserTest() throws Exception {
+        when(respuestasDao.countByUsuarioId(EXISTENT_USER_ID)).thenReturn(0);
+        when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(0);
+        StatsResponse response = new StatsResponse(0,0,0);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}/statistics", EXISTENT_USER_ID))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(mapper.writeValueAsString(response)));
     }
 }

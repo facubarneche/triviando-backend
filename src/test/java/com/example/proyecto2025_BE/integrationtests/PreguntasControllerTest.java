@@ -4,10 +4,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,9 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.proyecto2025_BE.configuration.PreguntasData;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
-import com.example.proyecto2025_BE.dao.TopicoDao;
 import com.example.proyecto2025_BE.model.Pregunta;
-import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,8 +35,6 @@ class PreguntasControllerTest {
     private MockMvc mockMvc;
     @MockitoBean
     private PreguntaDao preguntaDao;
-    @MockitoBean
-    private TopicoDao topicoDao;
     @Autowired
     private ObjectMapper objectMapper;
     @Autowired
@@ -148,16 +141,23 @@ class PreguntasControllerTest {
     @Test
     @DisplayName("Get cantidad de preguntas por topico")
     void getCantidadPreguntasPorTopico() throws Exception {
-        List<Topico> resultadoDao = Arrays.asList(
-            new Topico(UUID.randomUUID().toString(),"Microservicios", 10),
-            new Topico(UUID.randomUUID().toString(),"Patrones", 3)
+
+        List<Map<String, Object>> resultadoDao = Arrays.asList(
+                Map.of("_id", "java", "cantidadPreguntas", 5),
+                Map.of("_id", "python", "cantidadPreguntas", 10),
+                Map.of("_id", "javascript", "cantidadPreguntas", 7)
         );
 
-        when(topicoDao.findAll()).thenReturn(resultadoDao);
+        when(preguntaDao.contarPreguntasPorTopico()).thenReturn(resultadoDao);
+
+        Map<String, Number> resultadoEsperado = new HashMap<>();
+        resultadoEsperado.put("java", 5);
+        resultadoEsperado.put("python", 10);
+        resultadoEsperado.put("javascript", 7);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().json(objectMapper.writeValueAsString(resultadoDao)));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
     }
 }

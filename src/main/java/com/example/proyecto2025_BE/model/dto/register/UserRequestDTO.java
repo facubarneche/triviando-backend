@@ -34,5 +34,4 @@ public class UserRequestDTO {
                 .birthDate(userRequestDTO.getBirthday())
                 .build();
     }
-
 }
