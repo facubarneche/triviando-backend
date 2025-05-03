@@ -67,7 +67,7 @@ public class AnswerServiceTest {
 	@DisplayName("Success answer without latency penalty limit, without unsuccessful limit")
 	void answerTest() {
 		Answer answer = answerbuilder.millisecondsSpent(29999)
-				.optionSelected(correctOption)
+				.letterSelected(correctOption.getLetter())
 				.build();
 		
 		BigDecimal score = answerService.answer(answer);
@@ -79,7 +79,7 @@ public class AnswerServiceTest {
 	@DisplayName("Success answer with latency penalty limit, without unsuccessful limit")
 	void answerWithLatencyPenaltyLimitTest() {
 		Answer answer = answerbuilder.millisecondsSpent(30001)
-				.optionSelected(correctOption)
+				.letterSelected(correctOption.getLetter())
 				.build();
 		
 		BigDecimal score = answerService.answer(answer);
@@ -91,7 +91,7 @@ public class AnswerServiceTest {
 	@DisplayName("Unsuccess answer by unsuccessful limit")
 	void answerWithUnsuccessfulLatencyLimitTest() {
 		Answer answer = answerbuilder.millisecondsSpent(50001)
-				.optionSelected(correctOption)
+				.letterSelected(correctOption.getLetter())
 				.build();
 		
 		BigDecimal score = answerService.answer(answer);
@@ -107,7 +107,7 @@ public class AnswerServiceTest {
 				.build();
 		
 		Answer answer = answerbuilder.millisecondsSpent(29999)
-				.optionSelected(incorrectOption)
+				.letterSelected(incorrectOption.getLetter())
 				.build();
 		
 		BigDecimal score = answerService.answer(answer);
