@@ -46,6 +46,7 @@ public class User {
 	private LocalDateTime updatedAt;
 	@Builder.Default
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JoinColumn(name = "user_id")
 	private List<Answer> answers = new ArrayList<>();
 	@Builder.Default
 	@JsonView(Views.Score.class)

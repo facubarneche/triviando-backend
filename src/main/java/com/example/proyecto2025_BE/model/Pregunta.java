@@ -31,7 +31,7 @@ public class Pregunta {
     	return difficulty.getDifficultyFactor();
     }
 
-	public boolean isSuccess(Opcion option) {
-		return correctOption.getLetter().equals(option.getLetter());
+	public boolean isSuccess(LetterOption letterSelected) {
+		return correctOption.getLetter().equals(letterSelected);
 	}
 }
