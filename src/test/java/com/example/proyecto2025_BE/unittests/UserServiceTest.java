@@ -108,10 +108,13 @@ public class UserServiceTest {
     void getUsersOrderedByScoreFromUser_ShouldReturnCorrectPage() {
         Long userId = 4L;  // Usuario con score 400
         int pageSize = 5;
-        Pageable pageable = PageRequest.of(0, pageSize);
+        Pageable pageable = PageRequest.of(0, pageSize); // La solicitud inicial puede ser página 0
 
         int userRankPosition = findUserPosition(userId);
-        int expectedPageNumber = userRankPosition / pageSize;
+        // Calcular el número de página esperado (base 0 para Pageable)
+        int expectedPageNumberBase0 = userRankPosition / pageSize;
+        // El número de página esperado para la respuesta (base 1)
+        int expectedPageNumberBase1 = expectedPageNumberBase0 + 1;
 
         User user = users.stream()
                 .filter(u -> u.getId().equals(userId))
@@ -120,40 +123,39 @@ public class UserServiceTest {
 
         List<User> sortedUsers = getSortedUsers();
         List<User> expectedContent = sortedUsers.stream()
-                .skip((long) expectedPageNumber * pageSize)
+                .skip((long) expectedPageNumberBase0 * pageSize) // Usar el número de página base 0 para skip
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
-        Pageable expectedPageable = PageRequest.of(
-                expectedPageNumber,
+        Pageable expectedPageableBase0 = PageRequest.of(
+                expectedPageNumberBase0, // Usar el número de página base 0 para el mock
                 pageSize,
                 Sort.by(Sort.Direction.DESC, "score").and(Sort.by(Sort.Direction.ASC, "id")));
 
-        Page<User> expectedPage = new PageImpl<>(expectedContent, expectedPageable, sortedUsers.size());
+        Page<User> expectedPage = new PageImpl<>(expectedContent, expectedPageableBase0, sortedUsers.size());
 
-        
         when(userDao.findById(userId)).thenReturn(Optional.of(user));
         when(userDao.findUserRankPosition(userId)).thenReturn(userRankPosition);
         when(userDao.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
         Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
 
-        
         assertNotNull(result);
-        assertEquals(expectedPageNumber, result.getNumber());
+        assertEquals(expectedPageNumberBase1, result.getNumber()); // Comparar con el número de página base 1
         verify(userDao, times(1)).findById(userId);
         verify(userDao, times(1)).findUserRankPosition(userId);
         verify(userDao, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
-    void getUsersOrderedByScoreFromUser_UserInFirstPage_ShouldReturnPageZero() {
+    void getUsersOrderedByScoreFromUser_UserInFirstPage_ShouldReturnPageOne() {
         Long userId = 10L; // Usuario con el score más alto (1000)
         int pageSize = 5;
-        Pageable pageable = PageRequest.of(0, pageSize);
+        Pageable initialPageable = PageRequest.of(0, pageSize); // Solicitud inicial
 
         int userRankPosition = findUserPosition(userId); // Debería ser 0
-        int expectedPageNumber = userRankPosition / pageSize; // Debería ser página 0
+        int expectedPageNumberBase0 = userRankPosition / pageSize; // Debería ser 0
+        int expectedPageNumberBase1 = expectedPageNumberBase0 + 1; // Debería ser 1 para la respuesta
 
         User user = users.stream()
                 .filter(u -> u.getId().equals(userId))
@@ -162,12 +164,12 @@ public class UserServiceTest {
 
         List<User> sortedUsers = getSortedUsers();
         List<User> expectedContent = sortedUsers.stream()
-                .skip((long) expectedPageNumber * pageSize)
+                .skip((long) expectedPageNumberBase0 * pageSize) // Usar base 0 para skip
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
         Pageable expectedPageable = PageRequest.of(
-                expectedPageNumber,
+                expectedPageNumberBase0, // Usar base 0 para el mock
                 pageSize,
                 Sort.by(Sort.Direction.DESC, "score").and(Sort.by(Sort.Direction.ASC, "id")));
 
@@ -177,10 +179,10 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId)).thenReturn(userRankPosition);
         when(userDao.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
-        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
+        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, initialPageable);
 
         assertNotNull(result);
-        assertEquals(expectedPageNumber, result.getNumber());
+        assertEquals(expectedPageNumberBase1, result.getNumber()); // Aserción con base 1
         verify(userDao, times(1)).findById(userId);
         verify(userDao, times(1)).findUserRankPosition(userId);
         verify(userDao, times(1)).findAll(any(Pageable.class));
@@ -190,10 +192,11 @@ public class UserServiceTest {
     void getUsersOrderedByScoreFromUser_UserInLastPage_ShouldReturnLastPage() {
         Long userId = 1L; // Usuario con score bajo (100)
         int pageSize = 5;
-        Pageable pageable = PageRequest.of(0, pageSize);
+        Pageable initialPageable = PageRequest.of(0, pageSize); // Solicitud inicial
 
         int userRankPosition = findUserPosition(userId);
-        int expectedPageNumber = userRankPosition / pageSize;
+        int expectedPageNumberBase0 = userRankPosition / pageSize;
+        int expectedPageNumberBase1 = expectedPageNumberBase0 + 1; // Para la respuesta
 
         User user = users.stream()
                 .filter(u -> u.getId().equals(userId))
@@ -202,12 +205,12 @@ public class UserServiceTest {
 
         List<User> sortedUsers = getSortedUsers();
         List<User> expectedContent = sortedUsers.stream()
-                .skip((long) expectedPageNumber * pageSize)
+                .skip((long) expectedPageNumberBase0 * pageSize) // Usar base 0
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
         Pageable expectedPageable = PageRequest.of(
-                expectedPageNumber,
+                expectedPageNumberBase0, // Usar base 0 para el mock
                 pageSize,
                 Sort.by(Sort.Direction.DESC, "score").and(Sort.by(Sort.Direction.ASC, "id")));
 
@@ -217,10 +220,10 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId)).thenReturn(userRankPosition);
         when(userDao.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
-        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
+        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, initialPageable);
 
         assertNotNull(result);
-        assertEquals(expectedPageNumber, result.getNumber());
+        assertEquals(expectedPageNumberBase1, result.getNumber()); // Aserción con base 1
         verify(userDao, times(1)).findById(userId);
         verify(userDao, times(1)).findUserRankPosition(userId);
         verify(userDao, times(1)).findAll(any(Pageable.class));
@@ -245,15 +248,20 @@ public class UserServiceTest {
         Long userId2 = 2L;  // Score 200
         Long userId11 = 11L; // Score 200 también
         int pageSize = 3;
-        Pageable pageable = PageRequest.of(0, pageSize);
+        Pageable initialPageable = PageRequest.of(0, pageSize); // Solicitud inicial
 
         int userPosition2 = findUserPosition(userId2);
         int userPosition11 = findUserPosition(userId11);
 
         assertNotEquals(userPosition2, userPosition11);
 
-        int expectedPageNumber2 = userPosition2 / pageSize;
-        int expectedPageNumber11 = userPosition11 / pageSize;
+        // Calcular el número de página esperado (base 0 para Pageable)
+        int expectedPageNumberBase0_2 = userPosition2 / pageSize;
+        int expectedPageNumberBase0_11 = userPosition11 / pageSize;
+
+        // Calcular el número de página esperado para la respuesta (base 1)
+        int expectedPageNumberBase1_2 = expectedPageNumberBase0_2 + 1;
+        int expectedPageNumberBase1_11 = expectedPageNumberBase0_11 + 1;
 
         User user2 = users.stream().filter(u -> u.getId().equals(userId2)).findFirst().orElseThrow();
         User user11 = users.stream().filter(u -> u.getId().equals(userId11)).findFirst().orElseThrow();
@@ -263,24 +271,24 @@ public class UserServiceTest {
         List<User> sortedUsers = getSortedUsers();
 
         List<User> expectedContent2 = sortedUsers.stream()
-                .skip((long) expectedPageNumber2 * pageSize)
+                .skip((long) expectedPageNumberBase0_2 * pageSize) // Usar base 0
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
         Pageable expectedPageable2 = PageRequest.of(
-                expectedPageNumber2,
+                expectedPageNumberBase0_2, // Usar base 0 para el mock
                 pageSize,
                 Sort.by(Sort.Direction.DESC, "score").and(Sort.by(Sort.Direction.ASC, "id")));
 
         Page<User> expectedPage2 = new PageImpl<>(expectedContent2, expectedPageable2, sortedUsers.size());
 
         List<User> expectedContent11 = sortedUsers.stream()
-                .skip((long) expectedPageNumber11 * pageSize)
+                .skip((long) expectedPageNumberBase0_11 * pageSize) // Usar base 0
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
         Pageable expectedPageable11 = PageRequest.of(
-                expectedPageNumber11,
+                expectedPageNumberBase0_11, // Usar base 0 para el mock
                 pageSize,
                 Sort.by(Sort.Direction.DESC, "score").and(Sort.by(Sort.Direction.ASC, "id")));
 
@@ -290,17 +298,17 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId2)).thenReturn(userPosition2);
         when(userDao.findAll(eq(expectedPageable2))).thenReturn(expectedPage2);
 
-        Page<UserRankingDTO> result2 = userService.getUsersOrderedByScoreFromUser(userId2, pageable);
+        Page<UserRankingDTO> result2 = userService.getUsersOrderedByScoreFromUser(userId2, initialPageable);
         assertNotNull(result2);
-        assertEquals(expectedPageNumber2, result2.getNumber());
+        assertEquals(expectedPageNumberBase1_2, result2.getNumber()); // Aserción con base 1
 
         when(userDao.findById(userId11)).thenReturn(Optional.of(user11));
         when(userDao.findUserRankPosition(userId11)).thenReturn(userPosition11);
         when(userDao.findAll(eq(expectedPageable11))).thenReturn(expectedPage11);
 
-        Page<UserRankingDTO> result11 = userService.getUsersOrderedByScoreFromUser(userId11, pageable);
+        Page<UserRankingDTO> result11 = userService.getUsersOrderedByScoreFromUser(userId11, initialPageable);
         assertNotNull(result11);
-        assertEquals(expectedPageNumber11, result11.getNumber());
+        assertEquals(expectedPageNumberBase1_11, result11.getNumber()); // Aserción con base 1
     }
 
     @Test
@@ -308,7 +316,7 @@ public class UserServiceTest {
         Long userId3 = 3L;   // Score 300
         Long userId12 = 12L; // Score 300 también
         int pageSize = 3;
-        Pageable pageable = PageRequest.of(0, pageSize);
+        Pageable initialPageable = PageRequest.of(0, pageSize); // La solicitud inicial puede ser página 0
 
         User user3 = users.stream().filter(u -> u.getId().equals(userId3)).findFirst().orElseThrow();
         User user12 = users.stream().filter(u -> u.getId().equals(userId12)).findFirst().orElseThrow();
@@ -327,26 +335,31 @@ public class UserServiceTest {
         when(userDao.findById(userId12)).thenReturn(Optional.of(user12));
         when(userDao.findUserRankPosition(userId12)).thenReturn(userPosition12);
 
-        int expectedPageNumber3 = userPosition3 / pageSize;
-        int expectedPageNumber12 = userPosition12 / pageSize;
+        // Calcular el número de página esperado (base 0 para Pageable)
+        int expectedPageNumberBase0_3 = userPosition3 / pageSize;
+        int expectedPageNumberBase0_12 = userPosition12 / pageSize;
+
+        // Calcular el número de página esperado para la respuesta (base 1)
+        int expectedPageNumberBase1_3 = expectedPageNumberBase0_3 + 1;
+        int expectedPageNumberBase1_12 = expectedPageNumberBase0_12 + 1;
 
         Pageable expectedPageable3 = PageRequest.of(
-                expectedPageNumber3,
+                expectedPageNumberBase0_3, // Usar el número de página base 0 para el mock
                 pageSize,
                 Sort.by(Sort.Direction.DESC, "score").and(Sort.by(Sort.Direction.ASC, "id")));
 
         Pageable expectedPageable12 = PageRequest.of(
-                expectedPageNumber12,
+                expectedPageNumberBase0_12, // Usar el número de página base 0 para el mock
                 pageSize,
                 Sort.by(Sort.Direction.DESC, "score").and(Sort.by(Sort.Direction.ASC, "id")));
 
         List<User> expectedContent3 = sortedUsers.stream()
-                .skip((long) expectedPageNumber3 * pageSize)
+                .skip((long) expectedPageNumberBase0_3 * pageSize) // Usar el número de página base 0
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
         List<User> expectedContent12 = sortedUsers.stream()
-                .skip((long) expectedPageNumber12 * pageSize)
+                .skip((long) expectedPageNumberBase0_12 * pageSize) // Usar el número de página base 0
                 .limit(pageSize)
                 .collect(Collectors.toList());
 
@@ -356,12 +369,12 @@ public class UserServiceTest {
         when(userDao.findAll(eq(expectedPageable3))).thenReturn(expectedPage3);
         when(userDao.findAll(eq(expectedPageable12))).thenReturn(expectedPage12);
 
-        Page<UserRankingDTO> result3 = userService.getUsersOrderedByScoreFromUser(userId3, pageable);
+        Page<UserRankingDTO> result3 = userService.getUsersOrderedByScoreFromUser(userId3, initialPageable);
         assertNotNull(result3);
-        assertEquals(expectedPageNumber3, result3.getNumber());
+        assertEquals(expectedPageNumberBase1_3, result3.getNumber()); // Comparar con el número de página base 1
 
-        Page<UserRankingDTO> result12 = userService.getUsersOrderedByScoreFromUser(userId12, pageable);
+        Page<UserRankingDTO> result12 = userService.getUsersOrderedByScoreFromUser(userId12, initialPageable);
         assertNotNull(result12);
-        assertEquals(expectedPageNumber12, result12.getNumber());
+        assertEquals(expectedPageNumberBase1_12, result12.getNumber()); // Comparar con el número de página base 1
     }
 }
