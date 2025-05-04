@@ -3,14 +3,13 @@ package com.example.proyecto2025_BE.service;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -79,12 +78,22 @@ public class UserService {
 	}
 
 	public Page<UserRankingDTO> getUsersOrderedByScoreDesc(Pageable pageable) {
-		pageable = PageRequest.of(
+		PageRequest internalPageable = PageRequest.of(
 				pageable.getPageNumber(),
 				pageable.getPageSize(),
 				Sort.by(Sort.Direction.DESC, "score")
-						.and(Sort.by(Sort.Direction.ASC, "id"))); //desempate por id
-		return this.userDao.findAll(pageable).map(UserRankingDTO::fromUser);
+						.and(Sort.by(Sort.Direction.ASC, "id")));
+
+		Page<User> userPage = userDao.findAll(internalPageable);
+		List<UserRankingDTO> dtoList = userPage.getContent().stream()
+				.map(UserRankingDTO::fromUser)
+				.collect(Collectors.toList());
+
+		return new PageImpl<>(
+				dtoList,
+				PageRequest.of(userPage.getNumber() + 1, userPage.getSize(), userPage.getSort()),
+				userPage.getTotalElements()
+		);
 	}
 
 	public Page<UserRankingDTO> getUsersOrderedByScoreFromUser(Long userId, Pageable pageable) {
