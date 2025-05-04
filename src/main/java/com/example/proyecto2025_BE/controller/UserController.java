@@ -2,6 +2,7 @@ package com.example.proyecto2025_BE.controller;
 
 import java.util.Map;
 
+import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -138,12 +139,12 @@ public class UserController {
 	}
 
 	@GetMapping("/ranking")
-	ResponseEntity<Page<User>> getUsersOrderedByScoreDesc(Pageable pageable) {
+	ResponseEntity<Page<UserRankingDTO>> getUsersOrderedByScoreDesc(Pageable pageable) {
 		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(pageable));
 	}
 
 	@GetMapping("/ranking/{userId}")
-	ResponseEntity<Page<User>> getUsersOrderedByScoreFromUser(@PathVariable Long userId, Pageable pageable) {
+	ResponseEntity<Page<UserRankingDTO>> getUsersOrderedByScoreFromUser(@PathVariable Long userId, Pageable pageable) {
 		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, pageable));
 	}
 }

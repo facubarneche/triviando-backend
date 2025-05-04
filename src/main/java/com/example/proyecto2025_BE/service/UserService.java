@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -77,16 +78,16 @@ public class UserService {
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	public Page<User> getUsersOrderedByScoreDesc(Pageable pageable) {
+	public Page<UserRankingDTO> getUsersOrderedByScoreDesc(Pageable pageable) {
 		pageable = PageRequest.of(
 				pageable.getPageNumber(),
 				pageable.getPageSize(),
 				Sort.by(Sort.Direction.DESC, "score")
 						.and(Sort.by(Sort.Direction.ASC, "id"))); //desempate por id
-		return this.userDao.findAll(pageable);
+		return this.userDao.findAll(pageable).map(UserRankingDTO::fromUser);
 	}
 
-	public Page<User> getUsersOrderedByScoreFromUser(Long userId, Pageable pageable) {
+	public Page<UserRankingDTO> getUsersOrderedByScoreFromUser(Long userId, Pageable pageable) {
 		User user = retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
 		if (userPosition == null) {

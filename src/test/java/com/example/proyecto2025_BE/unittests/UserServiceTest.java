@@ -3,6 +3,7 @@ package com.example.proyecto2025_BE.unittests;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import com.example.proyecto2025_BE.service.UserService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,11 +96,11 @@ public class UserServiceTest {
 
         when(userDao.findAll(pageable)).thenReturn(expectedPage);
 
-        Page<User> result = userService.getUsersOrderedByScoreDesc(pageable);
+        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreDesc(pageable);
 
         assertNotNull(result);
         assertEquals(pageSize, result.getContent().size());
-        assertEquals(new BigDecimal("1000.00"), result.getContent().getFirst().getScore());
+        assertEquals(new BigDecimal("1000.00"), result.getContent().getFirst().score());
         verify(userDao, times(1)).findAll(pageable);
     }
 
@@ -135,7 +136,7 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId)).thenReturn(userRankPosition);
         when(userDao.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
-        Page<User> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
+        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
 
         
         assertNotNull(result);
@@ -176,7 +177,7 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId)).thenReturn(userRankPosition);
         when(userDao.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
-        Page<User> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
+        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
 
         assertNotNull(result);
         assertEquals(expectedPageNumber, result.getNumber());
@@ -216,7 +217,7 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId)).thenReturn(userRankPosition);
         when(userDao.findAll(any(Pageable.class))).thenReturn(expectedPage);
 
-        Page<User> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
+        Page<UserRankingDTO> result = userService.getUsersOrderedByScoreFromUser(userId, pageable);
 
         assertNotNull(result);
         assertEquals(expectedPageNumber, result.getNumber());
@@ -289,7 +290,7 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId2)).thenReturn(userPosition2);
         when(userDao.findAll(eq(expectedPageable2))).thenReturn(expectedPage2);
 
-        Page<User> result2 = userService.getUsersOrderedByScoreFromUser(userId2, pageable);
+        Page<UserRankingDTO> result2 = userService.getUsersOrderedByScoreFromUser(userId2, pageable);
         assertNotNull(result2);
         assertEquals(expectedPageNumber2, result2.getNumber());
 
@@ -297,7 +298,7 @@ public class UserServiceTest {
         when(userDao.findUserRankPosition(userId11)).thenReturn(userPosition11);
         when(userDao.findAll(eq(expectedPageable11))).thenReturn(expectedPage11);
 
-        Page<User> result11 = userService.getUsersOrderedByScoreFromUser(userId11, pageable);
+        Page<UserRankingDTO> result11 = userService.getUsersOrderedByScoreFromUser(userId11, pageable);
         assertNotNull(result11);
         assertEquals(expectedPageNumber11, result11.getNumber());
     }
@@ -355,11 +356,11 @@ public class UserServiceTest {
         when(userDao.findAll(eq(expectedPageable3))).thenReturn(expectedPage3);
         when(userDao.findAll(eq(expectedPageable12))).thenReturn(expectedPage12);
 
-        Page<User> result3 = userService.getUsersOrderedByScoreFromUser(userId3, pageable);
+        Page<UserRankingDTO> result3 = userService.getUsersOrderedByScoreFromUser(userId3, pageable);
         assertNotNull(result3);
         assertEquals(expectedPageNumber3, result3.getNumber());
 
-        Page<User> result12 = userService.getUsersOrderedByScoreFromUser(userId12, pageable);
+        Page<UserRankingDTO> result12 = userService.getUsersOrderedByScoreFromUser(userId12, pageable);
         assertNotNull(result12);
         assertEquals(expectedPageNumber12, result12.getNumber());
     }
