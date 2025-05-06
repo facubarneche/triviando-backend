@@ -55,7 +55,8 @@ public class User {
 	@JsonView(Views.Score.class)
 	private BigDecimal score = BigDecimal.ZERO;
 
-	private int rachaActual;
+
+	private Integer rachaActual;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	private LocalDate ultimaActividad;
 
@@ -78,7 +79,6 @@ public class User {
 		LocalDate today = LocalDate.now();
 		if (ultimaActividad != null && ChronoUnit.DAYS.between(ultimaActividad, today) == 1) {
 			rachaActual++;
-
         }  else {
 			rachaActual = 1;
         }
