@@ -1,6 +1,7 @@
 package com.example.proyecto2025_BE.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.Pregunta;
-import com.example.proyecto2025_BE.model.Topico;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.LLMApiClient;
 import com.example.proyecto2025_BE.service.PreguntaService;
@@ -97,7 +97,7 @@ public class PreguntasController {
             @ApiResponse(responseCode = "200", description = "Conteo obtenido exitosamente",
                     content = @Content(mediaType = "application/json"))
     })
-    public List<Topico> cantidadPreguntasPorTopico() {
+    public Map<String, Number> cantidadPreguntasPorTopico() {
         return preguntasService.contarPreguntasPorTopico();
     }
     

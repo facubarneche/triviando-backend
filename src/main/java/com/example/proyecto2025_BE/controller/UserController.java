@@ -3,7 +3,6 @@ package com.example.proyecto2025_BE.controller;
 import java.util.Map;
 
 import org.apache.logging.log4j.util.Strings;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,10 +16,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
 import com.example.proyecto2025_BE.model.dto.login.LoginResponseDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserResponseDTO;
+import com.example.proyecto2025_BE.service.StatisticService;
 import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.views.Views;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -39,13 +40,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "User Controller", description = "API para la gestión de usuarios")
 public class UserController {
-	
-	UserService userService;
 
-	@Autowired
-	public UserController(UserService userService) {
-		this.userService = userService;
-	}
+	private final UserService userService;
+	private final StatisticService statisticService;
 
 	@PostMapping
 	@Operation(summary = "Registrar usuario", description = "Se registra un nuevo usuario en el sistema",
@@ -113,6 +110,16 @@ public class UserController {
         
         return ResponseEntity.ok(LoginResponseDTO.fromEntity(logged));
     }
+
+	@GetMapping("/{usuarioId}/statistics")
+	@Operation(summary = "Obtener estadísticas de un usuario", description = "Obtiene las estadísticas de un usuario por ID",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Estadísticas obtenidas",
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = StatsResponse.class)))
+			})
+	public ResponseEntity<StatsResponse> getStatistics(@PathVariable Long usuarioId) {
+		return ResponseEntity.ok(statisticService.getStats(usuarioId));
+	}
 	
 	@GetMapping("/{userId}/score")
 	@JsonView(Views.Score.class)

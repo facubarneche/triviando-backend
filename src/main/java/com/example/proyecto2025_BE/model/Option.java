@@ -23,5 +23,5 @@ public class Option {
 	private Long id;
 	@Enumerated(EnumType.STRING)
 	private LetterOption letter;
-    private String text;
+	private String text;
 }
