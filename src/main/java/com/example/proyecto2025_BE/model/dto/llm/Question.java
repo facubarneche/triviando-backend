@@ -6,7 +6,7 @@ import com.example.proyecto2025_BE.model.Difficulty;
 
 public record Question(
 		String text, 
-		List<QuestionOption>incorrectOptions, 
+		List<QuestionOption> options, 
 		QuestionOption correctOption,
 		Difficulty difficulty,
 		String briefExplanationOfTheCorrectAnswer

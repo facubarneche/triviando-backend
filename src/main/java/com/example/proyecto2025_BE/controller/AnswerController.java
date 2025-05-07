@@ -1,7 +1,5 @@
 package com.example.proyecto2025_BE.controller;
 
-import java.math.BigDecimal;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -10,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.model.dto.login.LoginResponseDTO;
 import com.example.proyecto2025_BE.service.AnswerService;
 
@@ -35,9 +34,9 @@ public class AnswerController {
         @ApiResponse(responseCode = "200", description = "Puntaje al usuario actualizado",
                      content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDTO.class))),
     })
-    public ResponseEntity<BigDecimal> answer(@RequestBody Answer answer) {
-		BigDecimal score = answerService.answer(answer);
+    public ResponseEntity<FeedbackAnswer> answer(@RequestBody Answer answer) {
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		return ResponseEntity.ok(score);
+		return ResponseEntity.ok(feedback);
     }
 }

@@ -15,6 +15,7 @@ import org.junit.jupiter.api.Test;
 
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Difficulty;
+import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.model.LetterOption;
 import com.example.proyecto2025_BE.model.Option;
 import com.example.proyecto2025_BE.model.Pregunta;
@@ -70,9 +71,9 @@ public class AnswerServiceTest {
 				.optionSelected(correctOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.valueOf(16), score);
+		assertEquals(BigDecimal.valueOf(16), feedback.getScore());
 	}
 	
 	@Test
@@ -82,9 +83,9 @@ public class AnswerServiceTest {
 				.optionSelected(correctOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.valueOf(1.6), score);
+		assertEquals(BigDecimal.valueOf(1.6), feedback.getScore());
 	}
 	
 	@Test
@@ -94,9 +95,9 @@ public class AnswerServiceTest {
 				.optionSelected(correctOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.ZERO, score);
+		assertEquals(BigDecimal.ZERO, feedback.getScore());
 	}
 	
 	@Test
@@ -110,8 +111,8 @@ public class AnswerServiceTest {
 				.optionSelected(incorrectOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.ZERO, score);
+		assertEquals(BigDecimal.ZERO, feedback.getScore());
 	}
 }

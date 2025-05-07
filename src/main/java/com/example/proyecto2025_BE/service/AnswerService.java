@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 
@@ -19,7 +20,7 @@ public class AnswerService {
 	private final PreguntaService preguntaService;
 	
 	@Transactional
-	public BigDecimal answer(Answer answer) {
+	public FeedbackAnswer answer(Answer answer) {
 		User user = userService.retrieve(answer.getUserId());
 		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
 		
@@ -29,7 +30,11 @@ public class AnswerService {
 		
 		userService.update(user);
 		
-		return score;
+		return FeedbackAnswer.builder()
+				.score(score)
+				.explanation(question.getExplicacion())
+				.errorReason(answer.getErrorReason())
+				.build();
 	}
 	
 }

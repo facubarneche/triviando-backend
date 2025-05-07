@@ -21,7 +21,7 @@ public class Pregunta {
     private String id;
     private String topico;
     private String enunciado;
-    private List<Option> incorrectOptions;
+    private List<Option> options;
     @JsonIgnore
     private Option correctOption;
     private String explicacion;

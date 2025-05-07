@@ -66,7 +66,7 @@ public class LLMApiClient implements ChatLanguageModel {
 			Pregunta.builder()
 				.topico(topic)
 				.enunciado(question.text())
-				.incorrectOptions(buildIncorrectOptions(question.incorrectOptions()))
+				.options(buildIncorrectOptions(question.options()))
 				.correctOption(buildCorrectOption(question.correctOption()))
 				.explicacion(question.briefExplanationOfTheCorrectAnswer())
 				.difficulty(question.difficulty())
