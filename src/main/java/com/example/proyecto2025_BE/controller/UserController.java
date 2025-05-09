@@ -2,6 +2,7 @@ package com.example.proyecto2025_BE.controller;
 
 import java.util.Map;
 
+import com.example.proyecto2025_BE.model.dto.Racha;
 import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
@@ -146,5 +147,16 @@ public class UserController {
 	@GetMapping("/ranking/{userId}")
 	ResponseEntity<Page<UserRankingDTO>> getUsersOrderedByScoreFromUser(@PathVariable Long userId, Pageable pageable) {
 		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, pageable));
+	}
+
+	@GetMapping("/racha/{userId}")
+	@Operation(summary = "Obtener racha de un usuario", description = "Obtiene la racha de un usuario",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Racha obtenida",
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+					@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
+			})
+	public ResponseEntity<Racha> getRachaUsuario(@PathVariable Long userId) {
+		return ResponseEntity.ok(userService.getRachaUsuario(userId));
 	}
 }

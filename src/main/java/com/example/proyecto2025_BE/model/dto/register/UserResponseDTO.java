@@ -1,10 +1,12 @@
 package com.example.proyecto2025_BE.model.dto.register;
 
 import com.example.proyecto2025_BE.model.User;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -15,6 +17,7 @@ public class UserResponseDTO {
     private int age;
     private String email;
     private String phoneNumber;
+
 
 
     public static UserResponseDTO fromUser(User user) {

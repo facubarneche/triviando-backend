@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.proyecto2025_BE.model.dto.Racha;
 import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
@@ -105,5 +106,10 @@ public class UserService {
 		}
 		int pageNumber = userPosition / pageable.getPageSize();
 		return getUsersOrderedByScoreDesc(PageRequest.of(pageNumber, pageable.getPageSize()));
+	}
+
+	public Racha getRachaUsuario(Long userId) {
+		User user = retrieve(userId);
+		return new Racha(user.getRachaActual(), user.getUltimaActividad());
 	}
 }
