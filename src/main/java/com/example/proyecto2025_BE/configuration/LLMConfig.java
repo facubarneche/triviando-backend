@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.example.proyecto2025_BE.constants.LLM;
-import com.example.proyecto2025_BE.model.dto.QuestionList;
+import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
 import com.example.proyecto2025_BE.service.ModelCommunication;
 
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;

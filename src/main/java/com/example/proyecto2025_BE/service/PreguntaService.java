@@ -12,5 +12,6 @@ public interface PreguntaService {
     Pregunta getPreguntaById(String id);
     String createPregunta(PreguntaRequest preguntaRequest);
     List<Pregunta> getPreguntasByTopico(String topico);
+    List<Pregunta> saveAll(List<Pregunta> preguntas);
     Map<String, Number> contarPreguntasPorTopico();
 }

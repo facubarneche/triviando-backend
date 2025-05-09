@@ -16,8 +16,9 @@ import org.junit.jupiter.api.Test;
 
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Difficulty;
+import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.model.LetterOption;
-import com.example.proyecto2025_BE.model.Opcion;
+import com.example.proyecto2025_BE.model.Option;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.service.AnswerService;
@@ -30,7 +31,7 @@ public class AnswerServiceTest {
 	private static AnswerService answerService;
 	private static UserService userServiceMock;
 	private static PreguntaService preguntaServiceMock;
-	private static Opcion correctOption;
+	private static Option correctOption;
 	private static Answer.AnswerBuilder answerbuilder;
 	private static UserInvoker userInvoker;
 	
@@ -44,7 +45,7 @@ public class AnswerServiceTest {
 		User user = User.builder()
 				.build();
 		
-		correctOption = Opcion.builder()
+		correctOption = Option.builder()
 				.letter(LetterOption.A)
 				.build();
 		
@@ -70,51 +71,51 @@ public class AnswerServiceTest {
 	@DisplayName("Success answer without latency penalty limit, without unsuccessful limit")
 	void answerTest() {
 		Answer answer = answerbuilder.millisecondsSpent(29999)
-				.letterSelected(correctOption.getLetter())
+				.optionSelected(correctOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.valueOf(16), score);
+		assertEquals(BigDecimal.valueOf(16), feedback.getScore());
 	}
 	
 	@Test
 	@DisplayName("Success answer with latency penalty limit, without unsuccessful limit")
 	void answerWithLatencyPenaltyLimitTest() {
 		Answer answer = answerbuilder.millisecondsSpent(30001)
-				.letterSelected(correctOption.getLetter())
+				.optionSelected(correctOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.valueOf(1.6), score);
+		assertEquals(BigDecimal.valueOf(1.6), feedback.getScore());
 	}
 	
 	@Test
 	@DisplayName("Unsuccess answer by unsuccessful limit")
 	void answerWithUnsuccessfulLatencyLimitTest() {
 		Answer answer = answerbuilder.millisecondsSpent(50001)
-				.letterSelected(correctOption.getLetter())
+				.optionSelected(correctOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.ZERO, score);
+		assertEquals(BigDecimal.ZERO, feedback.getScore());
 	}
 	
 	@Test
 	@DisplayName("Unsuccess answer by incorrect option selected")
 	void unsaccessAnswerTest() {
-		Opcion incorrectOption = Opcion.builder()
+		Option incorrectOption = Option.builder()
 				.letter(LetterOption.B)
 				.build();
 		
 		Answer answer = answerbuilder.millisecondsSpent(29999)
-				.letterSelected(incorrectOption.getLetter())
+				.optionSelected(incorrectOption)
 				.build();
 		
-		BigDecimal score = answerService.answer(answer);
+		FeedbackAnswer feedback = answerService.answer(answer);
 		
-		assertEquals(BigDecimal.ZERO, score);
+		assertEquals(BigDecimal.ZERO, feedback.getScore());
 	}
 }

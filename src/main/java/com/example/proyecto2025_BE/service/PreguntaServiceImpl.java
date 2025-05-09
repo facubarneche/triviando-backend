@@ -53,4 +53,9 @@ public class PreguntaServiceImpl implements PreguntaService{
                         m -> (Number) m.get("cantidadPreguntas")
                 ));
     }
+    
+    @Override
+    public List<Pregunta> saveAll(List<Pregunta> preguntas) {
+    	return preguntaDao.saveAll(preguntas);
+    }
 }
