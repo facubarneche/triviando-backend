@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
 
+import com.example.proyecto2025_BE.service.command.UserInvoker;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,12 +33,14 @@ public class AnswerServiceTest {
 	private static PreguntaService preguntaServiceMock;
 	private static Option correctOption;
 	private static Answer.AnswerBuilder answerbuilder;
+	private static UserInvoker userInvoker;
 	
 	@BeforeAll
 	static void beforeAll() {
 		userServiceMock = mock(UserService.class);
 		preguntaServiceMock = mock(PreguntaService.class);
-		answerService = new AnswerService(userServiceMock, preguntaServiceMock);
+		userInvoker = mock(UserInvoker.class);
+		answerService = new AnswerService(userServiceMock, preguntaServiceMock,userInvoker);
 		
 		User user = User.builder()
 				.build();

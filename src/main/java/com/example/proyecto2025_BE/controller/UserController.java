@@ -2,7 +2,11 @@ package com.example.proyecto2025_BE.controller;
 
 import java.util.Map;
 
+import com.example.proyecto2025_BE.model.dto.Racha;
+import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -36,7 +40,7 @@ import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequestMapping("/users")
-@CrossOrigin(origins = "*")	// TODO: Cambiar luego por los dominios que permitiremos que consuman esta api
+@CrossOrigin(origins = "*")
 @RequiredArgsConstructor
 @Tag(name = "User Controller", description = "API para la gestión de usuarios")
 public class UserController {
@@ -133,5 +137,26 @@ public class UserController {
 		User user = this.userService.retrieve(userId);
 
 		return ResponseEntity.ok(user);
+	}
+
+	@GetMapping("/ranking")
+	ResponseEntity<Page<UserRankingDTO>> getUsersOrderedByScoreDesc(Pageable pageable) {
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(pageable));
+	}
+
+	@GetMapping("/ranking/{userId}")
+	ResponseEntity<Page<UserRankingDTO>> getUsersOrderedByScoreFromUser(@PathVariable Long userId, Pageable pageable) {
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, pageable));
+	}
+
+	@GetMapping("/racha/{userId}")
+	@Operation(summary = "Obtener racha de un usuario", description = "Obtiene la racha de un usuario",
+			responses = {
+					@ApiResponse(responseCode = "200", description = "Racha obtenida",
+							content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
+					@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
+			})
+	public ResponseEntity<Racha> getRachaUsuario(@PathVariable Long userId) {
+		return ResponseEntity.ok(userService.getRachaUsuario(userId));
 	}
 }

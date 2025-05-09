@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import com.example.proyecto2025_BE.constants.DatePattern;
@@ -40,8 +41,10 @@ public class User {
 	private String phoneNumber;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
 	private LocalDate birthDate;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@CreationTimestamp
 	private LocalDateTime createdAt;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	@Builder.Default
@@ -51,6 +54,11 @@ public class User {
 	@Builder.Default
 	@JsonView(Views.Score.class)
 	private BigDecimal score = BigDecimal.ZERO;
+
+
+	private Integer rachaActual;
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	private LocalDate ultimaActividad;
 
 	public Integer getAge() {
 		if (birthDate == null){
@@ -66,4 +74,14 @@ public class User {
 	public void add(BigDecimal score) {
 		this.score = this.score.add(score);
 	}
+
+	public void actualizarRacha() {
+		LocalDate today = LocalDate.now();
+		if (ultimaActividad != null && ChronoUnit.DAYS.between(ultimaActividad, today) == 1) {
+			rachaActual++;
+        }  else {
+			rachaActual = 1;
+        }
+        ultimaActividad = today;
+    }
 }
