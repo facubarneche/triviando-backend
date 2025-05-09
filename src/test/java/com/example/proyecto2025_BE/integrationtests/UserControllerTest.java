@@ -1,25 +1,5 @@
 package com.example.proyecto2025_BE.integrationtests;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-
 import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.User;
@@ -28,6 +8,27 @@ import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -145,5 +146,99 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(response)));
+    }
+
+    @Test
+    @DisplayName("Obtener el ranking de usuarios ordenados por score")
+    void getUsersOrderedByScoreTest() throws Exception {
+        // Preparar datos de prueba
+        User user1 = User.builder().fullName("Usuario Alto Score").score(new BigDecimal(100)).build();
+        User user2 = User.builder().fullName("Usuario Medio Score").score(new BigDecimal(50)).build();
+        User user3 = User.builder().fullName("Usuario Bajo Score").score(new BigDecimal(25)).build();
+
+        dao.save(user1);
+        dao.save(user2);
+        dao.save(user3);
+
+        // Ejecutar y verificar
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking")
+                        .param("page", "0")
+                        .param("size", "10")
+                        .param("sort", "score,desc"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.content[0].score", closeTo(100.0,0 )))
+                .andExpect(jsonPath("$.content[1].score", closeTo(50.0,0)))
+                .andExpect(jsonPath("$.content[2].score", closeTo(25.0,0)))
+                ;
+    }
+
+    @Test
+    @DisplayName("Obtener el ranking desde un usuario específico")
+    void getUsersOrderedByScoreFromUserTest() throws Exception {
+        // Preparar datos de prueba - Usuarios con diferentes scores
+        User userHigh = User.builder().fullName("Usuario Alto").score(new BigDecimal(500)).build();
+        User userMid = User.builder().fullName("Usuario Medio").score(new BigDecimal(300)).build();
+        User userLow = User.builder().fullName("Usuario Bajo").score(new BigDecimal(100)).build();
+
+        userHigh = dao.save(userHigh);
+        userMid = dao.save(userMid);
+        userLow = dao.save(userLow);
+
+        Long midUserId = userMid.getId();
+
+        // Ejecutar y verificar
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", midUserId)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
+                .andExpect(jsonPath("$.content[*].id", hasItem(midUserId.intValue())))
+                .andExpect(jsonPath("$.number").isNumber());
+    }
+
+    @Test
+    @DisplayName("Obtener el ranking desde un usuario con mismo score que otro")
+    void getUsersOrderedByScoreFromUserWithSameScoreTest() throws Exception {
+        // Preparar datos de prueba - Usuarios con mismos scores pero diferentes IDs
+        User user1 = User.builder().fullName("Usuario 1").score(new BigDecimal(300)).build();
+        User user2 = User.builder().fullName("Usuario 2").score(new BigDecimal(300)).build();
+
+        user1 = dao.save(user1);
+        user2 = dao.save(user2);
+
+        Long user1Id = user1.getId();
+        Long user2Id = user2.getId();
+
+        // Verificar que ambos tienen el mismo score
+        assertEquals(user1.getScore(), user2.getScore());
+
+        // Prueba para el primer usuario
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", user1Id)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
+                .andExpect(jsonPath("$.number").isNumber());
+
+        // Prueba para el segundo usuario
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", user2Id)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
+                .andExpect(jsonPath("$.number").isNumber());
+    }
+
+    @Test
+    @DisplayName("Obtener el ranking desde un usuario inexistente debería retornar error 404")
+    void getUsersOrderedByScoreFromInexistentUserTest() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", INEXISTENT_USER_ID)
+                        .param("page", "0")
+                        .param("size", "10"))
+                .andExpect(status().isNotFound());
     }
 }
