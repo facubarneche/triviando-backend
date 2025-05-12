@@ -32,7 +32,7 @@ public class AnswerController {
 	@Operation(summary = "Creacion de respuesta", description = "Suma puntaje a un usuario de una pregunta respondida",
     responses = {
         @ApiResponse(responseCode = "200", description = "Puntaje al usuario actualizado",
-                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDTO.class))),
+                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeedbackAnswer.class))),
     })
     public ResponseEntity<FeedbackAnswer> answer(@RequestBody Answer answer) {
 		FeedbackAnswer feedback = answerService.answer(answer);
