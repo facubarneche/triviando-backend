@@ -9,9 +9,12 @@ services:
         - SPRING_DATA_MONGODB_URI=mongodb://mongo-db:27017/flashcards_mongo
       ports:
         - "8080:8080"
+      container_name: proyecto2025-be-app
       depends_on:
         - mysql-db
         - mongo-db
+      networks:
+        - flashcardsnet
 
   mysql-db:
       image: mysql:8.0
@@ -25,6 +28,8 @@ services:
         - MYSQL_PASSWORD=admin
       volumes:
         - mysql_data:/var/lib/mysql
+      networks:
+        - flashcardsnet
 
   mongo-db:
       image: mongo:latest
@@ -33,6 +38,8 @@ services:
         - "27017:27017"
       volumes:
         - mongo_data:/data/db
+      networks:
+        - flashcardsnet
 
 #  ollama:
 #    hostname: ollama
@@ -40,9 +47,17 @@ services:
 #    image: ollama/ollama
 #    ports:
 #      - "11434:11434"
+#    networks:
+#      - flashcardsnet
+
 
 volumes:
   mysql_data:
     driver: local
   mongo_data:
     driver: local
+
+networks:
+  flashcardsnet:
+    name: flashcardsnet
+
