@@ -100,6 +100,7 @@ public class UserService {
 	}
 
 	public Page<UserRankingDTO> getUsersOrderedByScoreFromUser(Long userId, Pageable pageable) {
+		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
 		if (userPosition == null) {
 			// Si no encontramos la posición, devolvemos la primera página
