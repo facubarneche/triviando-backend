@@ -1,16 +1,17 @@
 package com.example.proyecto2025_BE.service;
 
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.example.proyecto2025_BE.model.dto.Racha;
-import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +21,8 @@ import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.User;
-import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
+import com.example.proyecto2025_BE.model.dto.Racha;
+import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,7 +75,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public User findByEmailAndPassword(LoginRequestDTO loginInfo) {
+	public User findByEmailAndPassword(User loginInfo) {
 		return this.userDao.findByEmailAndPassword(loginInfo.getEmail(), loginInfo.getPassword())
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
@@ -98,7 +100,7 @@ public class UserService {
 	}
 
 	public Page<UserRankingDTO> getUsersOrderedByScoreFromUser(Long userId, Pageable pageable) {
-		User user = retrieve(userId);
+		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
 		if (userPosition == null) {
 			// Si no encontramos la posición, devolvemos la primera página
