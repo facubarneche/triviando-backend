@@ -8,6 +8,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import com.example.proyecto2025_BE.constants.DatePattern;
+import com.example.proyecto2025_BE.model.racha.RachaStrategy;
+import com.example.proyecto2025_BE.model.racha.RachaStrategyFactory;
 import com.example.proyecto2025_BE.views.Views;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -77,11 +79,8 @@ public class User {
 
 	public void actualizarRacha() {
 		LocalDate today = LocalDate.now();
-		if (ultimaActividad != null && ChronoUnit.DAYS.between(ultimaActividad, today) == 1) {
-			rachaActual++;
-        }  else {
-			rachaActual = 1;
-        }
-        ultimaActividad = today;
-    }
+		RachaStrategy strategy = RachaStrategyFactory.getStrategy(ultimaActividad, today);
+		this.rachaActual = strategy.calcularRacha(rachaActual);
+		this.ultimaActividad = today;
+	}
 }

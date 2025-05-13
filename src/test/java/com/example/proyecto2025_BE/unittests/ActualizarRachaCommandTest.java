@@ -28,7 +28,7 @@ public class ActualizarRachaCommandTest {
 
         User user = new User();
         user.setRachaActual(5);
-        user.setUltimaActividad(LocalDate.now().minusDays(3));
+        user.setUltimaActividad(LocalDate.now().minusDays(2));
 
         Command command = new ActualizarRachaCommand(user);
         command.execute();
@@ -46,7 +46,20 @@ public class ActualizarRachaCommandTest {
         Command command = new ActualizarRachaCommand(user);
         command.execute();
 
-        assertEquals(1, user.getRachaActual());
+        assertEquals(1,  user.getRachaActual());
+        assertEquals(LocalDate.now(), user.getUltimaActividad());
+    }
+
+    @Test
+    void noDebeIncrementarRachaSiUltimaActividadEsMenorQueAyer() {
+        User user = new User();
+        user.setRachaActual(2);
+        user.setUltimaActividad(LocalDate.now());
+
+        Command command = new ActualizarRachaCommand(user);
+        command.execute();
+
+        assertEquals(2,  user.getRachaActual());
         assertEquals(LocalDate.now(), user.getUltimaActividad());
     }
 }
