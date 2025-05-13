@@ -2,8 +2,6 @@ package com.example.proyecto2025_BE.controller;
 
 import java.util.Map;
 
-import com.example.proyecto2025_BE.model.dto.Racha;
-import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,9 +18,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.Racha;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
-import com.example.proyecto2025_BE.model.dto.login.LoginResponseDTO;
+import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserResponseDTO;
 import com.example.proyecto2025_BE.service.StatisticService;
@@ -103,16 +101,17 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
+	@JsonView(Views.Login.class)
 	@Operation(summary = "Login de usuario", description = "Autentica a un usuario basado en su correo y contraseña",
     responses = {
         @ApiResponse(responseCode = "200", description = "Usuario autenticado",
-                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDTO.class))),
+                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
     })
-    public ResponseEntity<LoginResponseDTO> login(@RequestBody @Valid LoginRequestDTO loginInfo) {
-		User logged = this.userService.findByEmailAndPassword(loginInfo);
+    public ResponseEntity<User> login(@RequestBody @Valid User user) {
+		User logged = this.userService.findByEmailAndPassword(user);
         
-        return ResponseEntity.ok(LoginResponseDTO.fromEntity(logged));
+        return ResponseEntity.ok(logged);
     }
 
 	@GetMapping("/{usuarioId}/statistics")

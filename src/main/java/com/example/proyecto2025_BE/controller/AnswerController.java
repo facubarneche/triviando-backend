@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.FeedbackAnswer;
-import com.example.proyecto2025_BE.model.dto.login.LoginResponseDTO;
 import com.example.proyecto2025_BE.service.AnswerService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -32,7 +31,7 @@ public class AnswerController {
 	@Operation(summary = "Creacion de respuesta", description = "Suma puntaje a un usuario de una pregunta respondida",
     responses = {
         @ApiResponse(responseCode = "200", description = "Puntaje al usuario actualizado",
-                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseDTO.class))),
+                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Answer.class))),
     })
     public ResponseEntity<FeedbackAnswer> answer(@RequestBody Answer answer) {
 		FeedbackAnswer feedback = answerService.answer(answer);
