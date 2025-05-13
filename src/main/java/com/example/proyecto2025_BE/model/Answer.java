@@ -37,6 +37,7 @@ public class Answer {
     private Long userId;
     private LetterOption optionSelected;
     private long millisecondsSpent;
+    @JsonIgnore
     private String errorReason;
 
     public BigDecimal getScoreBy(Pregunta question) {
