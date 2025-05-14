@@ -33,9 +33,7 @@ public class LLMConfig {
 		return AiServices.builder(ModelCommunication.class)
 			.streamingChatLanguageModel(streamingChatLanguageModel())
 			.chatMemory(MessageWindowChatMemory.withMaxMessages(10))
-			.systemMessageProvider(chatMemoryId ->
-					"You are an AI-powered question generator. Your task is to create clear, well-structured multiple-choice questions about a specific topic provided by the user. Each question must have 3 options, with only one correct answer. Make sure the questions are relevant and appropriate for the topic, and vary in difficulty. Output the questions in plain text, including the correct answer indicated clearly. Do not repeat questions."
-			)
+			.systemMessageProvider(chatMemoryId -> LLM.TEMPLATE_SYSTEM_PROMPT)
 			.build();
 	}
 	
