@@ -35,6 +35,7 @@ public class Answer {
     private String questionId;
     @Transient
     private Long userId;
+    @Enumerated(EnumType.STRING)
     private LetterOption optionSelected;
     private long millisecondsSpent;
     @JsonIgnore
