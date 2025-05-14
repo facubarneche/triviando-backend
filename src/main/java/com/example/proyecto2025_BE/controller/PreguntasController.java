@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
+import com.example.proyecto2025_BE.model.prompter.Prompter;
 import com.example.proyecto2025_BE.service.LLMApiClient;
 import com.example.proyecto2025_BE.service.PreguntaService;
 
@@ -101,13 +102,33 @@ public class PreguntasController {
         return preguntasService.contarPreguntasPorTopico();
     }
     
+//    @PostMapping("/generate")
+//    @Operation(summary = "Generar preguntas del LLM", description = "Generacion de preguntas según tópico",
+//	responses = {
+//	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente",
+//	                  content = @Content(mediaType = "application/json")),
+//	})
+//    public Mono<List<Pregunta>> generate(@RequestParam String topic) {
+//        return llmApiClient.generate(topic);
+//    }
+    
     @PostMapping("/generate")
-    @Operation(summary = "Generar respuesta del LLM", description = "Generacion de preguntas según tópico",
+    @Operation(summary = "Generar preguntas del LLM", description = "Generacion de preguntas según tópico",
 	responses = {
 	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente",
 	                  content = @Content(mediaType = "application/json")),
 	})
-    public Mono<List<Pregunta>> generate(@RequestParam String topic) {
-        return llmApiClient.generate(topic);
+    public Mono<List<Pregunta>> generate(@RequestBody Prompter prompter) {
+        return llmApiClient.generate(prompter);
     }
+    
+//    @PostMapping("/generate")
+//    @Operation(summary = "Generar preguntas del LLM por topico", description = "Generacion de tópico y preguntas",
+//	responses = {
+//	    @ApiResponse(responseCode = "200", description = "Preguntas y topico generados exitosamente",
+//	                  content = @Content(mediaType = "application/json")),
+//	})
+//    public Mono<List<Pregunta>> generateByTopic(@RequestParam String topic) {
+//        return llmApiClient.generate(topic);
+//    }
 }
