@@ -22,7 +22,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/answers")
 @CrossOrigin(origins = "*")	// TODO: Cambiar luego por los dominios que permitiremos que consuman esta api
 @RequiredArgsConstructor
-@Tag(name = "Answer Controller", description = "API para la gestión de respuestas")
+@Tag(name = "Answer Controller", description = "API co para la gestión de respuestas")
 public class AnswerController {
 	
 	private final AnswerService answerService;
@@ -31,7 +31,7 @@ public class AnswerController {
 	@Operation(summary = "Creacion de respuesta", description = "Suma puntaje a un usuario de una pregunta respondida",
     responses = {
         @ApiResponse(responseCode = "200", description = "Puntaje al usuario actualizado",
-                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Answer.class))),
+         content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeedbackAnswer.class))),
     })
     public ResponseEntity<FeedbackAnswer> answer(@RequestBody Answer answer) {
 		FeedbackAnswer feedback = answerService.answer(answer);

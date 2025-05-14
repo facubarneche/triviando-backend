@@ -6,6 +6,8 @@ import java.math.RoundingMode;
 
 import com.example.proyecto2025_BE.constants.UnsuccessReasons;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -28,14 +30,15 @@ public class Answer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Long id;
     private String questionId;
     @Transient
     private Long userId;
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "option_id")
-    private Option optionSelected;
+    @Enumerated(EnumType.STRING)
+    private LetterOption optionSelected;
     private long millisecondsSpent;
+    @JsonIgnore
     private String errorReason;
 
     public BigDecimal getScoreBy(Pregunta question) {
