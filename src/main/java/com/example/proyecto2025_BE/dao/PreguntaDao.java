@@ -18,7 +18,7 @@ public interface PreguntaDao extends MongoRepository<Pregunta, String> {
     })
     List<Map<String, Object>> contarPreguntasPorTopico();
     
-    boolean existsByTopic(String topic);
+    boolean existsByTopico(String topic);
 }
 
 

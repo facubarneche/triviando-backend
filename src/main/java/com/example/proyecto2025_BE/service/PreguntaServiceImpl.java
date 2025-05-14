@@ -61,6 +61,6 @@ public class PreguntaServiceImpl implements PreguntaService{
     
     @Override
     public boolean existsByTopic(String topic) {
-    	return preguntaDao.existsByTopic(topic);
+    	return preguntaDao.existsByTopico(topic);
     }
 }

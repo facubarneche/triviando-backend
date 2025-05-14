@@ -1,7 +1,9 @@
 package com.example.proyecto2025_BE.model.prompter;
 
 import com.example.proyecto2025_BE.exceptions.ConflictException;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 
+@JsonTypeName("topicPrompter")
 public class TopicPrompter extends Prompter {
 
 	@Override
