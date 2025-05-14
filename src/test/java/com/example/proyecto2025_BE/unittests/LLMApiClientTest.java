@@ -12,6 +12,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import com.example.proyecto2025_BE.model.prompter.QuestionPrompter;
 import com.example.proyecto2025_BE.service.LLMApiClient;
 import com.example.proyecto2025_BE.service.ModelCommunication;
 import com.example.proyecto2025_BE.service.PreguntaService;
@@ -46,6 +47,10 @@ public class LLMApiClientTest {
 		when(preguntaServiceMock.saveAll(any())).thenReturn(List.of());
 		doNothing().when(tokenStreamMock).start();
 		
-		assertNotNull(llmApiClient.generate("cars"));
+		assertNotNull(llmApiClient.generate(QuestionPrompter.builder()
+				.topic("cars")
+				.promptContext("Any context")
+				.preguntaService(preguntaServiceMock)
+				.build()));
 	}
 }

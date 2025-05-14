@@ -2,6 +2,9 @@ package com.example.proyecto2025_BE.model.prompter;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import lombok.experimental.SuperBuilder;
+
+@SuperBuilder
 @JsonTypeName("questionPrompter")
 public class QuestionPrompter extends Prompter {
 

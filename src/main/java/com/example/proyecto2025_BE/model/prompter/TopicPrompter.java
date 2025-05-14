@@ -3,6 +3,9 @@ package com.example.proyecto2025_BE.model.prompter;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
+import lombok.experimental.SuperBuilder;
+
+@SuperBuilder
 @JsonTypeName("topicPrompter")
 public class TopicPrompter extends Prompter {
 
