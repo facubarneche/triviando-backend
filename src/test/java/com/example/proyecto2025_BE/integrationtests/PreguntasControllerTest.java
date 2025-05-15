@@ -25,7 +25,6 @@ import com.example.proyecto2025_BE.configuration.PreguntasData;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
-import com.example.proyecto2025_BE.service.PreguntaService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -41,8 +40,6 @@ class PreguntasControllerTest {
     private PreguntaDao preguntaDao;
     @Autowired
     private ObjectMapper objectMapper;
-    @MockitoBean
-    private PreguntaService preguntaService;
 
     @Test
     @DisplayName("Get all preguntas")
