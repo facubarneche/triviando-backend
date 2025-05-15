@@ -32,8 +32,9 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonView(Views.Score.class)
+	@JsonView({Views.Score.class, Views.Login.class})
 	private Long id;
+	@JsonView(Views.Login.class)
 	private String fullName;
 	@Transient
 	private int age;
@@ -55,6 +56,7 @@ public class User {
 	@Builder.Default
 	@JsonView(Views.Score.class)
 	private BigDecimal score = BigDecimal.ZERO;
+	@JsonView(Views.Login.class)
 	private String username;
 
 

@@ -7,13 +7,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
-import com.example.proyecto2025_BE.utils.ranking.UserRankingProjection;
-import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import com.example.proyecto2025_BE.utils.ranking.UserRankingProjection;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +75,7 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public User findByEmailAndPassword(@Valid LoginRequestDTO loginInfo) {
+	public User findByEmailAndPassword(User loginInfo) {
 		return this.userDao.findByEmailAndPassword(loginInfo.getEmail(), loginInfo.getPassword())
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}

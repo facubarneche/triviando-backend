@@ -33,6 +33,7 @@ public class LLMConfig {
 		return AiServices.builder(ModelCommunication.class)
 			.streamingChatLanguageModel(streamingChatLanguageModel())
 			.chatMemory(MessageWindowChatMemory.withMaxMessages(10))
+			.systemMessageProvider(chatMemoryId -> LLM.TEMPLATE_SYSTEM_PROMPT)
 			.build();
 	}
 	

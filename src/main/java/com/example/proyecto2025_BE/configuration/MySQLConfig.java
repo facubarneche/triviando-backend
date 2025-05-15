@@ -36,6 +36,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1990, 5, 15))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
+                        .username("johny_doe")
                         .build();
 
                 User user2 = User.builder()
@@ -46,6 +47,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1985, 10, 22))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
+                        .username("jane_smithy")
                         .build();
 
                 User user3 = User.builder()

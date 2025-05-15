@@ -270,4 +270,33 @@ public class UserControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isNotFound());
     }
+    
+    @Test
+    @DisplayName("Cuando se loguea un usuario, y este esta registrado, obtengo dicho recurso")
+    void loginTest() throws Exception {
+    	User registeredUser = User.builder()
+    			.email("pancho.rancho@gmail.com")
+                .password("123456")
+                .fullName("Pancho Rancho")
+                .username("pancho_rancho_1746")
+    			.build();
+    	
+    	dao.save(registeredUser);
+    	
+    	
+    	User requestBody = User.builder()
+                .email("pancho.rancho@gmail.com")
+                .password("123456")
+                .build();
+
+        String jsonBody = mapper.writeValueAsString(requestBody);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users/login")
+                        .contentType("application/json")
+                        .content(jsonBody))
+                .andExpect(content().contentType("application/json"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.fullName").value("Pancho Rancho"))
+                .andExpect(jsonPath("$.username").value("pancho_rancho_1746"));
+    }
 }
