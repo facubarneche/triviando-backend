@@ -102,16 +102,6 @@ public class PreguntasController {
         return preguntasService.contarPreguntasPorTopico();
     }
     
-//    @PostMapping("/generate")
-//    @Operation(summary = "Generar preguntas del LLM", description = "Generacion de preguntas según tópico",
-//	responses = {
-//	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente",
-//	                  content = @Content(mediaType = "application/json")),
-//	})
-//    public Mono<List<Pregunta>> generate(@RequestParam String topic) {
-//        return llmApiClient.generate(topic);
-//    }
-    
     @PostMapping("/generate")
     @Operation(summary = "Generar preguntas del LLM", description = "Generacion de preguntas según tópico",
 	responses = {
@@ -121,14 +111,4 @@ public class PreguntasController {
     public Mono<List<Pregunta>> generate(@RequestBody Prompter prompter) {
         return llmApiClient.generate(prompter);
     }
-    
-//    @PostMapping("/generate")
-//    @Operation(summary = "Generar preguntas del LLM por topico", description = "Generacion de tópico y preguntas",
-//	responses = {
-//	    @ApiResponse(responseCode = "200", description = "Preguntas y topico generados exitosamente",
-//	                  content = @Content(mediaType = "application/json")),
-//	})
-//    public Mono<List<Pregunta>> generateByTopic(@RequestParam String topic) {
-//        return llmApiClient.generate(topic);
-//    }
 }
