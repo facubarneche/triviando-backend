@@ -6,11 +6,14 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import com.example.proyecto2025_BE.model.dto.Racha;
-import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
-import org.springframework.data.domain.*;
+import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
+import com.example.proyecto2025_BE.utils.ranking.UserRankingProjection;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,7 +23,8 @@ import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.User;
-import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
+import com.example.proyecto2025_BE.model.dto.Racha;
+import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -73,43 +77,44 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public User findByEmailAndPassword(LoginRequestDTO loginInfo) {
+	public User findByEmailAndPassword(@Valid LoginRequestDTO loginInfo) {
 		return this.userDao.findByEmailAndPassword(loginInfo.getEmail(), loginInfo.getPassword())
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
 	public Page<UserRankingDTO> getUsersOrderedByScoreDesc(Pageable pageable) {
-		PageRequest internalPageable = PageRequest.of(
-				pageable.getPageNumber(),
-				pageable.getPageSize(),
-				Sort.by(Sort.Direction.DESC, "score")
-						.and(Sort.by(Sort.Direction.ASC, "id")));
+		Page<UserRankingProjection> userPage = userDao.findAllUsersWithRank(pageable);
 
-		Page<User> userPage = userDao.findAll(internalPageable);
 		List<UserRankingDTO> dtoList = userPage.getContent().stream()
-				.map(UserRankingDTO::fromUser)
-				.collect(Collectors.toList());
+				.map(p -> new UserRankingDTO(p.getId(), p.getUserName(), p.getScore(), p.getPosition()))
+				.toList();
 
-		return new PageImpl<>(
-				dtoList,
-				PageRequest.of(userPage.getNumber() + 1, userPage.getSize(), userPage.getSort()),
-				userPage.getTotalElements()
-		);
+		return new PageImpl<>(dtoList, pageable, userPage.getTotalElements());
 	}
 
 	public Page<UserRankingDTO> getUsersOrderedByScoreFromUser(Long userId, Pageable pageable) {
-		User user = retrieve(userId);
+		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
-		if (userPosition == null) {
-			// Si no encontramos la posición, devolvemos la primera página
+		if (userPosition == null || userPosition <= 0) {
 			return getUsersOrderedByScoreDesc(PageRequest.of(0, pageable.getPageSize()));
 		}
-		int pageNumber = userPosition / pageable.getPageSize();
+
+		int zeroBasedPosition = userPosition - 1;
+		int pageNumber = zeroBasedPosition / pageable.getPageSize();
+
 		return getUsersOrderedByScoreDesc(PageRequest.of(pageNumber, pageable.getPageSize()));
 	}
 
 	public Racha getRachaUsuario(Long userId) {
 		User user = retrieve(userId);
 		return new Racha(user.getRachaActual(), user.getUltimaActividad());
+	}
+
+	private UserRankingDTO getUserRankPositionById(User user) {
+		Long userId = user.getId();
+		String userName = user.getUsername();
+		BigDecimal score = user.getScore();
+		int position = userDao.findUserRankPosition(user.getId());
+		return new UserRankingDTO(userId,userName,score,position);
 	}
 }

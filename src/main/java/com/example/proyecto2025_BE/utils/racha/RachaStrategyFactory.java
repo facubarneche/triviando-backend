@@ -1,4 +1,4 @@
-package com.example.proyecto2025_BE.model.racha;
+package com.example.proyecto2025_BE.utils.racha;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;

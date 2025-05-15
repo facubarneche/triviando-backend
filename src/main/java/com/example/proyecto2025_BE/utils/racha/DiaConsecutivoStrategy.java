@@ -1,4 +1,4 @@
-package com.example.proyecto2025_BE.model.racha;
+package com.example.proyecto2025_BE.utils.racha;
 
 public class DiaConsecutivoStrategy implements RachaStrategy{
 
