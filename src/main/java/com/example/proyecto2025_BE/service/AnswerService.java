@@ -37,6 +37,7 @@ public class AnswerService {
 				.score(score)
 				.explanation(question.getExplicacion())
 				.errorReason(answer.getErrorReason())
+				.correctOption(question.getCorrectOption())
 				.build();
 	}
 	
