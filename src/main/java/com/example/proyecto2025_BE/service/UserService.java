@@ -27,8 +27,8 @@ import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserDao userDao;
