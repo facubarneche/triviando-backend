@@ -4,24 +4,33 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.example.proyecto2025_BE.constants.DatePattern;
-import com.example.proyecto2025_BE.model.racha.RachaStrategy;
-import com.example.proyecto2025_BE.model.racha.RachaStrategyFactory;
+import com.example.proyecto2025_BE.utils.racha.RachaStrategy;
+import com.example.proyecto2025_BE.utils.racha.RachaStrategyFactory;
 import com.example.proyecto2025_BE.views.Views;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;
 
-import java.util.ArrayList;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 @Data
 @Builder
@@ -35,7 +44,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class})
 	private Long id;
-	@JsonView({Views.Login.class,Views.Score.class})
+	@JsonView(Views.Login.class)
 	private String fullName;
 	@Transient
 	private int age;
@@ -44,10 +53,10 @@ public class User {
 	private String phoneNumber;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
 	private LocalDate birthDate;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	@Builder.Default
@@ -55,14 +64,14 @@ public class User {
 	@JoinColumn(name = "user_id")
 	private List<Answer> answers = new ArrayList<>();
 	@Builder.Default
-	@JsonView(Views.Ranking.class)
+	@JsonView({Views.Ranking.class,Views.Score.class})
 	private BigDecimal score = BigDecimal.ZERO;
 	@JsonView({Views.Login.class,Views.Ranking.class})
 	private String username;
 	@JsonView(Views.Racha.class)
 	private Integer rachaActual;
 	@JsonView(Views.Racha.class)
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
 	private LocalDate ultimaActividad;
 	@JsonView(Views.Ranking.class)
 	@Transient

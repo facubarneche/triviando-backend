@@ -14,4 +14,5 @@ public interface PreguntaService {
     List<Pregunta> getPreguntasByTopico(String topico);
     List<Pregunta> saveAll(List<Pregunta> preguntas);
     Map<String, Number> contarPreguntasPorTopico();
+	boolean existsByTopic(String topic);
 }

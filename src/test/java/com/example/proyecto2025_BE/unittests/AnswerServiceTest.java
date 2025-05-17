@@ -118,4 +118,17 @@ public class AnswerServiceTest {
 		
 		assertEquals(BigDecimal.ZERO, feedback.getScore());
 	}
+	
+	@Test
+	@DisplayName("Check feedback includes correct option")
+	void feedbackIncludesCorrectOptionTest() {
+		Answer answer = answerbuilder.millisecondsSpent(29999)
+				.optionSelected(correctOption.getLetter())
+				.build();
+		
+		FeedbackAnswer feedback = answerService.answer(answer);
+		
+		assertEquals(correctOption, feedback.getCorrectOption());
+		assertEquals(LetterOption.A, feedback.getCorrectOption().getLetter());
+	}
 }

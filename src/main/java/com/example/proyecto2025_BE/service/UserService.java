@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import com.example.proyecto2025_BE.utils.JsonViewPage;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
@@ -27,8 +26,8 @@ import com.example.proyecto2025_BE.model.User;
 import lombok.RequiredArgsConstructor;
 
 @Service
-@RequiredArgsConstructor
 @Transactional
+@RequiredArgsConstructor
 public class UserService {
 
 	private final UserDao userDao;
@@ -86,7 +85,7 @@ public class UserService {
 		Page<UserRankingProjection> projectionPage = userDao.findAllUsersWithRank(pageable);
 		List<User> users = projectionPage.getContent().stream()
 				.map(this::convertProjectionToUser)
-				.collect(Collectors.toList());
+				.toList();
 		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
 	}
 
@@ -99,7 +98,7 @@ public class UserService {
 		}
 		int zeroBasedPosition = userPosition - 1;
 		int pageNumber = zeroBasedPosition / size;
-		return getUsersOrderedByScoreDesc(page,size,sort);
+		return getUsersOrderedByScoreDesc(pageNumber,size,sort);
 	}
 
 	private User convertProjectionToUser(UserRankingProjection projection) {
@@ -125,5 +124,4 @@ public class UserService {
 
 		return PageRequest.of(page, size, Sort.by(orders));
 	}
-
 }

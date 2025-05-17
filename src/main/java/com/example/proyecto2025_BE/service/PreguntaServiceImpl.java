@@ -58,4 +58,9 @@ public class PreguntaServiceImpl implements PreguntaService{
     public List<Pregunta> saveAll(List<Pregunta> preguntas) {
     	return preguntaDao.saveAll(preguntas);
     }
+    
+    @Override
+    public boolean existsByTopic(String topic) {
+    	return preguntaDao.existsByTopico(topic);
+    }
 }

@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.proyecto2025_BE.constants.LLM;
 import com.example.proyecto2025_BE.exceptions.InternalServerErrorException;
 import com.example.proyecto2025_BE.model.Option;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
 import com.example.proyecto2025_BE.model.dto.llm.QuestionOption;
+import com.example.proyecto2025_BE.model.prompter.Prompter;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,16 +32,17 @@ public class LLMApiClient implements ChatLanguageModel {
 	private final PreguntaService preguntaService;
 
 	@Transactional
-	public Mono<List<Pregunta>> generate(String topic) {
-        String prompt = LLM.TEMPLATE_PROMPT + topic;
-        TokenStream tokenStream = assistant.chatWithModel(prompt);
+	public Mono<List<Pregunta>> generate(Prompter prompter) {
+		prompter.withService(preguntaService)
+			.validatePrompt();
+        TokenStream tokenStream = assistant.chatWithModel(prompter.buildPrompt());
         StringBuilder fullResponse = new StringBuilder();
 
         return Mono.<List<Pregunta>>create(sink -> {
             tokenStream.onPartialResponse(fullResponse::append)
                     .onCompleteResponse(response -> {
                     	QuestionList questionList = buildResponse(fullResponse);
-                    	List<Pregunta> preguntas = saveAndMappingResponse(questionList, topic);
+                    	List<Pregunta> preguntas = saveAndMappingResponse(questionList, prompter.getTopic());
                     	sink.success(preguntas);
                     })
                     .onError(sink::error)

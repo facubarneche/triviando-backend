@@ -4,9 +4,12 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,31 +40,24 @@ class PreguntasControllerTest {
     private PreguntaDao preguntaDao;
     @Autowired
     private ObjectMapper objectMapper;
-    @Autowired
-    PreguntasData preguntasData;
-    static List<Pregunta> preguntas;
 
-    @BeforeEach
-    void setUp() {
-        preguntas = PreguntasData.PREGUNTAS;
-    }
     @Test
     @DisplayName("Get all preguntas")
     void getPreguntas() throws Exception {
 
-        when(preguntaDao.findAll()).thenReturn(preguntas);
+        when(preguntaDao.findAll()).thenReturn(PreguntasData.PREGUNTAS);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json(objectMapper.writeValueAsString(preguntas)));
+                .andExpect(content().json(objectMapper.writeValueAsString(PreguntasData.PREGUNTAS)));
     }
 
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
         String topico = "Historia";
-        List<Pregunta> preguntasHistoria = preguntas.stream()
+        List<Pregunta> preguntasHistoria = PreguntasData.PREGUNTAS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topico))
                 .toList();
 
@@ -89,7 +85,7 @@ class PreguntasControllerTest {
     @Test
     @DisplayName("Get preguntas by Id - Id existente")
     void getPreguntaById_IDValid() throws Exception {
-        Pregunta pregunta = preguntas.getFirst();
+        Pregunta pregunta = PreguntasData.PREGUNTAS.getFirst();
 
         when(preguntaDao.findById(pregunta.getId())).thenReturn(Optional.of(pregunta));
 
