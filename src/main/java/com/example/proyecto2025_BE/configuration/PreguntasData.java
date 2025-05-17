@@ -169,7 +169,6 @@ public class PreguntasData {
                     .correctOption(Option.builder().text("Series de Tiempo").letter(LetterOption.D).build())
                     .build(),
 
-// Tópico: Contenerización con Docker
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
                     .topico("Contenerización con Docker")
@@ -229,6 +228,97 @@ public class PreguntasData {
                     )
                     .correctOption(Option.builder().text("docker build").letter(LetterOption.C).build())
                     .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Contenerización con Docker")
+                    .enunciado("¿Qué comando de Docker se utiliza para ejecutar una imagen y crear un contenedor?")
+                    .explicacion("'docker run' inicia un contenedor a partir de una imagen.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("docker build").letter(LetterOption.A).build(),
+                            Option.builder().text("docker start").letter(LetterOption.B).build(),
+                            Option.builder().text("docker run").letter(LetterOption.C).build(),
+                            Option.builder().text("docker exec").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("docker run").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Contenerización con Docker")
+                    .enunciado("¿Cuál es la diferencia principal entre una imagen de Docker y un contenedor de Docker?")
+                    .explicacion("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("No hay diferencia, son términos intercambiables").letter(LetterOption.A).build(),
+                            Option.builder().text("Una imagen es la instancia en ejecución, el contenedor es la plantilla").letter(LetterOption.B).build(),
+                            Option.builder().text("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución").letter(LetterOption.C).build(),
+                            Option.builder().text("Un contenedor solo puede tener una imagen base").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Contenerización con Docker")
+                    .enunciado("¿Qué comando se utiliza para detener un contenedor en ejecución?")
+                    .explicacion("'docker stop' envía una señal de terminación al contenedor.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("docker kill").letter(LetterOption.A).build(),
+                            Option.builder().text("docker pause").letter(LetterOption.B).build(),
+                            Option.builder().text("docker stop").letter(LetterOption.C).build(),
+                            Option.builder().text("docker rm").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("docker stop").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Contenerización con Docker")
+                    .enunciado("¿Cuál es el propósito de los 'volúmenes' en Docker?")
+                    .explicacion("Los volúmenes se utilizan para persistir datos más allá del ciclo de vida de un contenedor.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Gestionar la red entre contenedores").letter(LetterOption.A).build(),
+                            Option.builder().text("Definir variables de entorno para los contenedores").letter(LetterOption.B).build(),
+                            Option.builder().text("Persistir datos más allá del ciclo de vida del contenedor").letter(LetterOption.C).build(),
+                            Option.builder().text("Limitar el uso de recursos del contenedor (CPU, memoria)").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Persistir datos más allá del ciclo de vida del contenedor").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Contenerización con Docker")
+                    .enunciado("¿Qué comando se utiliza para eliminar un contenedor detenido?")
+                    .explicacion("'docker rm' elimina contenedores.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("docker rmi").letter(LetterOption.A).build(),
+                            Option.builder().text("docker stop").letter(LetterOption.B).build(),
+                            Option.builder().text("docker rm").letter(LetterOption.C).build(),
+                            Option.builder().text("docker prune").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("docker rm").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Contenerización con Docker")
+                    .enunciado("¿Qué es un 'Docker Registry'?")
+                    .explicacion("Un servicio para almacenar y distribuir imágenes de Docker.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("Una herramienta para orquestar múltiples contenedores").letter(LetterOption.A).build(),
+                            Option.builder().text("Un formato de archivo para definir imágenes de Docker").letter(LetterOption.B).build(),
+                            Option.builder().text("Un servicio para almacenar y distribuir imágenes de Docker").letter(LetterOption.C).build(),
+                            Option.builder().text("Una interfaz gráfica para gestionar contenedores").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Un servicio para almacenar y distribuir imágenes de Docker").letter(LetterOption.C).build())
+                    .build(),
+
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
                     .topico("Seguridad en Aplicaciones Web")
@@ -936,6 +1026,67 @@ public class PreguntasData {
                     )
                     .correctOption(Option.builder().text("El tiempo total desde la solicitud hasta la entrega de una tarea").letter(LetterOption.C).build())
                     .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo de Software Ágil")
+                    .enunciado("¿Qué significa el principio ágil de 'Entrega continua de software funcionando'?")
+                    .explicacion("Priorizar la entrega frecuente de software útil al cliente.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("Documentar completamente cada característica antes de la entrega").letter(LetterOption.A).build(),
+                            Option.builder().text("Entregar software al final del proyecto en una gran entrega").letter(LetterOption.B).build(),
+                            Option.builder().text("Priorizar la entrega frecuente de software útil al cliente").letter(LetterOption.C).build(),
+                            Option.builder().text("Obtener la aprobación del cliente para cada línea de código").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Priorizar la entrega frecuente de software útil al cliente").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo de Software Ágil")
+                    .enunciado("¿Qué es un 'Burn-down Chart' en Scrum?")
+                    .explicacion("Un gráfico que muestra el trabajo restante en un Sprint a lo largo del tiempo.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Un diagrama que muestra la estructura del equipo Scrum").letter(LetterOption.A).build(),
+                            Option.builder().text("Un gráfico del número de errores encontrados durante un Sprint").letter(LetterOption.B).build(),
+                            Option.builder().text("Un gráfico del trabajo restante en un Sprint a lo largo del tiempo").letter(LetterOption.C).build(),
+                            Option.builder().text("Un registro de las decisiones tomadas durante la Daily Scrum").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Un gráfico del trabajo restante en un Sprint a lo largo del tiempo").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo de Software Ágil")
+                    .enunciado("¿Qué rol tiene el 'Product Owner' en Scrum?")
+                    .explicacion("Maximizar el valor del producto resultante del trabajo del equipo de desarrollo.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Gestionar el equipo de desarrollo y asignar tareas").letter(LetterOption.A).build(),
+                            Option.builder().text("Facilitar las reuniones de Scrum y eliminar impedimentos").letter(LetterOption.B).build(),
+                            Option.builder().text("Maximizar el valor del producto resultante del trabajo del equipo").letter(LetterOption.C).build(),
+                            Option.builder().text("Asegurar la calidad técnica del software desarrollado").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Maximizar el valor del producto resultante del trabajo del equipo").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo de Software Ágil")
+                    .enunciado("¿Qué se enfatiza en el Manifiesto Ágil sobre 'Procesos y herramientas'?")
+                    .explicacion("Se valoran más los individuos e interacciones que los procesos y herramientas.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("Los procesos y herramientas son más importantes que los individuos").letter(LetterOption.A).build(),
+                            Option.builder().text("Se valora más la documentación que el software funcionando").letter(LetterOption.B).build(),
+                            Option.builder().text("Se valoran más los individuos e interacciones que los procesos").letter(LetterOption.C).build(),
+                            Option.builder().text("La negociación de contratos es más importante que la colaboración").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Se valoran más los individuos e interacciones que los procesos").letter(LetterOption.C).build())
+                    .build(),
+
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
                     .topico("Redes de Computadoras")
@@ -1207,6 +1358,111 @@ public class PreguntasData {
                             Option.builder().text("Una herramienta para el diseño de bases de datos").letter(LetterOption.D).build())
                     )
                     .correctOption(Option.builder().text("Un conjunto de reglas para la comunicación entre software").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo Back-end")
+                    .enunciado("¿Qué es un 'framework' back-end como Django (Python) o Spring (Java)?")
+                    .explicacion("Un conjunto de herramientas y convenciones que facilitan la construcción de aplicaciones del lado del servidor.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Un lenguaje de programación interpretado").letter(LetterOption.A).build(),
+                            Option.builder().text("Un sistema de gestión de bases de datos relacional").letter(LetterOption.B).build(),
+                            Option.builder().text("Un conjunto de herramientas para construir aplicaciones del servidor").letter(LetterOption.C).build(),
+                            Option.builder().text("Una biblioteca para la manipulación del DOM").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Un conjunto de herramientas para construir aplicaciones del servidor").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo Back-end")
+                    .enunciado("¿Qué significa el término 'middleware' en el contexto de frameworks back-end?")
+                    .explicacion("Componentes que se ejecutan durante el procesamiento de una solicitud HTTP, con diversas funciones.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("La capa de la aplicación que interactúa con la base de datos").letter(LetterOption.A).build(),
+                            Option.builder().text("Componentes que se ejecutan durante el procesamiento de una solicitud HTTP").letter(LetterOption.B).build(),
+                            Option.builder().text("El software que gestiona la infraestructura del servidor").letter(LetterOption.C).build(),
+                            Option.builder().text("La parte del framework responsable del enrutamiento de URLs").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Componentes que se ejecutan durante el procesamiento de una solicitud HTTP").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo Back-end")
+                    .enunciado("¿Qué patrón de diseño arquitectónico separa la interfaz de usuario, la lógica de negocio y la capa de datos?")
+                    .explicacion("El patrón MVC (Modelo-Vista-Controlador) organiza el código de esta manera.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Arquitectura de microservicios").letter(LetterOption.A).build(),
+                            Option.builder().text("Patrón Modelo-Vista-Controlador (MVC)").letter(LetterOption.B).build(),
+                            Option.builder().text("Arquitectura orientada a eventos").letter(LetterOption.C).build(),
+                            Option.builder().text("Patrón fachada").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Patrón Modelo-Vista-Controlador (MVC)").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo Back-end")
+                    .enunciado("¿Qué es la autenticación en el contexto de la seguridad back-end?")
+                    .explicacion("El proceso de verificar la identidad de un usuario.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("El proceso de cifrar la comunicación").letter(LetterOption.A).build(),
+                            Option.builder().text("El proceso de verificar la identidad de un usuario").letter(LetterOption.B).build(),
+                            Option.builder().text("El proceso de autorizar el acceso a recursos").letter(LetterOption.C).build(),
+                            Option.builder().text("El proceso de registrar la actividad del usuario").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("El proceso de verificar la identidad de un usuario").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo Back-end")
+                    .enunciado("¿Qué es la autorización en el contexto de la seguridad back-end?")
+                    .explicacion("El proceso de determinar qué acciones puede realizar un usuario autenticado.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("El proceso de verificar la identidad del servidor").letter(LetterOption.A).build(),
+                            Option.builder().text("El proceso de asegurar la integridad de los datos").letter(LetterOption.B).build(),
+                            Option.builder().text("El proceso de determinar los permisos de un usuario autenticado").letter(LetterOption.C).build(),
+                            Option.builder().text("El proceso de proteger contra ataques de fuerza bruta").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("El proceso de determinar los permisos de un usuario autenticado").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo Back-end")
+                    .enunciado("¿Qué son los 'ORMs' (Object-Relational Mappers) en el desarrollo back-end?")
+                    .explicacion("Bibliotecas que facilitan la interacción entre el código orientado a objetos y las bases de datos relacionales.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Herramientas para la creación de APIs RESTful").letter(LetterOption.A).build(),
+                            Option.builder().text("Sistemas de gestión de colas de mensajes").letter(LetterOption.B).build(),
+                            Option.builder().text("Bibliotecas para interactuar con bases de datos relacionales").letter(LetterOption.C).build(),
+                            Option.builder().text("Servidores web para desplegar aplicaciones back-end").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Bibliotecas para interactuar con bases de datos relacionales").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .topico("Desarrollo Back-end")
+                    .enunciado("¿Qué es una API 'RESTful'?")
+                    .explicacion("Una interfaz que sigue los principios de la arquitectura REST para la comunicación.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Un tipo de base de datos NoSQL").letter(LetterOption.A).build(),
+                            Option.builder().text("Una interfaz que utiliza SOAP para la comunicación").letter(LetterOption.B).build(),
+                            Option.builder().text("Una interfaz que sigue los principios de la arquitectura REST").letter(LetterOption.C).build(),
+                            Option.builder().text("Un protocolo para la transferencia de archivos").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Una interfaz que sigue los principios de la arquitectura REST").letter(LetterOption.C).build())
                     .build()
             );
 }
