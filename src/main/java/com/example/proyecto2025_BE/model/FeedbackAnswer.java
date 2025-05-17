@@ -15,4 +15,5 @@ public class FeedbackAnswer {
 	private BigDecimal score;
 	private String errorReason;
 	private String explanation;
+	private Option correctOption;
 }
