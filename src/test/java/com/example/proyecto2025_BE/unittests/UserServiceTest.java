@@ -440,7 +440,7 @@ public class UserServiceTest {
 
         Page<UserRankingProjection> projectionPage3 = new PageImpl<>(projections3, expectedPageable3, sortedUsers.size());
 
-        when(userDao.findAllUsersWithRank(pageable)).thenReturn(projectionPage3);
+        when(userDao.findAllUsersWithRank(expectedPageable3)).thenReturn(projectionPage3);
 
         // Mock para convertProjectionToUser
         for (int i = startIdx3; i < endIdx3; i++) {
@@ -449,7 +449,7 @@ public class UserServiceTest {
         }
 
         // Act para usuario 3
-        Page<User> result3 = userService.getUsersOrderedByScoreFromUser(userId3, pageable.getPageNumber(),pageable.getPageSize(),orders);
+        Page<User> result3 = userService.getUsersOrderedByScoreFromUser(userId3, projectionPage3.getNumber(),pageable.getPageSize(),orders);
 
         // Assert para usuario 3
         assertNotNull(result3);
