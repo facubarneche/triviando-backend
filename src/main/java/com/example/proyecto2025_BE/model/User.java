@@ -11,8 +11,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.example.proyecto2025_BE.constants.DatePattern;
-import com.example.proyecto2025_BE.model.racha.RachaStrategy;
-import com.example.proyecto2025_BE.model.racha.RachaStrategyFactory;
+import com.example.proyecto2025_BE.utils.racha.RachaStrategy;
+import com.example.proyecto2025_BE.utils.racha.RachaStrategyFactory;
 import com.example.proyecto2025_BE.views.Views;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonView;

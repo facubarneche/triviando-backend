@@ -8,6 +8,7 @@ import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,6 +28,7 @@ import java.util.Map;
 
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,28 +47,29 @@ public class UserControllerTest {
     private UserDao dao;
     @Autowired
     private ObjectMapper mapper;
-    private User user;
 
     @MockitoBean
     private RespuestasDao respuestasDao;
 
     @BeforeEach
     void beforeEach() {
-        user = User.builder()
-                .fullName("Pepe Palala")
-                .build();
+        dao.deleteAll();
 
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-
-        dao.save(user);
-        dao.save(User.builder().build());
-        dao.save(User.builder().build());
+//
+//        dao.save(user);
     }
+
 
     @Test
     @DisplayName("Cuando busco un user por id, y este existe, obtengo dicho recurso")
     void retrieveTest() throws Exception {
+        User user = User.builder()
+                .fullName("Pepe Palala")
+                .build();
+        dao.save(user);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
@@ -85,20 +88,24 @@ public class UserControllerTest {
     @DisplayName("Se actualiza un user de manera exitosa")
     @DirtiesContext
     void updateTest() throws Exception {
+        User user = User.builder()
+                .fullName("Pepe Palala")
+                .build();
+        dao.save(user);
         Map<String, Object> map = new HashMap<>();
         map.put("fullName", "Emiliano");
         map.put("phoneNumber", "1234567890");
         String requestBody = mapper.writeValueAsString(map);
 
         mockMvc
-                .perform(MockMvcRequestBuilders.patch("/users/{id}", EXISTENT_USER_ID, requestBody)
+                .perform(MockMvcRequestBuilders.patch("/users/{id}", user.getId(), requestBody)
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk());
 
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID))
+                .perform(MockMvcRequestBuilders.get("/users/{id}", user.getId()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.phoneNumber").value("1234567890"));
@@ -152,9 +159,9 @@ public class UserControllerTest {
     @DisplayName("Obtener el ranking de usuarios ordenados por score")
     void getUsersOrderedByScoreTest() throws Exception {
         // Preparar datos de prueba
-        User user1 = User.builder().fullName("Usuario Alto Score").score(new BigDecimal(100)).build();
-        User user2 = User.builder().fullName("Usuario Medio Score").score(new BigDecimal(50)).build();
-        User user3 = User.builder().fullName("Usuario Bajo Score").score(new BigDecimal(25)).build();
+        User user1 = User.builder().username("Usuario Alto Score").score(new BigDecimal(100)).build();
+        User user2 = User.builder().username("Usuario Medio Score").score(new BigDecimal(50)).build();
+        User user3 = User.builder().username("Usuario Bajo Score").score(new BigDecimal(25)).build();
 
         dao.save(user1);
         dao.save(user2);
@@ -167,19 +174,21 @@ public class UserControllerTest {
                         .param("sort", "score,desc"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.content[0].score", closeTo(100.0,0 )))
-                .andExpect(jsonPath("$.content[1].score", closeTo(50.0,0)))
-                .andExpect(jsonPath("$.content[2].score", closeTo(25.0,0)))
-                ;
+                .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(3))))
+                .andExpect(jsonPath("$.content[0].fullName").value("Usuario Alto Score"))
+                .andExpect(jsonPath("$.content[0].score", closeTo(100.0, 0)))
+                .andExpect(jsonPath("$.content[1].fullName").value("Usuario Medio Score"))
+                .andExpect(jsonPath("$.content[1].score", closeTo(50.0, 0)))
+                .andExpect(jsonPath("$.content[2].fullName").value("Usuario Bajo Score"))
+                .andExpect(jsonPath("$.content[2].score", closeTo(25.0, 0)));
     }
 
     @Test
     @DisplayName("Obtener el ranking desde un usuario específico")
     void getUsersOrderedByScoreFromUserTest() throws Exception {
-        // Preparar datos de prueba - Usuarios con diferentes scores
-        User userHigh = User.builder().fullName("Usuario Alto").score(new BigDecimal(500)).build();
-        User userMid = User.builder().fullName("Usuario Medio").score(new BigDecimal(300)).build();
-        User userLow = User.builder().fullName("Usuario Bajo").score(new BigDecimal(100)).build();
+        User userHigh = User.builder().username("Usuario Alto").score(new BigDecimal(500)).build();
+        User userMid = User.builder().username("Usuario Medio").score(new BigDecimal(300)).build();
+        User userLow = User.builder().username("Usuario Bajo").score(new BigDecimal(100)).build();
 
         userHigh = dao.save(userHigh);
         userMid = dao.save(userMid);
@@ -187,14 +196,18 @@ public class UserControllerTest {
 
         Long midUserId = userMid.getId();
 
-        // Ejecutar y verificar
         mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", midUserId)
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
-                .andExpect(jsonPath("$.content[*].id", hasItem(midUserId.intValue())))
+                // Verificar que los scores están ordenados correctamente
+                .andExpect(jsonPath("$.content[0].score", closeTo(500.0, 0)))
+                .andExpect(jsonPath("$.content[1].score", closeTo(300.0, 0)))
+                .andExpect(jsonPath("$.content[2].score", closeTo(100.0, 0)))
+                // Verificar que el usuario medio está en la posición correcta
+                .andExpect(jsonPath("$.content[1].id").value(midUserId.intValue()))
                 .andExpect(jsonPath("$.number").isNumber());
     }
 
@@ -202,17 +215,24 @@ public class UserControllerTest {
     @DisplayName("Obtener el ranking desde un usuario con mismo score que otro")
     void getUsersOrderedByScoreFromUserWithSameScoreTest() throws Exception {
         // Preparar datos de prueba - Usuarios con mismos scores pero diferentes IDs
-        User user1 = User.builder().fullName("Usuario 1").score(new BigDecimal(300)).build();
-        User user2 = User.builder().fullName("Usuario 2").score(new BigDecimal(300)).build();
-
+        User user1 = User.builder().username("Usuario 1").score(new BigDecimal("300.00")).build();
+        User user2 = User.builder().username("Usuario 2").score(new BigDecimal("300.00")).build();
+        // Añadir usuarios adicionales para un ranking más completo
+        User userHigh = User.builder().username("Usuario Alto").score(new BigDecimal(500)).build();
+        User userLow = User.builder().username("Usuario Bajo").score(new BigDecimal(100)).build();
+        userHigh = dao.save(userHigh);
         user1 = dao.save(user1);
         user2 = dao.save(user2);
+        userLow = dao.save(userLow);
 
         Long user1Id = user1.getId();
         Long user2Id = user2.getId();
 
         // Verificar que ambos tienen el mismo score
-        assertEquals(user1.getScore(), user2.getScore());
+        assertEquals(user1.getScore().compareTo(user2.getScore()), 0);
+
+        // Asumimos que user1 tiene ID menor que user2 por orden de inserción
+        assertTrue(user1Id < user2Id, "Para esta prueba, user1 debe tener un ID menor que user2");
 
         // Prueba para el primer usuario
         mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", user1Id)
@@ -220,7 +240,12 @@ public class UserControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
+                .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(4))))
+                // Verificar que cuando hay mismo score, se ordenan por ID
+                .andExpect(jsonPath("$.content[1].id").value(user1Id.intValue()))
+                .andExpect(jsonPath("$.content[2].id").value(user2Id.intValue()))
+                .andExpect(jsonPath("$.content[1].score", closeTo(300.0, 0)))
+                .andExpect(jsonPath("$.content[2].score", closeTo(300.0, 0)))
                 .andExpect(jsonPath("$.number").isNumber());
 
         // Prueba para el segundo usuario
@@ -229,7 +254,11 @@ public class UserControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
+                .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(4))))
+                .andExpect(jsonPath("$.content[*].id", hasItem(user2Id.intValue())))
+                // El orden debe ser consistente con la prueba anterior
+                .andExpect(jsonPath("$.content[1].id").value(user1Id.intValue()))
+                .andExpect(jsonPath("$.content[2].id").value(user2Id.intValue()))
                 .andExpect(jsonPath("$.number").isNumber());
     }
 
