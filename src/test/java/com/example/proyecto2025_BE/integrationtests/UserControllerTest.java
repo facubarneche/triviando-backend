@@ -129,7 +129,7 @@ public class UserControllerTest {
         when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(35);
         StatsResponse response = new StatsResponse(10, 35, 50);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}/statistics", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(response)));
@@ -142,7 +142,7 @@ public class UserControllerTest {
         when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(0);
         StatsResponse response = new StatsResponse(0,0,0);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}/statistics", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(response)));
@@ -161,10 +161,7 @@ public class UserControllerTest {
         dao.save(user3);
 
         // Ejecutar y verificar
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .param("sort", "score,desc"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content[0].score", closeTo(100.0,0 )))

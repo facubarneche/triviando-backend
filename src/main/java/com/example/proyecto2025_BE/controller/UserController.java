@@ -1,26 +1,21 @@
 package com.example.proyecto2025_BE.controller;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
-import com.example.proyecto2025_BE.model.dto.Racha;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.example.proyecto2025_BE.model.dto.register.UserResponseDTO;
 import com.example.proyecto2025_BE.service.StatisticService;
@@ -114,7 +109,7 @@ public class UserController {
         return ResponseEntity.ok(logged);
     }
 
-	@GetMapping("/{usuarioId}/statistics")
+	@GetMapping("/statistics/{usuarioId}")
 	@Operation(summary = "Obtener estadísticas de un usuario", description = "Obtiene las estadísticas de un usuario por ID",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Estadísticas obtenidas",
@@ -124,7 +119,7 @@ public class UserController {
 		return ResponseEntity.ok(statisticService.getStats(usuarioId));
 	}
 	
-	@GetMapping("/{userId}/score")
+	@GetMapping("/score/{userId}")
 	@JsonView(Views.Score.class)
 	@Operation(summary = "Obtener puntaje de un usuario", description = "Obtiene el puntaje de un usuario",
     responses = {
@@ -139,23 +134,31 @@ public class UserController {
 	}
 
 	@GetMapping("/ranking")
-	ResponseEntity<Page<UserRankingDTO>> getUsersOrderedByScoreDesc(Pageable pageable) {
-		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(pageable));
+	@JsonView(Views.Ranking.class)
+	ResponseEntity<Page<User>> getUsersOrderedByScoreDesc(@RequestParam(defaultValue = "0") int page,
+														  @RequestParam(defaultValue = "10") int size,
+														  @RequestParam(required = false) String[] sort) {
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(page,size,sort));
 	}
 
 	@GetMapping("/ranking/{userId}")
-	ResponseEntity<Page<UserRankingDTO>> getUsersOrderedByScoreFromUser(@PathVariable Long userId, Pageable pageable) {
-		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, pageable));
+	@JsonView(Views.Ranking.class)
+	ResponseEntity<Page<User>> getUsersOrderedByScoreFromUser(@PathVariable Long userId,
+															  @RequestParam(defaultValue = "0") int page,
+															  @RequestParam(defaultValue = "10") int size, @
+															  RequestParam(required = false) String[] sort){
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, page,size,sort));
 	}
 
 	@GetMapping("/racha/{userId}")
+	@JsonView(Views.Racha.class)
 	@Operation(summary = "Obtener racha de un usuario", description = "Obtiene la racha de un usuario",
 			responses = {
 					@ApiResponse(responseCode = "200", description = "Racha obtenida",
 							content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
 					@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
 			})
-	public ResponseEntity<Racha> getRachaUsuario(@PathVariable Long userId) {
-		return ResponseEntity.ok(userService.getRachaUsuario(userId));
+	public ResponseEntity<User> getRachaUsuario(@PathVariable Long userId) {
+		return ResponseEntity.ok(userService.retrieve(userId));
 	}
 }
