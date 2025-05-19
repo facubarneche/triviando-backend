@@ -1314,7 +1314,7 @@ public class PreguntasData {
                     .correctOption(Option.builder().text("Diseñar sitios web adaptables a diferentes pantallas").letter(LetterOption.C).build())
                     .build(),
 
-            // Nuevo Tópico: Desarrollo Back-end
+            //Nuevo Tópico: Desarrollo Back-end
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
                     .topico("Desarrollo Back-end")

@@ -1,18 +1,16 @@
 package com.example.proyecto2025_BE.service;
 
-import java.math.BigDecimal;
-
-import com.example.proyecto2025_BE.service.command.ActualizarRachaCommand;
-import com.example.proyecto2025_BE.service.command.UserInvoker;
-import org.springframework.stereotype.Service;
-
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
-
+import com.example.proyecto2025_BE.service.command.ActualizarRachaCommand;
+import com.example.proyecto2025_BE.service.command.UserInvoker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -40,5 +38,4 @@ public class AnswerService {
 				.correctOption(question.getCorrectOption())
 				.build();
 	}
-	
 }

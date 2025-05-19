@@ -1,24 +1,24 @@
 package com.example.proyecto2025_BE.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
-
+import com.example.proyecto2025_BE.service.pregunta.factory.PreguntaLoaderFactory;
+import com.example.proyecto2025_BE.service.pregunta.strategy.PreguntaLoaderStrategy;
 import lombok.RequiredArgsConstructor;
+import org.bson.types.ObjectId;
+import org.springframework.stereotype.Service;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PreguntaServiceImpl implements PreguntaService{
 
     private final PreguntaDao preguntaDao;
+    private final PreguntaLoaderFactory preguntaLoaderFactory;
 
     @Override
     public List<Pregunta> getAllPreguntas() {
@@ -62,5 +62,11 @@ public class PreguntaServiceImpl implements PreguntaService{
     @Override
     public boolean existsByTopic(String topic) {
     	return preguntaDao.existsByTopico(topic);
+    }
+
+    @Override
+    public List<Pregunta> obtenerPreguntasNoRespondidasPorTopico(Long userId, String topico) {
+        PreguntaLoaderStrategy preguntaLoader = preguntaLoaderFactory.getPreguntaLoader(userId);
+        return preguntaLoader.cargarPreguntasNoRespondidas(topico);
     }
 }

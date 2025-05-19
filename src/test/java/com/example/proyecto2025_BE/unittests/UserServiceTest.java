@@ -19,7 +19,6 @@ import org.springframework.data.domain.*;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -74,7 +73,7 @@ public class UserServiceTest {
         return users.stream()
                 .sorted(Comparator.comparing(User::getScore, Comparator.reverseOrder())
                         .thenComparing(User::getId))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     private int findUserPosition(Long userId) {
@@ -507,7 +506,7 @@ public class UserServiceTest {
                             : Sort.Direction.ASC;
                     return new Sort.Order(direction, property);
                 })
-                .collect(Collectors.toList());
+                .toList();;
 
         return PageRequest.of(page, size ,sort);
     }

@@ -53,12 +53,9 @@ public class PreguntasController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pregunta.class))),
             @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND, content = @Content)
     })
-    public List<Pregunta> getPreguntas(@RequestParam(value = "topico", required = false) String topico) {
-        if (topico == null) {
-            return preguntasService.getAllPreguntas();
-        } else {
-            return preguntasService.getPreguntasByTopico(topico);
-        }
+    public List<Pregunta> getPreguntas(@RequestParam(value = "userId", required = false) Long userId,
+                                       @RequestParam(value = "topico", required = false) String topico) {
+        return preguntasService.obtenerPreguntasNoRespondidasPorTopico(userId,topico);
     }
 
     @GetMapping("/{id}")

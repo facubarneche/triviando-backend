@@ -1,14 +1,15 @@
 package com.example.proyecto2025_BE.service;
 
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.utils.JsonViewPage;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -21,9 +22,8 @@ import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
-import com.example.proyecto2025_BE.model.User;
 
-import lombok.RequiredArgsConstructor;
+
 
 @Service
 @Transactional
