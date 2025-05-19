@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -136,7 +137,7 @@ public class UserControllerTest {
         when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(35);
         StatsResponse response = new StatsResponse(10, 35, 50);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}/statistics", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(response)));
@@ -149,7 +150,7 @@ public class UserControllerTest {
         when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(0);
         StatsResponse response = new StatsResponse(0,0,0);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}/statistics", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(response)));
@@ -168,18 +169,15 @@ public class UserControllerTest {
         dao.save(user3);
 
         // Ejecutar y verificar
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking")
-                        .param("page", "0")
-                        .param("size", "10")
-                        .param("sort", "score,desc"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(3))))
-                .andExpect(jsonPath("$.content[0].fullName").value("Usuario Alto Score"))
+                .andExpect(jsonPath("$.content[0].username").value("Usuario Alto Score"))
                 .andExpect(jsonPath("$.content[0].score", closeTo(100.0, 0)))
-                .andExpect(jsonPath("$.content[1].fullName").value("Usuario Medio Score"))
+                .andExpect(jsonPath("$.content[1].username").value("Usuario Medio Score"))
                 .andExpect(jsonPath("$.content[1].score", closeTo(50.0, 0)))
-                .andExpect(jsonPath("$.content[2].fullName").value("Usuario Bajo Score"))
+                .andExpect(jsonPath("$.content[2].username").value("Usuario Bajo Score"))
                 .andExpect(jsonPath("$.content[2].score", closeTo(25.0, 0)));
     }
 
@@ -279,6 +277,7 @@ public class UserControllerTest {
                 .password("123456")
                 .fullName("Pancho Rancho")
                 .username("pancho_rancho_1746")
+                .createdAt(LocalDateTime.now())
     			.build();
     	
     	dao.save(registeredUser);
@@ -287,6 +286,7 @@ public class UserControllerTest {
     	User requestBody = User.builder()
                 .email("pancho.rancho@gmail.com")
                 .password("123456")
+                .createdAt(LocalDateTime.now())
                 .build();
 
         String jsonBody = mapper.writeValueAsString(requestBody);

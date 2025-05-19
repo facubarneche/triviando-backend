@@ -1,17 +1,18 @@
 package com.example.proyecto2025_BE.service;
 
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.proyecto2025_BE.utils.JsonViewPage;
+import com.example.proyecto2025_BE.utils.UserRankingProjection;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import com.example.proyecto2025_BE.utils.ranking.UserRankingProjection;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +22,6 @@ import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.User;
-import com.example.proyecto2025_BE.model.dto.Racha;
-import com.example.proyecto2025_BE.model.dto.UserRankingDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -80,39 +79,49 @@ public class UserService {
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	public Page<UserRankingDTO> getUsersOrderedByScoreDesc(Pageable pageable) {
-		Page<UserRankingProjection> userPage = userDao.findAllUsersWithRank(pageable);
+	public Page<User> getUsersOrderedByScoreDesc(int page,int size, String[] sort) {
 
-		List<UserRankingDTO> dtoList = userPage.getContent().stream()
-				.map(p -> new UserRankingDTO(p.getId(), p.getUserName(), p.getScore(), p.getPosition()))
+		Pageable pageable = createPageable(page, size, sort);
+		Page<UserRankingProjection> projectionPage = userDao.findAllUsersWithRank(pageable);
+		List<User> users = projectionPage.getContent().stream()
+				.map(this::convertProjectionToUser)
 				.toList();
-
-		return new PageImpl<>(dtoList, pageable, userPage.getTotalElements());
+		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
 	}
 
-	public Page<UserRankingDTO> getUsersOrderedByScoreFromUser(Long userId, Pageable pageable) {
+	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size, String[] sort) {
 		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
+
 		if (userPosition == null || userPosition <= 0) {
-			return getUsersOrderedByScoreDesc(PageRequest.of(0, pageable.getPageSize()));
+			return getUsersOrderedByScoreDesc(page,size,sort);
+		}
+		int zeroBasedPosition = userPosition - 1;
+		int pageNumber = zeroBasedPosition / size;
+		return getUsersOrderedByScoreDesc(pageNumber,size,sort);
+	}
+
+	private User convertProjectionToUser(UserRankingProjection projection) {
+		User user = userDao.findById(projection.getId())
+				.orElseGet(User::new); // Fallback a un nuevo User si por alguna razón no existe
+		user.setPosition(projection.getPosition());
+		return user;
+	}
+
+	private Pageable createPageable(int page, int size, String[] sortParams) {
+		if (sortParams == null || sortParams.length == 0) {
+			Sort defaultSort = Sort.by("score").descending().and(Sort.by("id").ascending());
+			return PageRequest.of(page, size, defaultSort);
 		}
 
-		int zeroBasedPosition = userPosition - 1;
-		int pageNumber = zeroBasedPosition / pageable.getPageSize();
+		List<Sort.Order> orders = Arrays.stream(sortParams)
+				.map(param -> param.split(",", 2))
+				.map(parts -> new Sort.Order(
+						parts.length > 1 && parts[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
+						parts[0]
+				))
+				.toList();
 
-		return getUsersOrderedByScoreDesc(PageRequest.of(pageNumber, pageable.getPageSize()));
-	}
-
-	public Racha getRachaUsuario(Long userId) {
-		User user = retrieve(userId);
-		return new Racha(user.getRachaActual(), user.getUltimaActividad());
-	}
-
-	private UserRankingDTO getUserRankPositionById(User user) {
-		Long userId = user.getId();
-		String userName = user.getUsername();
-		BigDecimal score = user.getScore();
-		int position = userDao.findUserRankPosition(user.getId());
-		return new UserRankingDTO(userId,userName,score,position);
+		return PageRequest.of(page, size, Sort.by(orders));
 	}
 }

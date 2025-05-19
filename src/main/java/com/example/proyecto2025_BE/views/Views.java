@@ -5,4 +5,8 @@ public interface Views {
 	public static interface Score { }
 	
 	public static interface Login { }
+
+	public static interface Racha { }
+
+	public static interface Ranking {}
 }

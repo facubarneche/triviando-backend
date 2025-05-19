@@ -42,7 +42,7 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonView({Views.Score.class, Views.Login.class})
+	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class})
 	private Long id;
 	@JsonView(Views.Login.class)
 	private String fullName;
@@ -64,15 +64,18 @@ public class User {
 	@JoinColumn(name = "user_id")
 	private List<Answer> answers = new ArrayList<>();
 	@Builder.Default
-	@JsonView(Views.Score.class)
+	@JsonView({Views.Ranking.class,Views.Score.class})
 	private BigDecimal score = BigDecimal.ZERO;
-	@JsonView(Views.Login.class)
+	@JsonView({Views.Login.class,Views.Ranking.class})
 	private String username;
-
-
+	@JsonView(Views.Racha.class)
 	private Integer rachaActual;
+	@JsonView(Views.Racha.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
 	private LocalDate ultimaActividad;
+	@JsonView(Views.Ranking.class)
+	@Transient
+	private int position;
 
 	public Integer getAge() {
 		if (birthDate == null){
@@ -94,5 +97,13 @@ public class User {
 		RachaStrategy strategy = RachaStrategyFactory.getStrategy(ultimaActividad, today);
 		this.rachaActual = strategy.calcularRacha(rachaActual);
 		this.ultimaActividad = today;
+	}
+
+	public Integer getRachaActual() {
+		return rachaActual == null ? 0 : rachaActual;
+	}
+
+	public LocalDate getUltimaActividad() {
+		return ultimaActividad == null ? createdAt.toLocalDate() : ultimaActividad;
 	}
 }

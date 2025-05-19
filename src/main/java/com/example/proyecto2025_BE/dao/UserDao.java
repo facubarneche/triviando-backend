@@ -2,7 +2,7 @@ package com.example.proyecto2025_BE.dao;
 
 import java.util.Optional;
 
-import com.example.proyecto2025_BE.utils.ranking.UserRankingProjection;
+import com.example.proyecto2025_BE.utils.UserRankingProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
