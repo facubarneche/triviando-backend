@@ -22,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -117,6 +118,7 @@ public class UserControllerTest {
                 .fullName("Pepe Palala")
                 .email("pepe.palala@gmail.com")
                 .password("123456")
+                .createdAt(LocalDateTime.now())
                 .build();
 
         String requestBody = mapper.writeValueAsString(userRequestDTO);
