@@ -10,6 +10,9 @@ import com.example.proyecto2025_BE.service.pregunta.strategy.UsuarioRegistradoPr
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 @Component
 @RequiredArgsConstructor
 public class PreguntaLoaderFactory {
@@ -18,10 +21,17 @@ public class PreguntaLoaderFactory {
     private final PreguntaProperties properties;
     private final UserService userService;
 
+    private final InvitadoPreguntaLoader invitadoLoader = new InvitadoPreguntaLoader();
+
+    private final Map<Long, UsuarioRegistradoPreguntaLoader> usuarioLoaderCache = new ConcurrentHashMap<>();
+
     public PreguntaLoaderStrategy getPreguntaLoader(Long userId) {
         if (userId == null) {
-            return InvitadoPreguntaLoader.getInstance(preguntaDao,properties);
+            return invitadoLoader.init(preguntaDao, properties);
         }
-        return UsuarioRegistradoPreguntaLoader.getInstance(preguntaDao, properties, userService, userId);
+
+        return usuarioLoaderCache.computeIfAbsent(userId, id ->
+                new UsuarioRegistradoPreguntaLoader(preguntaDao, properties, userService, id)
+        );
     }
 }

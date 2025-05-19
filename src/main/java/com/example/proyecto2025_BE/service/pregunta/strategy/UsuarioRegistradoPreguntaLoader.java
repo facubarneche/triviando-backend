@@ -18,27 +18,15 @@ public class UsuarioRegistradoPreguntaLoader implements PreguntaLoaderStrategy{
     private final PreguntaProperties properties;
     private final Long userId;
     private final UserService userService;
-    private static UsuarioRegistradoPreguntaLoader instance;
-    private final Random random;
+    private final Random random = new Random();
 
-
-    public static UsuarioRegistradoPreguntaLoader getInstance(PreguntaDao preguntaDao,PreguntaProperties properties,UserService userService, Long userId ){
-        if(instance == null){
-            instance = new UsuarioRegistradoPreguntaLoader(preguntaDao,properties,userService, userId);
-        }
-        return instance;
-    }
-
-    private UsuarioRegistradoPreguntaLoader(PreguntaDao preguntaDao, PreguntaProperties properties,UserService userService,Long userId) {
+    public UsuarioRegistradoPreguntaLoader(PreguntaDao preguntaDao, PreguntaProperties properties,
+                                           UserService userService, Long userId) {
         this.preguntaDao = preguntaDao;
         this.properties = properties;
         this.userService = userService;
         this.userId = userId;
-        this.random = new Random();
     }
-
-    @Value("${api.preguntas.cantidad}")
-    private int cantidadPreguntas;
 
     @Override
     public List<Pregunta> cargarPreguntasNoRespondidas(String topico) {
@@ -49,10 +37,13 @@ public class UsuarioRegistradoPreguntaLoader implements PreguntaLoaderStrategy{
                 .toList();
        List<Pregunta> preguntasNoRespondidas =  preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(preguntasRespondidasIds, topico).stream()
                 .toList();
+        if (preguntasNoRespondidas.isEmpty()) {
+            return List.of();
+        }
         return random.ints(0, preguntasNoRespondidas.size())
-                .distinct() // Asegura que no se repitan las preguntas seleccionadas
+                .distinct()
                 .limit(cantidadPreguntas)
                 .mapToObj(preguntasNoRespondidas::get)
-                .collect(Collectors.toList());
+                .toList();
     }
 }
