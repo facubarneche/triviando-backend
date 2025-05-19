@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -276,6 +277,7 @@ public class UserControllerTest {
                 .password("123456")
                 .fullName("Pancho Rancho")
                 .username("pancho_rancho_1746")
+                .createdAt(LocalDateTime.now())
     			.build();
     	
     	dao.save(registeredUser);
@@ -284,6 +286,7 @@ public class UserControllerTest {
     	User requestBody = User.builder()
                 .email("pancho.rancho@gmail.com")
                 .password("123456")
+                .createdAt(LocalDateTime.now())
                 .build();
 
         String jsonBody = mapper.writeValueAsString(requestBody);
