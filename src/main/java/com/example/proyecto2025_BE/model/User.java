@@ -52,6 +52,7 @@ public class User {
 	@Transient
 	private int age;
 	@JsonView({Views.Register.class, Views.RegisterRequest.class})
+	@NotBlank(groups = Views.RegisterRequest.class)
 	@Email(groups = Views.RegisterRequest.class)
 	private String email;
 	@JsonView(Views.RegisterRequest.class)
