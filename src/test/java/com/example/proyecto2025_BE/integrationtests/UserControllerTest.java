@@ -4,7 +4,6 @@ import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -114,7 +113,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Se crea un user de manera exitosa")
     void createTest() throws Exception {
-        UserRequestDTO userRequestDTO = UserRequestDTO.builder()
+        User userRequestDTO = User.builder()
                 .fullName("Pepe Palala")
                 .email("pepe.palala@gmail.com")
                 .password("123456")

@@ -3,8 +3,6 @@ package com.example.proyecto2025_BE.controller;
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
-import com.example.proyecto2025_BE.model.dto.register.UserResponseDTO;
 import com.example.proyecto2025_BE.service.StatisticService;
 import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.views.Views;
@@ -19,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -34,45 +33,52 @@ public class UserController {
 	private final StatisticService statisticService;
 
 	@PostMapping
+	@JsonView(Views.Register.class)
 	@Operation(summary = "Registrar usuario", description = "Se registra un nuevo usuario en el sistema",
 	responses = {
 	    @ApiResponse(responseCode = "200", description = "Usuario creado exitosamente",
-	                  content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+	                  content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
 	    @ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema")
 	})
-    public ResponseEntity<UserResponseDTO> create(@RequestBody @Valid UserRequestDTO user) {
+    public ResponseEntity<User> create(
+			@RequestBody
+			@JsonView(Views.RegisterRequest.class)
+			@Validated(Views.RegisterRequest.class)
+			User user) {
 
-    	var userCreated = this.userService.create(UserRequestDTO.toEntity(user));
+    	var userCreated = this.userService.create(user);
 
-        return ResponseEntity.ok(UserResponseDTO.fromUser(userCreated));
+        return ResponseEntity.ok(userCreated);
     }
 	
 	@GetMapping("/{id}")
+	@JsonView(Views.Register.class)
 	@Operation(summary = "Obtener usuario", description = "Obtiene los detalles de un usuario por ID",
     responses = {
         @ApiResponse(responseCode = "200", description = "Usuario encontrado",
-                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
     })
-    public ResponseEntity<UserResponseDTO> retrieve(@PathVariable Long id) {
+    public ResponseEntity<User> retrieve(@PathVariable Long id) {
 		User user = this.userService.retrieve(id);
 
-		return ResponseEntity.ok(UserResponseDTO.fromUser(user));
+		return ResponseEntity.ok(user);
 	}
 	
 	@PatchMapping("/{id}")
+	@JsonView(Views.Register.class)
 	@Operation(summary = "Actualizar usuario", description = "Actualiza los detalles de un usuario existente",
     responses = {
         @ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente",
-                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseDTO.class))),
+                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
         @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
     })
-    public ResponseEntity<UserResponseDTO> update(@PathVariable Long id, @RequestBody Map<String, Object> properties) {
+    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody Map<String, Object> properties) {
 		var userToUpdate = this.userService.retrieve(id);
 
     	var updatedUser = this.userService.update(userToUpdate, properties);
 
-		return ResponseEntity.ok(UserResponseDTO.fromUser(updatedUser));
+		return ResponseEntity.ok(updatedUser);
     }
 	
 	@DeleteMapping("/{id}")

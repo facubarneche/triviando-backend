@@ -7,6 +7,8 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -42,16 +44,23 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class})
+	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class, Views.Register.class})
 	private Long id;
-	@JsonView(Views.Login.class)
+	@JsonView({Views.Login.class, Views.Register.class, Views.RegisterRequest.class})
+	@NotBlank(groups = Views.RegisterRequest.class)
 	private String fullName;
 	@Transient
 	private int age;
+	@JsonView({Views.Register.class, Views.RegisterRequest.class})
+	@Email(groups = Views.RegisterRequest.class)
 	private String email;
+	@JsonView(Views.RegisterRequest.class)
+	@NotBlank(groups = Views.RegisterRequest.class)
 	private String password;
+	@JsonView(Views.Register.class)
 	private String phoneNumber;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
+	@JsonView({Views.Register.class,Views.RegisterRequest.class})
 	private LocalDate birthDate;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
 	@CreationTimestamp
@@ -77,6 +86,7 @@ public class User {
 	@Transient
 	private int position;
 
+	@JsonView(Views.Register.class)
 	public Integer getAge() {
 		if (birthDate == null){
 			return null;
