@@ -9,4 +9,8 @@ public interface Views {
 	public static interface Racha { }
 
 	public static interface Ranking {}
+
+	public static interface Register {}
+
+	public static interface RegisterRequest {}
 }
