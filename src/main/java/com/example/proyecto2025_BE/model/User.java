@@ -47,16 +47,16 @@ public class User {
 	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class, Views.Register.class})
 	private Long id;
 	@JsonView({Views.Login.class, Views.Register.class, Views.RegisterRequest.class})
-	@NotBlank(groups = Views.RegisterRequest.class)
+	@NotBlank(groups = Views.RegisterRequest.class, message = "El nombre completo no puede estar vacío")
 	private String fullName;
 	@Transient
 	private int age;
 	@JsonView({Views.Register.class, Views.RegisterRequest.class})
-	@NotBlank(groups = Views.RegisterRequest.class)
-	@Email(groups = Views.RegisterRequest.class)
+	@NotBlank(groups = Views.RegisterRequest.class, message = "El email no puede estar vacío")
+	@Email(groups = Views.RegisterRequest.class, message = "El email no tiene un formato válido")
 	private String email;
 	@JsonView(Views.RegisterRequest.class)
-	@NotBlank(groups = Views.RegisterRequest.class)
+	@NotBlank(groups = Views.RegisterRequest.class, message = "La contraseña no puede estar vacía")
 	private String password;
 	@JsonView(Views.Register.class)
 	private String phoneNumber;
