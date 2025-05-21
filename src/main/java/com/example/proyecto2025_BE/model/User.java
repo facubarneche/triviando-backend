@@ -77,7 +77,7 @@ public class User {
 	@JsonView({Views.Ranking.class,Views.Score.class})
 	private BigDecimal score = BigDecimal.ZERO;
 	@JsonView({Views.Login.class,Views.Ranking.class})
-	private String username;
+	private String userName;
 	@JsonView(Views.Racha.class)
 	private Integer rachaActual;
 	@JsonView(Views.Racha.class)
