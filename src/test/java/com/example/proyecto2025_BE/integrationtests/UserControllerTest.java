@@ -408,7 +408,8 @@ public class UserControllerTest {
                 .password("123456")
                 .fullName("Pancho Rancho")
                 .userName("pancho_rancho_1746")
-    			.build();
+                .createdAt(LocalDateTime.now())
+    			      .build();
     	
     	dao.save(registeredUser);
     	
@@ -416,6 +417,7 @@ public class UserControllerTest {
     	User requestBody = User.builder()
                 .email("pancho.rancho@gmail.com")
                 .password("123456")
+                .createdAt(LocalDateTime.now())
                 .build();
 
         String jsonBody = mapper.writeValueAsString(requestBody);

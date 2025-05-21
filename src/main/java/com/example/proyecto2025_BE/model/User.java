@@ -109,4 +109,12 @@ public class User {
 		this.rachaActual = strategy.calcularRacha(rachaActual);
 		this.ultimaActividad = today;
 	}
+
+	public Integer getRachaActual() {
+		return rachaActual == null ? 0 : rachaActual;
+	}
+
+	public LocalDate getUltimaActividad() {
+		return ultimaActividad == null ? createdAt.toLocalDate() : ultimaActividad;
+	}
 }
