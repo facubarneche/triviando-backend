@@ -38,18 +38,18 @@ public class UserServiceTest {
     private static String[] orders;
     private List<User> createUsers() {
         return Arrays.asList(
-                User.builder().id(1L).username("Usuario Uno").score(new BigDecimal("100.00")).build(),
-                User.builder().id(2L).username("Usuario Dos").score(new BigDecimal("200.00")).build(),
-                User.builder().id(3L).username("Usuario Tres").score(new BigDecimal("300.00")).build(),
-                User.builder().id(4L).username("Usuario Cuatro").score(new BigDecimal("400.00")).build(),
-                User.builder().id(5L).username("Usuario Cinco").score(new BigDecimal("500.00")).build(),
-                User.builder().id(6L).username("Usuario Seis").score(new BigDecimal("600.00")).build(),
-                User.builder().id(7L).username("Usuario Siete").score(new BigDecimal("700.00")).build(),
-                User.builder().id(8L).username("Usuario Ocho").score(new BigDecimal("800.00")).build(),
-                User.builder().id(9L).username("Usuario Nueve").score(new BigDecimal("900.00")).build(),
-                User.builder().id(10L).username("Usuario Diez").score(new BigDecimal("1000.00")).build(),
-                User.builder().id(11L).username("Usuario Once").score(new BigDecimal("200.00")).build(),
-                User.builder().id(12L).username("Usuario Doce").score(new BigDecimal("300.00")).build()
+                User.builder().id(1L).userName("Usuario Uno").score(new BigDecimal("100.00")).build(),
+                User.builder().id(2L).userName("Usuario Dos").score(new BigDecimal("200.00")).build(),
+                User.builder().id(3L).userName("Usuario Tres").score(new BigDecimal("300.00")).build(),
+                User.builder().id(4L).userName("Usuario Cuatro").score(new BigDecimal("400.00")).build(),
+                User.builder().id(5L).userName("Usuario Cinco").score(new BigDecimal("500.00")).build(),
+                User.builder().id(6L).userName("Usuario Seis").score(new BigDecimal("600.00")).build(),
+                User.builder().id(7L).userName("Usuario Siete").score(new BigDecimal("700.00")).build(),
+                User.builder().id(8L).userName("Usuario Ocho").score(new BigDecimal("800.00")).build(),
+                User.builder().id(9L).userName("Usuario Nueve").score(new BigDecimal("900.00")).build(),
+                User.builder().id(10L).userName("Usuario Diez").score(new BigDecimal("1000.00")).build(),
+                User.builder().id(11L).userName("Usuario Once").score(new BigDecimal("200.00")).build(),
+                User.builder().id(12L).userName("Usuario Doce").score(new BigDecimal("300.00")).build()
         );
     }
 
@@ -98,7 +98,7 @@ public class UserServiceTest {
         for (int i = 0; i < 5; i++) {
             User user = sortedUsers.get(i);
             int position = i + 1; // La posición empieza en 1
-            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), position));
+            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), position));
         }
 
         Page<UserRankingProjection> projectionPage = new PageImpl<>(projections, pageable, sortedUsers.size());
@@ -155,7 +155,7 @@ public class UserServiceTest {
 
         for (int i = startIdx; i < endIdx; i++) {
             User user = sortedUsers.get(i);
-            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), i + 1));
+            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), i + 1));
         }
 
         Page<UserRankingProjection> projectionPage = new PageImpl<>(projections, expectedPageable, sortedUsers.size());
@@ -210,7 +210,7 @@ public class UserServiceTest {
 
         for (int i = 0; i < pageable.getPageSize(); i++) {
             User user = sortedUsers.get(i);
-            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), i + 1));
+            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), i + 1));
         }
 
         Page<UserRankingProjection> projectionPage = new PageImpl<>(projections, expectedPageable, sortedUsers.size());
@@ -264,7 +264,7 @@ public class UserServiceTest {
 
         for (int i = startIdx; i < endIdx; i++) {
             User user = sortedUsers.get(i);
-            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), i + 1));
+            projections.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), i + 1));
         }
 
         Page<UserRankingProjection> projectionPage = new PageImpl<>(projections, expectedPageable, sortedUsers.size());
@@ -343,7 +343,7 @@ public class UserServiceTest {
 
         for (int i = startIdx2; i < endIdx2; i++) {
             User user = sortedUsers.get(i);
-            projections2.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), i + 1));
+            projections2.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), i + 1));
         }
 
         Page<UserRankingProjection> projectionPage2 = new PageImpl<>(projections2, expectedPageable2, sortedUsers.size());
@@ -379,7 +379,7 @@ public class UserServiceTest {
 
         for (int i = startIdx11; i < endIdx11; i++) {
             User user = sortedUsers.get(i);
-            projections11.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), i + 1));
+            projections11.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), i + 1));
         }
 
         Page<UserRankingProjection> projectionPage11 = new PageImpl<>(projections11, expectedPageable11, sortedUsers.size());
@@ -435,7 +435,7 @@ public class UserServiceTest {
 
         for (int i = startIdx3; i < endIdx3; i++) {
             User user = sortedUsers.get(i);
-            projections3.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), i + 1));
+            projections3.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), i + 1));
         }
 
         Page<UserRankingProjection> projectionPage3 = new PageImpl<>(projections3, expectedPageable3, sortedUsers.size());
@@ -472,7 +472,7 @@ public class UserServiceTest {
 
         for (int i = startIdx12; i < endIdx12; i++) {
             User user = sortedUsers.get(i);
-            projections12.add(new UserRankingProjectionImpl(user.getId(), user.getUsername(), user.getScore(), i + 1));
+            projections12.add(new UserRankingProjectionImpl(user.getId(), user.getUserName(), user.getScore(), i + 1));
         }
 
         Page<UserRankingProjection> projectionPage12 = new PageImpl<>(projections12, expectedPageable12, sortedUsers.size());

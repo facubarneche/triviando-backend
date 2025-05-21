@@ -28,7 +28,7 @@ public interface UserDao extends JpaRepository<User, Long>{
 	Integer findUserRankPosition(@Param("userId") Long userId);
 
 	@Query(value = """
-    SELECT u.id as id, u.username as username, u.score as score, ranked.position as position
+    SELECT u.id as id, u.user_name as userName, u.score as score, ranked.position as position
     FROM (
         SELECT id, ROW_NUMBER() OVER (ORDER BY score DESC, id ASC) as position
         FROM users
