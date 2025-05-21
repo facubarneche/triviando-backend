@@ -9,6 +9,7 @@ import com.example.proyecto2025_BE.views.Views;
 import com.fasterxml.jackson.annotation.JsonView;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -37,10 +38,34 @@ public class UserController {
 	@Operation(summary = "Registrar usuario", description = "Se registra un nuevo usuario en el sistema",
 	responses = {
 	    @ApiResponse(responseCode = "200", description = "Usuario creado exitosamente",
-	                  content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-	    @ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema")
+	                  content = @Content(mediaType = "application/json",
+							  examples = @ExampleObject(value = """
+									{
+									"id": 1,
+									"fullName": "John Doe",
+									"email": "JohnDoe@example.com",
+									"phoneNumber": "1234567890",
+									"birthDate": "1990-05-15",
+									"age": 30
+									}"""))),
+	    @ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema",
+	                  content = @Content(mediaType = "application/json",
+					  examples = @ExampleObject(value = """
+									{
+									"error": "El usuario ya existe en el sistema"
+									}""")))
 	})
     public ResponseEntity<User> create(
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(value = """
+									{
+									"fullName": "John Doe",
+									"email": "JohnDoe@example.com",
+									"password": "123456"
+									}""")
+					))
 			@RequestBody
 			@JsonView(Views.RegisterRequest.class)
 			@Validated(Views.RegisterRequest.class)
