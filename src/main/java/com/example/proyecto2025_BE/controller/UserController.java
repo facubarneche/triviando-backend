@@ -123,10 +123,31 @@ public class UserController {
 	@Operation(summary = "Login de usuario", description = "Autentica a un usuario basado en su correo y contraseña",
     responses = {
         @ApiResponse(responseCode = "200", description = "Usuario autenticado",
-                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-        @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND)
+                     content = @Content(mediaType = "application/json",
+							 examples = @ExampleObject(value = """
+									{
+									"id": 1,
+									"fullName": "John Doe",
+									"userName": "JohnDoe"
+									}"""))),
+        @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
+				content = @Content(mediaType = "application/json",
+						examples = @ExampleObject(value = """
+									{
+									"error": "Recurso no encontrado"
+									}""")))
     })
-    public ResponseEntity<User> login(@RequestBody @Valid User user) {
+    public ResponseEntity<User> login(
+			@io.swagger.v3.oas.annotations.parameters.RequestBody(
+					content = @Content(
+							mediaType = "application/json",
+							examples = @ExampleObject(value = """
+									{
+									"email": "JohnDoe@example.com",
+									"password": "123456"
+									}""")
+					))
+			@RequestBody @Valid User user) {
 		User logged = this.userService.findByEmailAndPassword(user);
         
         return ResponseEntity.ok(logged);
