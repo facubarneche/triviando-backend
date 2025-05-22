@@ -13,4 +13,8 @@ public interface Views {
 	public static interface Register {}
 
 	public static interface RegisterRequest {}
+
+	public static interface GetUser {}
+
+	public static interface UpdateUser {}
 }

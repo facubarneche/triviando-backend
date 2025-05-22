@@ -36,7 +36,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1990, 5, 15))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .userName("johny_doe")
+                        .username("johny_doe")
                         .build();
 
                 User user2 = User.builder()
@@ -47,7 +47,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1985, 10, 22))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .userName("jane_smithy")
+                        .username("jane_smithy")
                         .build();
 
                 User user3 = User.builder()
@@ -60,7 +60,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(100.00))
                         .rachaActual(0)
-                        .userName("user_three")
+                        .username("user_three")
                         .build();
 
                 User user4 = User.builder()
@@ -73,7 +73,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(200.00))
                         .rachaActual(0)
-                        .userName("user_four")
+                        .username("user_four")
                         .build();
 
                 User user5 = User.builder()
@@ -86,7 +86,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(300.00))
                         .rachaActual(0)
-                        .userName("user_five")
+                        .username("user_five")
                         .build();
 
                 User user6 = User.builder()
@@ -99,7 +99,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(400.00))
                         .rachaActual(0)
-                        .userName("user_six")
+                        .username("user_six")
                         .build();
 
                 User user7 = User.builder()
@@ -112,7 +112,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(500.00))
                         .rachaActual(0)
-                        .userName("user_seven")
+                        .username("user_seven")
                         .build();
 
                 User user8 = User.builder()
@@ -125,7 +125,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(600.00))
                         .rachaActual(0)
-                        .userName("user_eight")
+                        .username("user_eight")
                         .build();
 
                 User user9 = User.builder()
@@ -138,7 +138,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(700.00))
                         .rachaActual(0)
-                        .userName("user_nine")
+                        .username("user_nine")
                         .build();
 
                 User user10 = User.builder()
@@ -151,7 +151,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(800.00))
                         .rachaActual(0)
-                        .userName("user_ten")
+                        .username("user_ten")
                         .build();
 
                 User user11 = User.builder()
@@ -164,7 +164,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(900.00))
                         .rachaActual(0)
-                        .userName("user_eleven")
+                        .username("user_eleven")
                         .build();
 
                 User user12 = User.builder()
@@ -177,7 +177,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .score(BigDecimal.valueOf(1000.00))
                         .rachaActual(0)
-                        .userName("user_twelve")
+                        .username("user_twelve")
                         .build();
                 
                 userDao.saveAll(List.of(user1, user2, user3, user4, user5, user6, user7, user8, user9, user10, user11, user12));
