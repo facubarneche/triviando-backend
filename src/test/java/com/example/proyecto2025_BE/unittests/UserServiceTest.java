@@ -67,7 +67,7 @@ public class UserServiceTest {
     }
     @AfterEach
     void tearDown() {
-        Mockito.reset(userDao);  
+        Mockito.reset(userDao);
     }
 
     private List<User> getSortedUsers() {

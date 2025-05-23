@@ -53,9 +53,10 @@ public class UserService {
 		properties.forEach((key, value) -> {
 			switch (key) {
 				case "fullName" -> user.setFullName(value.toString());
+				case "username" -> user.setUsername(value.toString());
 				case "email" -> user.setEmail(value.toString());
 				case "password" -> user.setPassword(value.toString());
-				case "birthday" -> user.setBirthDate(LocalDate.parse(value.toString()));
+				case "birthDate" -> user.setBirthDate(LocalDate.parse(value.toString()));
 				case "phoneNumber" -> user.setPhoneNumber(value.toString());
 				default -> throw ValidationException.build("La propiedad no existe o no puede ser modificada");
 			}

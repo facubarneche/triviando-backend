@@ -7,6 +7,10 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -42,41 +46,65 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class})
+	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class, Views.Register.class,Views.GetUser.class})
 	private Long id;
-	@JsonView(Views.Login.class)
+
+	@JsonView({Views.Login.class, Views.Register.class, Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
 	private String fullName;
+
 	@Transient
 	private int age;
+
+	@JsonView({Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
+	@NotBlank(groups = Views.RegisterRequest.class, message = "El email no puede estar vacío")
+	@Email(groups = Views.RegisterRequest.class, message = "El email no tiene un formato válido")
 	private String email;
+
+	@JsonView(Views.RegisterRequest.class)
+	@NotBlank(groups = Views.RegisterRequest.class, message = "La contraseña no puede estar vacía")
 	private String password;
+
+	@JsonView({Views.UpdateUser.class,Views.GetUser.class})
 	private String phoneNumber;
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
+	@JsonView({Views.RegisterRequest.class,Views.UpdateUser.class})
 	private LocalDate birthDate;
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
 	@CreationTimestamp
+	@JsonView(Views.GetUser.class)
 	private LocalDateTime createdAt;
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
+
 	@Builder.Default
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
 	@JoinColumn(name = "user_id")
 	private List<Answer> answers = new ArrayList<>();
+
 	@Builder.Default
 	@JsonView({Views.Ranking.class,Views.Score.class})
 	private BigDecimal score = BigDecimal.ZERO;
-	@JsonView({Views.Login.class,Views.Ranking.class})
+
+	@JsonView({Views.Login.class,Views.Ranking.class,Views.Register.class,Views.RegisterRequest.class,Views.UpdateUser.class})
+	@NotBlank(groups = Views.RegisterRequest.class, message = "El username no puede estar vacío")
 	private String username;
+
 	@JsonView(Views.Racha.class)
 	private Integer rachaActual;
+
 	@JsonView(Views.Racha.class)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
 	private LocalDate ultimaActividad;
+
 	@JsonView(Views.Ranking.class)
 	@Transient
 	private int position;
 
+	@JsonView(Views.GetUser.class)
 	public Integer getAge() {
 		if (birthDate == null){
 			return null;

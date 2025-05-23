@@ -4,7 +4,6 @@ import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.example.proyecto2025_BE.model.dto.register.UserRequestDTO;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -115,10 +114,11 @@ public class UserControllerTest {
     @Test
     @DisplayName("Se crea un user de manera exitosa")
     void createTest() throws Exception {
-        UserRequestDTO userRequestDTO = UserRequestDTO.builder()
-                .fullName("Pepe Palala")
+        User userRequestDTO = User.builder()
+                .username("PepePalala")
                 .email("pepe.palala@gmail.com")
                 .password("123456")
+                .createdAt(LocalDateTime.now())
                 .build();
 
         String requestBody = mapper.writeValueAsString(userRequestDTO);
@@ -127,8 +127,139 @@ public class UserControllerTest {
                         .contentType("application/json")
                         .content(requestBody))
                 .andExpect(content().contentType("application/json"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
+
+    @Test
+    @DisplayName("Error al crear un usuario con email vacío")
+    void createUserWithEmptyEmailTest() throws Exception {
+        User invalidUser = User.builder()
+                .fullName("Test User")
+                .email("")
+                .password("password123")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        String requestBody = mapper.writeValueAsString(invalidUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").exists());
+    }
+
+    @Test
+    @DisplayName("Error al crear un usuario con email inválido")
+    void createUserWithInvalidEmailFormatTest() throws Exception {
+        User invalidUser = User.builder()
+                .fullName("Test User")
+                .email("invalid-email")
+                .password("password123")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        String requestBody = mapper.writeValueAsString(invalidUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").exists());
+    }
+
+    @Test
+    @DisplayName("Error al crear un usuario con nombre vacío")
+    void createUserWithEmptyFullNameTest() throws Exception {
+        User invalidUser = User.builder()
+                .fullName("")
+                .email("test@example.com")
+                .password("password123")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        String requestBody = mapper.writeValueAsString(invalidUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").exists());
+    }
+
+    @Test
+    @DisplayName("Error al crear un usuario con contraseña vacía")
+    void createUserWithEmptyPasswordTest() throws Exception {
+        User invalidUser = User.builder()
+                .fullName("Test User")
+                .email("test@example.com")
+                .password("")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        String requestBody = mapper.writeValueAsString(invalidUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").exists());
+    }
+
+    @Test
+    @DisplayName("Error al crear un usuario con campos nulos")
+    void createUserWithNullFieldsTest() throws Exception {
+        User invalidUser = User.builder()
+                .fullName(null)
+                .email(null)
+                .password(null)
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        String requestBody = mapper.writeValueAsString(invalidUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").exists());
+    }
+
+    @Test
+    @DisplayName("Error al crear un usuario que ya existe")
+    void createDuplicateUserTest() throws Exception {
+
+        User user = User.builder()
+                .fullName("Existing User")
+                .email("existing@example.com")
+                .password("password123")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        dao.save(user);
+
+        User duplicateUser = User.builder()
+                .fullName("Another User")
+                .email("existing@example.com")
+                .password("differentpassword")
+                .createdAt(LocalDateTime.now())
+                .build();
+
+        String requestBody = mapper.writeValueAsString(duplicateUser);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/users")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$").exists());
+    }
+
 
     @Test
     @DisplayName("Estadisticas de un user que ha respondido preguntas")
@@ -278,7 +409,7 @@ public class UserControllerTest {
                 .fullName("Pancho Rancho")
                 .username("pancho_rancho_1746")
                 .createdAt(LocalDateTime.now())
-    			.build();
+    			      .build();
     	
     	dao.save(registeredUser);
     	
