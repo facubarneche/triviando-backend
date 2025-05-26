@@ -30,7 +30,7 @@ public abstract class Prompter {
 	protected PreguntaService preguntaService;
 	
 	public String buildPrompt() {
-		return String.format(TEMPLATE_PROMPT, questionsQuantity(), topic);
+		return String.format(TEMPLATE_PROMPT, questionsQuantity(), topic.toLowerCase());
 	}
 	
 	protected abstract String questionsQuantity();
