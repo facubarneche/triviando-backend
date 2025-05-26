@@ -1,5 +1,23 @@
 package com.example.proyecto2025_BE.controller;
 
+import java.util.Map;
+
+import org.apache.logging.log4j.util.Strings;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
@@ -12,13 +30,13 @@ import com.example.proyecto2025_BE.views.users.login.request.UserLoginRequest;
 import com.example.proyecto2025_BE.views.users.login.response.UserLoginResponse200;
 import com.example.proyecto2025_BE.views.users.racha.UserRachaResponse;
 import com.example.proyecto2025_BE.views.users.ranking.PageUserRankingResponse;
-import com.example.proyecto2025_BE.views.users.ranking.UserRankingResponse;
 import com.example.proyecto2025_BE.views.users.register.request.UserRegisterRequest;
 import com.example.proyecto2025_BE.views.users.register.response.UserRegisterResponse;
 import com.example.proyecto2025_BE.views.users.score.UserScoreResponse;
 import com.example.proyecto2025_BE.views.users.update.request.UpdateUserRequest;
 import com.example.proyecto2025_BE.views.users.update.response.UpdateUserResponse;
 import com.fasterxml.jackson.annotation.JsonView;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -27,14 +45,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.apache.logging.log4j.util.Strings;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")

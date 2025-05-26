@@ -7,10 +7,6 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -31,6 +27,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -89,7 +87,12 @@ public class User {
 	@JsonView({Views.Ranking.class,Views.Score.class})
 	private BigDecimal score = BigDecimal.ZERO;
 
-	@JsonView({Views.Login.class,Views.Ranking.class,Views.Register.class,Views.RegisterRequest.class,Views.UpdateUser.class})
+	@JsonView({Views.Login.class,
+		Views.Ranking.class,
+		Views.Register.class,
+		Views.RegisterRequest.class,
+		Views.UpdateUser.class,
+		Views.GetUser.class})
 	@NotBlank(groups = Views.RegisterRequest.class, message = "El username no puede estar vacío")
 	private String username;
 
