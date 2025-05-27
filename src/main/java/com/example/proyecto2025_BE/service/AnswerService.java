@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +26,7 @@ public class AnswerService {
 
 		User user = userService.retrieve(answer.getUser().getId());
 		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
-		
+		answer.setFechaRespuesta(LocalDate.now());
 		BigDecimal score = answer.getScoreBy(question);
 		user.add(answer);
 		user.add(score);
