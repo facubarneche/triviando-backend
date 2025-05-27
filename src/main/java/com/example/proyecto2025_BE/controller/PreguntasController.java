@@ -47,7 +47,8 @@ public class PreguntasController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Obtiene todas las preguntas o las preguntas por tópico",
             description = "Si se proporciona un parámetro 'topico', devuelve las preguntas asociadas a ese tópico. " +
-                    "De lo contrario, devuelve todas las preguntas.")
+                    "De lo contrario, devuelve todas las preguntas." +
+                    "Si se proporciona una userId valido, filtrará las preguntas ya respondidas por el mismo.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de preguntas obtenido exitosamente",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pregunta.class))),
