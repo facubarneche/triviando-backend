@@ -87,7 +87,12 @@ public class User {
 	@JsonView({Views.Ranking.class,Views.Score.class})
 	private BigDecimal score = BigDecimal.ZERO;
 
-	@JsonView({Views.Login.class,Views.Ranking.class,Views.Register.class,Views.RegisterRequest.class,Views.UpdateUser.class})
+	@JsonView({Views.Login.class,
+		Views.Ranking.class,
+		Views.Register.class,
+		Views.RegisterRequest.class,
+		Views.UpdateUser.class,
+		Views.GetUser.class})
 	@NotBlank(groups = Views.RegisterRequest.class, message = "El username no puede estar vacío")
 	private String username;
 
