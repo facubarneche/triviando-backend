@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.utils.JsonViewPage;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +33,7 @@ import com.example.proyecto2025_BE.exceptions.ValidationException;
 public class UserService {
 
 	private final UserDao userDao;
+	private final RespuestasDao answerDao;
 
 	public User create(User user) {
 		Optional<User> fetched = userDao.findByEmail(user.getEmail());
@@ -124,5 +127,12 @@ public class UserService {
 				.toList();
 
 		return PageRequest.of(page, size, Sort.by(orders));
+	}
+
+	public StatsResponse getStatisticsFromUser(Long userId) {
+		var totalQuestions = answerDao.countByUserId(userId);
+		var correctAnswers = answerDao.countByUserIdAndErrorReasonIsNull(userId);
+		var totalQuizzes = totalQuestions / 5;
+		return new StatsResponse(totalQuizzes, correctAnswers, totalQuestions);
 	}
 }

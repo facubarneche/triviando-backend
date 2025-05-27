@@ -32,8 +32,9 @@ public class Answer {
     @JsonIgnore
     private Long id;
     private String questionId;
-    @Transient
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @Enumerated(EnumType.STRING)
     private LetterOption optionSelected;
     private long millisecondsSpent;

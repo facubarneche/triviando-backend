@@ -22,7 +22,8 @@ public class AnswerService {
 
 	@Transactional
 	public FeedbackAnswer answer(Answer answer) {
-		User user = userService.retrieve(answer.getUserId());
+
+		User user = userService.retrieve(answer.getUser().getId());
 		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
 		
 		BigDecimal score = answer.getScoreBy(question);
