@@ -1,0 +1,22 @@
+package com.example.proyecto2025_BE.views.answers.request;
+
+import com.example.proyecto2025_BE.model.LetterOption;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@Schema(description = "Representa los datos de entrada de la pregunta respondida")
+public class AnswerRequest {
+	 	
+	@Schema(description = "Id de pregunta respondida", example = "bb5c6bf4-4dec-4ab7-b3fc-ac34940ccf6d")
+	private String questionId;
+	@Schema(description = "Id del usuario que responde", example = "2373245246753")
+    private Long userId;
+	@Schema(description = "Letra de la opcion seleccionada", example = "A")
+    private LetterOption optionSelected;
+	@Schema(description = "Tiempo en milisegundos empleados en responder", example = "25000")
+    private long millisecondsSpent;
+}

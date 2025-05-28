@@ -10,11 +10,13 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.service.AnswerService;
+import com.example.proyecto2025_BE.views.answers.request.AnswerRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 
@@ -28,11 +30,16 @@ public class AnswerController {
 	private final AnswerService answerService;
 
 	@PostMapping
-	@Operation(summary = "Creacion de respuesta", description = "Suma puntaje a un usuario de una pregunta respondida",
-    responses = {
+	@Operation(summary = "Creacion de respuesta", description = "Suma puntaje a un usuario de una pregunta respondida")
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			required = true,
+			content = @Content(
+					mediaType = "application/json",
+					schema = @Schema(implementation = AnswerRequest.class)))
+	@ApiResponses(
         @ApiResponse(responseCode = "200", description = "Puntaje al usuario actualizado",
-         content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeedbackAnswer.class))),
-    })
+         content = @Content(mediaType = "application/json", schema = @Schema(implementation = FeedbackAnswer.class)))
+    )
     public ResponseEntity<FeedbackAnswer> answer(@RequestBody Answer answer) {
 		FeedbackAnswer feedback = answerService.answer(answer);
 		
