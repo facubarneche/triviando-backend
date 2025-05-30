@@ -21,21 +21,28 @@ public interface UserDao extends JpaRepository<User, Long>{
 
 	@Query(value =
 			"SELECT position FROM (" +
-					"  SELECT id, ROW_NUMBER() OVER (ORDER BY score DESC, id ASC) as position " +
-					"  FROM users" +
+					"  SELECT u.id, SUM(a.score) as total_score, ROW_NUMBER() OVER (ORDER BY SUM(a.score) DESC, u.id ASC) as position " +
+					"  FROM users u LEFT JOIN answer a ON u.id = a.user_id " +
+					"  GROUP BY u.id " +
 					") ranked WHERE ranked.id = :userId",
 			nativeQuery = true)
 	Integer findUserRankPosition(@Param("userId") Long userId);
 
 	@Query(value = """
-    SELECT u.id as id, u.username as username, u.score as score, ranked.position as position
-    FROM (
-        SELECT id, ROW_NUMBER() OVER (ORDER BY score DESC, id ASC) as position
-        FROM users
-    ) ranked
-    JOIN users u ON u.id = ranked.id
-    """,
-			countQuery = "SELECT COUNT(*) FROM users",
+       SELECT u.id as id, u.username as username, COALESCE(SUM(a.score), 0) as score, ranked.position as position
+       FROM (
+          SELECT u_inner.id, COALESCE(SUM(a_inner.score), 0) as total_score,
+                ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(a_inner.score), 0) DESC, u_inner.id ASC) as position
+          FROM users u_inner
+          LEFT JOIN answer a_inner ON u_inner.id = a_inner.user_id
+          GROUP BY u_inner.id
+       ) ranked
+       JOIN users u ON u.id = ranked.id
+       LEFT JOIN answer a ON u.id = a.user_id
+       GROUP BY u.id, u.username, ranked.position
+       ORDER BY ranked.position ASC, u.id ASC
+       """,
+			countQuery = "SELECT COUNT(DISTINCT u.id) FROM users u LEFT JOIN answer a ON u.id = a.user_id",
 			nativeQuery = true)
 	Page<UserRankingProjection> findAllUsersWithRank(Pageable pageable);
 }

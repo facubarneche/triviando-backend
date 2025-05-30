@@ -83,9 +83,9 @@ public class UserService {
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	public Page<User> getUsersOrderedByScoreDesc(int page,int size, String[] sort) {
+	public Page<User> getUsersOrderedByScoreDesc(int page,int size ) {
 
-		Pageable pageable = createPageable(page, size, sort);
+		Pageable pageable = createPageable(page, size);
 		Page<UserRankingProjection> projectionPage = userDao.findAllUsersWithRank(pageable);
 		List<User> users = projectionPage.getContent().stream()
 				.map(this::convertProjectionToUser)
@@ -93,16 +93,16 @@ public class UserService {
 		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
 	}
 
-	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size, String[] sort) {
+	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size) {
 		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
 
 		if (userPosition == null || userPosition <= 0) {
-			return getUsersOrderedByScoreDesc(page,size,sort);
+			return getUsersOrderedByScoreDesc(page,size);
 		}
 		int zeroBasedPosition = userPosition - 1;
-		int pageNumber = zeroBasedPosition / size;
-		return getUsersOrderedByScoreDesc(pageNumber,size,sort);
+		int pageNumber = zeroBasedPosition / size;//3
+		return getUsersOrderedByScoreDesc(pageNumber,size);
 	}
 
 	private User convertProjectionToUser(UserRankingProjection projection) {
@@ -112,21 +112,8 @@ public class UserService {
 		return user;
 	}
 
-	private Pageable createPageable(int page, int size, String[] sortParams) {
-		if (sortParams == null || sortParams.length == 0) {
-			Sort defaultSort = Sort.by("score").descending().and(Sort.by("id").ascending());
-			return PageRequest.of(page, size, defaultSort);
-		}
-
-		List<Sort.Order> orders = Arrays.stream(sortParams)
-				.map(param -> param.split(",", 2))
-				.map(parts -> new Sort.Order(
-						parts.length > 1 && parts[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
-						parts[0]
-				))
-				.toList();
-
-		return PageRequest.of(page, size, Sort.by(orders));
+	private Pageable createPageable(int page, int size) {
+			return PageRequest.of(page, size);
 	}
 
 	public StatsResponse getStatisticsFromUser(Long userId) {

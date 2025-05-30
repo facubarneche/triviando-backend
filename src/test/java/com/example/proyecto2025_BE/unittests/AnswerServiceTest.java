@@ -34,7 +34,6 @@ public class AnswerServiceTest {
 		
 		User user = User.builder()
 				.id(1L)
-				.score(BigDecimal.ZERO)
 				.build();
 		
 		correctOption = Option.builder()

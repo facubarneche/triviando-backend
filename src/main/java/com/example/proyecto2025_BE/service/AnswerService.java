@@ -10,7 +10,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -25,15 +25,14 @@ public class AnswerService {
 
 		User user = userService.retrieve(answer.getUser().getId());
 		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
-		
-		BigDecimal score = answer.getScoreBy(question);
+		answer.setFechaRespuesta(LocalDate.now());
+		answer.impactScore(question);
 		user.add(answer);
-		user.add(score);
 		userInvoker.executeCommand(new ActualizarRachaCommand(user));
 		userService.update(user);
 
 		return FeedbackAnswer.builder()
-				.score(score)
+				.score(answer.getScore())
 				.explanation(question.getExplicacion())
 				.errorReason(answer.getErrorReason())
 				.correctOption(question.getCorrectOption())

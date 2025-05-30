@@ -1,17 +1,14 @@
 package com.example.proyecto2025_BE.configuration;
 
-import com.example.proyecto2025_BE.model.User;
-
-import lombok.RequiredArgsConstructor;
-
 import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +19,8 @@ import java.util.List;
 public class MySQLConfig {
 
 	private final UserDao userDao;
-	
+    private static String mySecret = "mysecret";
+
 	@Bean
     @Transactional
     public CommandLineRunner initMySQLData() {
@@ -36,6 +34,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1990, 5, 15))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
+                        .rachaActual(0)
                         .username("johny_doe")
                         .build();
 
@@ -47,6 +46,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1985, 10, 22))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
+                        .rachaActual(0)
                         .username("jane_smithy")
                         .build();
 
@@ -58,7 +58,6 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1996, 3, 10)) // Corrected month value
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(100.00))
                         .rachaActual(0)
                         .username("user_three")
                         .build();
@@ -71,7 +70,6 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1988, 11, 25))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(200.00))
                         .rachaActual(0)
                         .username("user_four")
                         .build();
@@ -79,12 +77,11 @@ public class MySQLConfig {
                 User user5 = User.builder()
                         .fullName("User five")
                         .email("user5@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1995, 7, 1))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(300.00))
                         .rachaActual(0)
                         .username("user_five")
                         .build();
@@ -92,12 +89,11 @@ public class MySQLConfig {
                 User user6 = User.builder()
                         .fullName("User six")
                         .email("user6@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1982, 5, 20))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(400.00))
                         .rachaActual(0)
                         .username("user_six")
                         .build();
@@ -105,12 +101,11 @@ public class MySQLConfig {
                 User user7 = User.builder()
                         .fullName("User seven")
                         .email("user7@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1993, 9, 15))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(500.00))
                         .rachaActual(0)
                         .username("user_seven")
                         .build();
@@ -118,12 +113,11 @@ public class MySQLConfig {
                 User user8 = User.builder()
                         .fullName("User eight")
                         .email("user8@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1979, 1, 5))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(600.00))
                         .rachaActual(0)
                         .username("user_eight")
                         .build();
@@ -131,12 +125,11 @@ public class MySQLConfig {
                 User user9 = User.builder()
                         .fullName("User nine")
                         .email("user9@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1998, 6, 30))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(700.00))
                         .rachaActual(0)
                         .username("user_nine")
                         .build();
@@ -144,12 +137,11 @@ public class MySQLConfig {
                 User user10 = User.builder()
                         .fullName("User ten")
                         .email("user10@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1986, 4, 12))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(800.00))
                         .rachaActual(0)
                         .username("user_ten")
                         .build();
@@ -157,12 +149,11 @@ public class MySQLConfig {
                 User user11 = User.builder()
                         .fullName("User eleven")
                         .email("user11@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1991, 12, 1))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(900.00))
                         .rachaActual(0)
                         .username("user_eleven")
                         .build();
@@ -170,12 +161,11 @@ public class MySQLConfig {
                 User user12 = User.builder()
                         .fullName("User twelve")
                         .email("user12@example.com")
-                        .password("mysecret")
+                        .password(mySecret)
                         .phoneNumber("999-888-7777")
                         .birthDate(LocalDate.of(1980, 8, 18))
                         .createdAt(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(1000.00))
                         .rachaActual(0)
                         .username("user_twelve")
                         .build();
