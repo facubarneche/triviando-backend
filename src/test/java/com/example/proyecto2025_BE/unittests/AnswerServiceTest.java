@@ -1,29 +1,22 @@
 package com.example.proyecto2025_BE.unittests;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-
+import com.example.proyecto2025_BE.model.*;
+import com.example.proyecto2025_BE.service.AnswerService;
+import com.example.proyecto2025_BE.service.PreguntaService;
+import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.service.command.UserInvoker;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import com.example.proyecto2025_BE.model.Answer;
-import com.example.proyecto2025_BE.model.Difficulty;
-import com.example.proyecto2025_BE.model.FeedbackAnswer;
-import com.example.proyecto2025_BE.model.LetterOption;
-import com.example.proyecto2025_BE.model.Option;
-import com.example.proyecto2025_BE.model.Pregunta;
-import com.example.proyecto2025_BE.model.User;
-import com.example.proyecto2025_BE.service.AnswerService;
-import com.example.proyecto2025_BE.service.PreguntaService;
-import com.example.proyecto2025_BE.service.UserService;
+import java.math.BigDecimal;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 @DisplayName("Answer Service Test")
 public class AnswerServiceTest {
@@ -34,7 +27,7 @@ public class AnswerServiceTest {
 	private static Option correctOption;
 	private static Answer.AnswerBuilder answerbuilder;
 	private static UserInvoker userInvoker;
-	
+
 	@BeforeAll
 	static void beforeAll() {
 		userServiceMock = mock(UserService.class);

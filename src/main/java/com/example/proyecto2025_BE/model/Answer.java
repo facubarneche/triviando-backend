@@ -1,18 +1,17 @@
 package com.example.proyecto2025_BE.model;
 
+import com.example.proyecto2025_BE.constants.UnsuccessReasons;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-
-import com.example.proyecto2025_BE.constants.UnsuccessReasons;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -40,6 +39,7 @@ public class Answer {
     private long millisecondsSpent;
     @JsonIgnore
     private String errorReason;
+    private LocalDate fechaRespuesta;
 
     public BigDecimal getScoreBy(Pregunta question) {
         if (isSuccess(question)) {

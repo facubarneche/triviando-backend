@@ -31,3 +31,7 @@ llm:
   auth: Basic Z2VtbWEzOkxvc1BpYml0b3NEZUxhVW5zYW1NYW5kYW4u
   logRequests: true
   logResponses: true
+
+api:
+  preguntas:
+    cantidad: 5

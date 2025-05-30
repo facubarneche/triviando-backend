@@ -47,18 +47,16 @@ public class PreguntasController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Obtiene todas las preguntas o las preguntas por tópico",
             description = "Si se proporciona un parámetro 'topico', devuelve las preguntas asociadas a ese tópico. " +
-                    "De lo contrario, devuelve todas las preguntas.")
+                    "De lo contrario, devuelve todas las preguntas." +
+                    "Si se proporciona una userId valido, filtrará las preguntas ya respondidas por el mismo.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de preguntas obtenido exitosamente",
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pregunta.class))),
             @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND, content = @Content)
     })
-    public List<Pregunta> getPreguntas(@RequestParam(value = "topico", required = false) String topico) {
-        if (topico == null) {
-            return preguntasService.getAllPreguntas();
-        } else {
-            return preguntasService.getPreguntasByTopico(topico);
-        }
+    public List<Pregunta> getPreguntas(@RequestParam(value = "userId", required = false) Long userId,
+                                       @RequestParam(value = "topico", required = false) String topico) {
+        return preguntasService.obtenerPreguntasNoRespondidasPorTopico(userId,topico);
     }
 
     @GetMapping("/{id}")
