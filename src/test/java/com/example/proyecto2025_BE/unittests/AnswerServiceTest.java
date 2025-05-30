@@ -22,20 +22,19 @@ import static org.mockito.Mockito.when;
 public class AnswerServiceTest {
 
 	private static AnswerService answerService;
-	private static UserService userServiceMock;
-	private static PreguntaService preguntaServiceMock;
-	private static Option correctOption;
+    private static Option correctOption;
 	private static Answer.AnswerBuilder answerbuilder;
-	private static UserInvoker userInvoker;
 
-	@BeforeAll
+    @BeforeAll
 	static void beforeAll() {
-		userServiceMock = mock(UserService.class);
-		preguntaServiceMock = mock(PreguntaService.class);
-		userInvoker = mock(UserInvoker.class);
-		answerService = new AnswerService(userServiceMock, preguntaServiceMock,userInvoker);
+        UserService userServiceMock = mock(UserService.class);
+        PreguntaService preguntaServiceMock = mock(PreguntaService.class);
+        UserInvoker userInvoker = mock(UserInvoker.class);
+		answerService = new AnswerService(userServiceMock, preguntaServiceMock, userInvoker);
 		
 		User user = User.builder()
+				.id(1L)
+				.score(BigDecimal.ZERO)
 				.build();
 		
 		correctOption = Option.builder()
@@ -49,7 +48,7 @@ public class AnswerServiceTest {
 		
 		answerbuilder = Answer.builder()
 				.questionId("e3r4g5th4nb3rg4t")
-				.userId(12345L);
+				.user(user);
 		
 		when(userServiceMock.retrieve(anyLong())).thenReturn(user);
 		when(preguntaServiceMock.getPreguntaById(anyString())).thenReturn(pregunta);

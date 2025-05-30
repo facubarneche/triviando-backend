@@ -1,15 +1,14 @@
 package com.example.proyecto2025_BE.unittests;
 
+import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
 import lombok.AllArgsConstructor;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,6 +27,9 @@ public class UserServiceTest {
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private RespuestasDao answerDao;
 
     @InjectMocks
     private UserService userService;
@@ -490,6 +492,19 @@ public class UserServiceTest {
         // Assert para usuario 12
         assertNotNull(result12);
         assertEquals(pageNumber12, result12.getNumber());
+    }
+
+    @Test
+    @DisplayName("Estadisticas usuario: contesto bien 4 de 5 preguntas")
+    void getUserStatistics_4of5Answers() {
+
+        when(answerDao.countByUserId(anyLong())).thenReturn(5);
+        when(answerDao.countByUserIdAndErrorReasonIsNull(anyLong())).thenReturn(4);
+
+        StatsResponse expectedStatsResponse = new StatsResponse(1, 4, 5);
+        StatsResponse statsResponse = userService.getStatisticsFromUser(anyLong());
+
+        assertEquals(expectedStatsResponse, statsResponse);
     }
 
     private Pageable createPageable(int page, int size, String[] sortParams) {

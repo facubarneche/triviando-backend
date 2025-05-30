@@ -1,10 +1,10 @@
 package com.example.proyecto2025_BE.dao;
 
-import com.example.proyecto2025_BE.model.Respuesta;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import com.example.proyecto2025_BE.model.Answer;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface RespuestasDao extends MongoRepository<Respuesta, String> {
+public interface RespuestasDao extends JpaRepository<Answer, Long> {
 
-    Integer countByUsuarioId(Long usuarioId);
-    Integer countByUsuarioIdAndCorrectaTrue(Long usuarioId);
+    Integer countByUserId(Long usuarioId);
+    Integer countByUserIdAndErrorReasonIsNull(Long userId);
 }
