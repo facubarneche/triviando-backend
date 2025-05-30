@@ -41,13 +41,18 @@ public class Answer {
     @JsonIgnore
     private String errorReason;
     private LocalDate fechaRespuesta;
+    private BigDecimal score = BigDecimal.ZERO;
 
-    public BigDecimal getScoreBy(Pregunta question) {
+    public void impactScore(Pregunta question) {
         if (isSuccess(question)) {
-            return calculateScoreBy(question);
+            score =  calculateScoreBy(question);
+            return ;
         }
         errorReason = errorReason != null ? errorReason : UnsuccessReasons.INCORRECT_OPTION;
-        return BigDecimal.ZERO;
+    }
+
+    public BigDecimal getScore(){
+        return score == null ? BigDecimal.ZERO : score;
     }
 
     private BigDecimal calculateScoreBy(Pregunta question) {

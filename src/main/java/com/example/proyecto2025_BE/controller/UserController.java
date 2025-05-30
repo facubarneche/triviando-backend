@@ -170,9 +170,8 @@ public class UserController {
 			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
 	ResponseEntity<Page<User>> getUsersOrderedByScoreDesc(@RequestParam(defaultValue = "0") int page,
-														  @RequestParam(defaultValue = "10") int size,
-														  @RequestParam(required = false) String[] sort) {
-		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(page,size,sort));
+														  @RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(page,size));
 	}
 
 	@GetMapping("/ranking/{userId}")
@@ -187,7 +186,7 @@ public class UserController {
 															  @RequestParam(defaultValue = "0") int page,
 															  @RequestParam(defaultValue = "10") int size, @
 															  RequestParam(required = false) String[] sort){
-		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, page,size,sort));
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, page,size));
 	}
 
 	@GetMapping("/racha/{userId}")
