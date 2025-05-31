@@ -52,7 +52,8 @@ public class UserService {
 
 		properties.forEach((key, value) -> {
 			switch (key) {
-				case "fullName" -> user.setFullName(value.toString());
+				case "name" -> user.setName(value.toString());
+				case "lastName" -> user.setLastName(value.toString());
 				case "username" -> user.setUsername(value.toString());
 				case "email" -> user.setEmail(value.toString());
 				case "password" -> user.setPassword(value.toString());
