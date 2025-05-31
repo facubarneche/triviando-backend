@@ -1,14 +1,10 @@
 package com.example.proyecto2025_BE.service;
 
 
-import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
-import com.example.proyecto2025_BE.utils.JsonViewPage;
-import com.example.proyecto2025_BE.utils.UserRankingProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,8 +16,9 @@ import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
-import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.utils.JsonViewPage;
+import com.example.proyecto2025_BE.utils.UserRankingProjection;
 
 import lombok.RequiredArgsConstructor;
 
@@ -48,25 +45,9 @@ public class UserService {
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	public User update(User user, Map<String, Object> properties) {
-
-		properties.forEach((key, value) -> {
-			switch (key) {
-				case "name" -> user.setName(value.toString());
-				case "lastName" -> user.setLastName(value.toString());
-				case "username" -> user.setUsername(value.toString());
-				case "email" -> user.setEmail(value.toString());
-				case "password" -> user.setPassword(value.toString());
-				case "birthDate" -> user.setBirthDate(LocalDate.parse(value.toString()));
-				case "phoneNumber" -> user.setPhoneNumber(value.toString());
-				default -> throw ValidationException.build("La propiedad no existe o no puede ser modificada");
-			}
-		});
-
-		return userDao.save(user);
-	}
-
 	public User update(User user) {
+		this.retrieve(user.getId());
+		
 		return userDao.save(user);
 	}
 

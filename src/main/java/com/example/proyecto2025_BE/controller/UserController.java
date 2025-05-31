@@ -1,7 +1,5 @@
 package com.example.proyecto2025_BE.controller;
 
-import java.util.Map;
-
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -34,7 +32,6 @@ import com.example.proyecto2025_BE.views.users.register.request.UserRegisterRequ
 import com.example.proyecto2025_BE.views.users.register.response.UserRegisterResponse;
 import com.example.proyecto2025_BE.views.users.score.UserScoreResponse;
 import com.example.proyecto2025_BE.views.users.update.request.UpdateUserRequest;
-import com.example.proyecto2025_BE.views.users.update.response.UpdateUserResponse;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -101,14 +98,13 @@ public class UserController {
 					mediaType = "application/json",
 					schema = @Schema(implementation = UpdateUserRequest.class)))
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Usuario actualizado exitosamente",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UpdateUserResponse.class))),
+			@ApiResponse(responseCode = "204", description = "Usuario actualizado exitosamente"),
 			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
-    public ResponseEntity<User> update(@PathVariable Long id, @RequestBody Map<String, Object> properties) {
-		var userToUpdate = this.userService.retrieve(id);
-    	var updatedUser = this.userService.update(userToUpdate, properties);
-		return ResponseEntity.ok(updatedUser);
+    public ResponseEntity<Void> update(@RequestBody User user) {
+    	this.userService.update(user);
+    	
+		return ResponseEntity.noContent().build();
     }
 	
 	@DeleteMapping("/{id}")

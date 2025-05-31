@@ -95,6 +95,7 @@ public class UserControllerTest {
     @DirtiesContext
     void updateTest() throws Exception {
         User user = User.builder()
+        		.id(EXISTENT_USER_ID)
         		.name("Pepe")
                 .lastName("Palala")
                 .build();
