@@ -59,8 +59,11 @@ public class UserControllerTest {
 
     @BeforeEach
     void beforeEach() {
+        // Limpiamos la base de datos
         dao.deleteAll();
+        dao.flush();  // Forzamos la sincronización con la base de datos
 
+        // Configuramos el mapper
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
@@ -95,29 +98,30 @@ public class UserControllerTest {
     @DirtiesContext
     void updateTest() throws Exception {
         User user = User.builder()
-        		.id(EXISTENT_USER_ID)
         		.name("Pepe")
                 .lastName("Palala")
                 .build();
-        dao.save(user);
+        
+        user = dao.save(user);
+        
         Map<String, Object> map = new HashMap<>();
+        map.put("id", user.getId().toString());
         map.put("name", "Emiliano");
         map.put("lastName", "Emil");
         map.put("phoneNumber", "1234567890");
+        
         String requestBody = mapper.writeValueAsString(map);
 
         mockMvc
-                .perform(MockMvcRequestBuilders.patch("/users/{id}", user.getId(), requestBody)
+                .perform(MockMvcRequestBuilders.put("/users")
                         .contentType("application/json")
                         .content(requestBody))
-                .andExpect(content().contentType("application/json"))
-                .andExpect(status().isOk());
+                .andExpect(status().isNoContent());
 
-        mockMvc
-                .perform(MockMvcRequestBuilders.get("/users/{id}", user.getId()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(jsonPath("$.phoneNumber").value("1234567890"));
+        User updatedUser = dao.findById(user.getId()).orElseThrow();
+        assertEquals("Emiliano", updatedUser.getName());
+        assertEquals("Emil", updatedUser.getLastName());
+        assertEquals("1234567890", updatedUser.getPhoneNumber());
     }
 
     @Test
