@@ -39,21 +39,14 @@ public class UserService {
 		return userDao.save(user);
 	}
 
+	@Transactional(readOnly = true)
 	public User retrieve(Long id) {
 		return userDao.findById(id)
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
 	public User update(User user) {
-//		User existingUser = this.retrieve(user.getId());
-//		
-//		existingUser.setName(user.getName());
-//		existingUser.setLastName(user.getLastName());
-//		existingUser.setEmail(user.getEmail());
-//		existingUser.setPhoneNumber(user.getPhoneNumber());
-//		existingUser.setCountryCode(user.getCountryCode());
-//		existingUser.setBirthDate(user.getBirthDate());
-//		existingUser.setUsername(user.getUsername());
+		this.retrieve(user.getId());
 		
 		return userDao.save(user);
 	}
