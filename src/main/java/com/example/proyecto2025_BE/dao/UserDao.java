@@ -46,7 +46,25 @@ public interface UserDao extends JpaRepository<User, Long>{
 			nativeQuery = true)
 	Page<UserRankingProjection> findAllUsersWithRank(Pageable pageable);
 
-
+	@Query(value = """
+      SELECT u.id as id, u.username as username, COALESCE(u.weekly_score, 0) as score, ranked.position as position
+      FROM (
+         SELECT u_inner.id, COALESCE(u_inner.weekly_score, 0) as weekly_score,
+               ROW_NUMBER() OVER (ORDER BY COALESCE(u_inner.weekly_score, 0) DESC, u_inner.id ASC) as position
+         FROM users u_inner
+         WHERE EXTRACT(WEEK FROM u_inner.ultima_actividad) = EXTRACT(WEEK FROM CURRENT_DATE)
+           AND EXTRACT(YEAR FROM u_inner.ultima_actividad) = EXTRACT(YEAR FROM CURRENT_DATE)
+      ) ranked
+      JOIN users u ON u.id = ranked.id
+      GROUP BY u.id, u.username, u.weekly_score, ranked.position
+      ORDER BY ranked.position ASC, u.id ASC
+      """,
+	countQuery = """
+	  SELECT COUNT(DISTINCT u.id) FROM users u
+	  WHERE EXTRACT(WEEK FROM u.ultima_actividad) = EXTRACT(WEEK FROM CURRENT_DATE)
+	    AND EXTRACT(YEAR FROM u.ultima_actividad) = EXTRACT(YEAR FROM CURRENT_DATE)
+	""",
+	nativeQuery = true)
 	Page<UserRankingProjection> findWeeklyRanking(Pageable pageable);
 
 }
