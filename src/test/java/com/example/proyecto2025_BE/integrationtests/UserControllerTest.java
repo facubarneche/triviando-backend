@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -427,6 +428,57 @@ public class UserControllerTest {
                         .param("page", "0")
                         .param("size", "10"))
                 .andExpect(status().isNotFound());
+    }
+
+
+    @Test
+    @DisplayName("Obtener el ranking semanal de usuarios")
+    void getWeeklyRankingTest() throws Exception {
+        User userHighActive = User.builder().username("Usuario Alto Activo").build();
+        User userMidActive = User.builder().username("Usuario Medio Activo").build();
+        User userLowActive = User.builder().username("Usuario Bajo Activo").build();
+        User userHighInactive = User.builder().username("Usuario Alto Inactivo").build();
+
+        LocalDate currentDate = LocalDate.now();
+        LocalDate previousWeekDate = currentDate.minusWeeks(1);
+
+        userHighActive.setUltimaActividad(currentDate);
+        userMidActive.setUltimaActividad(currentDate);
+        userLowActive.setUltimaActividad(currentDate);
+        userHighInactive.setUltimaActividad(previousWeekDate);
+
+        Answer a1 = Answer.builder().score(new BigDecimal(100)).fechaRespuesta(currentDate).build();
+        Answer a2 = Answer.builder().score(new BigDecimal(50)).fechaRespuesta(currentDate).build();
+        Answer a3 = Answer.builder().score(new BigDecimal(25)).fechaRespuesta(currentDate).build();
+        // respuesta hecha ene la semana pasada
+        Answer a4 = Answer.builder().score(new BigDecimal(200)).fechaRespuesta(previousWeekDate).build();
+
+        userHighActive.setAnswers(List.of(a1));
+        userMidActive.setAnswers(List.of(a2));
+        userLowActive.setAnswers(List.of(a3));
+        userHighInactive.setAnswers(List.of(a4));
+
+        dao.save(userHighActive);
+        dao.save(userMidActive);
+        dao.save(userLowActive);
+        dao.save(userHighInactive);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking-semanal")
+                .param("page", "0")
+                .param("size", "10"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                // solo deberian haber  3 usuarios (los activos esta semana)
+                .andExpect(jsonPath("$.content", hasSize(3)))
+                // vemos el orden correcto por puntuacion
+                .andExpect(jsonPath("$.content[0].username").value("Usuario Alto Activo"))
+                .andExpect(jsonPath("$.content[0].score", closeTo(100.0, 0)))
+                .andExpect(jsonPath("$.content[1].username").value("Usuario Medio Activo"))
+                .andExpect(jsonPath("$.content[1].score", closeTo(50.0, 0)))
+                .andExpect(jsonPath("$.content[2].username").value("Usuario Bajo Activo"))
+                .andExpect(jsonPath("$.content[2].score", closeTo(25.0, 0)))
+                // usuario inactivo no esta en la respuesta
+                .andExpect(jsonPath("$.content[*].username", not(hasItem("Usuario Alto Inactivo"))));
     }
     
     @Test

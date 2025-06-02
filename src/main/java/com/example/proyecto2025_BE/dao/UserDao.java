@@ -47,16 +47,23 @@ public interface UserDao extends JpaRepository<User, Long>{
 	Page<UserRankingProjection> findAllUsersWithRank(Pageable pageable);
 
 	@Query(value = """
-      SELECT u.id as id, u.username as username, COALESCE(u.weekly_score, 0) as score, ranked.position as position
+      SELECT u.id as id, u.username as username, COALESCE(SUM(a.score), 0) as score, ranked.position as position
       FROM (
-         SELECT u_inner.id, COALESCE(u_inner.weekly_score, 0) as weekly_score,
-               ROW_NUMBER() OVER (ORDER BY COALESCE(u_inner.weekly_score, 0) DESC, u_inner.id ASC) as position
+         SELECT u_inner.id, COALESCE(SUM(a_inner.score), 0) as weekly_score,
+               ROW_NUMBER() OVER (ORDER BY COALESCE(SUM(a_inner.score), 0) DESC, u_inner.id ASC) as position
          FROM users u_inner
+         LEFT JOIN answer a_inner ON u_inner.id = a_inner.user_id
+           AND EXTRACT(WEEK FROM a_inner.fecha_respuesta) = EXTRACT(WEEK FROM CURRENT_DATE)
+           AND EXTRACT(YEAR FROM a_inner.fecha_respuesta) = EXTRACT(YEAR FROM CURRENT_DATE)
          WHERE EXTRACT(WEEK FROM u_inner.ultima_actividad) = EXTRACT(WEEK FROM CURRENT_DATE)
            AND EXTRACT(YEAR FROM u_inner.ultima_actividad) = EXTRACT(YEAR FROM CURRENT_DATE)
+         GROUP BY u_inner.id
       ) ranked
       JOIN users u ON u.id = ranked.id
-      GROUP BY u.id, u.username, u.weekly_score, ranked.position
+      LEFT JOIN answer a ON u.id = a.user_id 
+         AND EXTRACT(WEEK FROM a.fecha_respuesta) = EXTRACT(WEEK FROM CURRENT_DATE)
+         AND EXTRACT(YEAR FROM a.fecha_respuesta) = EXTRACT(YEAR FROM CURRENT_DATE)
+      GROUP BY u.id, u.username, ranked.position
       ORDER BY ranked.position ASC, u.id ASC
       """,
 	countQuery = """
