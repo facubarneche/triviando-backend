@@ -93,6 +93,16 @@ public class UserService {
 		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
 	}
 
+	@Transactional(readOnly = true)
+	public Page<User> getWeeklyRanking(int page, int size) {
+		Pageable pageable = createPageable(page, size);
+		Page<UserRankingProjection> projectionPage = userDao.findWeeklyRanking(pageable);
+		List<User> users = projectionPage.getContent().stream()
+				.map(this::convertProjectionToUser)
+				.toList();
+		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
+	}
+
 	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size) {
 		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);

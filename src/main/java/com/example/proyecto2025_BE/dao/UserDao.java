@@ -45,4 +45,8 @@ public interface UserDao extends JpaRepository<User, Long>{
 			countQuery = "SELECT COUNT(DISTINCT u.id) FROM users u LEFT JOIN answer a ON u.id = a.user_id",
 			nativeQuery = true)
 	Page<UserRankingProjection> findAllUsersWithRank(Pageable pageable);
+
+
+	Page<UserRankingProjection> findWeeklyRanking(Pageable pageable);
+
 }
