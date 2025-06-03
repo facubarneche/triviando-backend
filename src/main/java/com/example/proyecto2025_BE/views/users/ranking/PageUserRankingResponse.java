@@ -1,11 +1,10 @@
 package com.example.proyecto2025_BE.views.users.ranking;
 
+import java.util.List;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.PageImpl;
-
-import java.util.List;
 
 @Data
 @NoArgsConstructor

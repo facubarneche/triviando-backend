@@ -1,17 +1,20 @@
 package com.example.proyecto2025_BE.service;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.pregunta.factory.PreguntaLoaderFactory;
 import com.example.proyecto2025_BE.service.pregunta.strategy.PreguntaLoaderStrategy;
-import lombok.RequiredArgsConstructor;
-import org.bson.types.ObjectId;
-import org.springframework.stereotype.Service;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
