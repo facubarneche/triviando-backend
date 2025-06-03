@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -32,6 +33,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -280,8 +282,8 @@ public class UserControllerTest {
     @Test
     @DisplayName("Estadisticas de un user que ha respondido preguntas")
     void estadisticasTest() throws Exception {
-        when(respuestasDao.countByUsuarioId(EXISTENT_USER_ID)).thenReturn(50);
-        when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(35);
+        when(respuestasDao.countByUserId(EXISTENT_USER_ID)).thenReturn(50);
+        when(respuestasDao.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(35);
         StatsResponse response = new StatsResponse(10, 35, 50);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
@@ -293,8 +295,8 @@ public class UserControllerTest {
     @Test
     @DisplayName("Estadisticas de un user que no ha respondido preguntas")
     void estadisticasInexistentUserTest() throws Exception {
-        when(respuestasDao.countByUsuarioId(EXISTENT_USER_ID)).thenReturn(0);
-        when(respuestasDao.countByUsuarioIdAndCorrectaTrue(EXISTENT_USER_ID)).thenReturn(0);
+        when(respuestasDao.countByUserId(EXISTENT_USER_ID)).thenReturn(0);
+        when(respuestasDao.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(0);
         StatsResponse response = new StatsResponse(0,0,0);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
@@ -307,9 +309,17 @@ public class UserControllerTest {
     @DisplayName("Obtener el ranking de usuarios ordenados por score")
     void getUsersOrderedByScoreTest() throws Exception {
         // Preparar datos de prueba
-        User user1 = User.builder().username("Usuario Alto Score").score(new BigDecimal(100)).build();
-        User user2 = User.builder().username("Usuario Medio Score").score(new BigDecimal(50)).build();
-        User user3 = User.builder().username("Usuario Bajo Score").score(new BigDecimal(25)).build();
+        User user1 = User.builder().username("Usuario Alto Score").build();
+        User user2 = User.builder().username("Usuario Medio Score").build();
+        User user3 = User.builder().username("Usuario Bajo Score").build();
+
+        Answer a1 = Answer.builder().score(new BigDecimal(100)).build();
+        Answer a2 = Answer.builder().score(new BigDecimal(50)).build();
+        Answer a3 = Answer.builder().score(new BigDecimal(25)).build();
+
+        user1.setAnswers(List.of(a1));
+        user2.setAnswers(List.of(a2));
+        user3.setAnswers(List.of(a3));
 
         dao.save(user1);
         dao.save(user2);
@@ -331,9 +341,17 @@ public class UserControllerTest {
     @Test
     @DisplayName("Obtener el ranking desde un usuario específico")
     void getUsersOrderedByScoreFromUserTest() throws Exception {
-        User userHigh = User.builder().username("Usuario Alto").score(new BigDecimal(500)).build();
-        User userMid = User.builder().username("Usuario Medio").score(new BigDecimal(300)).build();
-        User userLow = User.builder().username("Usuario Bajo").score(new BigDecimal(100)).build();
+        User userHigh = User.builder().username("Usuario Alto").build();
+        User userMid = User.builder().username("Usuario Medio").build();
+        User userLow = User.builder().username("Usuario Bajo").build();
+
+        Answer a1 = Answer.builder().score(new BigDecimal(500)).build();
+        Answer a2 = Answer.builder().score(new BigDecimal(300)).build();
+        Answer a3 = Answer.builder().score(new BigDecimal(100)).build();
+
+        userHigh.setAnswers(List.of(a1));
+        userMid.setAnswers(List.of(a2));
+        userLow.setAnswers(List.of(a3));
 
         userHigh = dao.save(userHigh);
         userMid = dao.save(userMid);
@@ -360,11 +378,22 @@ public class UserControllerTest {
     @DisplayName("Obtener el ranking desde un usuario con mismo score que otro")
     void getUsersOrderedByScoreFromUserWithSameScoreTest() throws Exception {
         // Preparar datos de prueba - Usuarios con mismos scores pero diferentes IDs
-        User user1 = User.builder().username("Usuario 1").score(new BigDecimal("300.00")).build();
-        User user2 = User.builder().username("Usuario 2").score(new BigDecimal("300.00")).build();
+        User user1 = User.builder().username("Usuario 1").build();
+        User user2 = User.builder().username("Usuario 2").build();
         // Añadir usuarios adicionales para un ranking más completo
-        User userHigh = User.builder().username("Usuario Alto").score(new BigDecimal(500)).build();
-        User userLow = User.builder().username("Usuario Bajo").score(new BigDecimal(100)).build();
+        User userHigh = User.builder().username("Usuario Alto").build();
+        User userLow = User.builder().username("Usuario Bajo").build();
+        Answer a1 = Answer.builder().score(new BigDecimal(300)).build();
+        Answer a2 = Answer.builder().score(new BigDecimal(300)).build();
+        Answer a3 = Answer.builder().score(new BigDecimal(500)).build();
+        Answer a4 = Answer.builder().score(new BigDecimal(100)).build();
+
+        user1.setAnswers(List.of(a1));
+        user2.setAnswers(List.of(a2));
+        userHigh.setAnswers(List.of(a3));
+        userLow.setAnswers(List.of(a4));
+
+
         userHigh = dao.save(userHigh);
         user1 = dao.save(user1);
         user2 = dao.save(user2);

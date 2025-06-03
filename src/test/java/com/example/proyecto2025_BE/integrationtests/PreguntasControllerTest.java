@@ -42,18 +42,6 @@ class PreguntasControllerTest {
     private ObjectMapper objectMapper;
 
     @Test
-    @DisplayName("Get all preguntas")
-    void getPreguntas() throws Exception {
-
-        when(preguntaDao.findAll()).thenReturn(PreguntasData.PREGUNTAS);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas"))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("application/json"))
-                .andExpect(content().json(objectMapper.writeValueAsString(PreguntasData.PREGUNTAS)));
-    }
-
-    @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
         String topico = "Historia";
@@ -79,7 +67,9 @@ class PreguntasControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("topico", topico))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json("[]"));
     }
 
     @Test

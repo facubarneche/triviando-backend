@@ -1,26 +1,28 @@
 package com.example.proyecto2025_BE.service;
 
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
+import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.utils.JsonViewPage;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
 
 import lombok.RequiredArgsConstructor;
+
+
 
 @Service
 @Transactional
@@ -28,6 +30,7 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserDao userDao;
+	private final RespuestasDao answerDao;
 
 	public User create(User user) {
 		Optional<User> fetched = userDao.findByEmail(user.getEmail());
@@ -62,9 +65,9 @@ public class UserService {
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	public Page<User> getUsersOrderedByScoreDesc(int page,int size, String[] sort) {
+	public Page<User> getUsersOrderedByScoreDesc(int page,int size ) {
 
-		Pageable pageable = createPageable(page, size, sort);
+		Pageable pageable = createPageable(page, size);
 		Page<UserRankingProjection> projectionPage = userDao.findAllUsersWithRank(pageable);
 		List<User> users = projectionPage.getContent().stream()
 				.map(this::convertProjectionToUser)
@@ -72,16 +75,16 @@ public class UserService {
 		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
 	}
 
-	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size, String[] sort) {
+	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size) {
 		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
 
 		if (userPosition == null || userPosition <= 0) {
-			return getUsersOrderedByScoreDesc(page,size,sort);
+			return getUsersOrderedByScoreDesc(page,size);
 		}
 		int zeroBasedPosition = userPosition - 1;
-		int pageNumber = zeroBasedPosition / size;
-		return getUsersOrderedByScoreDesc(pageNumber,size,sort);
+		int pageNumber = zeroBasedPosition / size;//3
+		return getUsersOrderedByScoreDesc(pageNumber,size);
 	}
 
 	private User convertProjectionToUser(UserRankingProjection projection) {
@@ -91,20 +94,14 @@ public class UserService {
 		return user;
 	}
 
-	private Pageable createPageable(int page, int size, String[] sortParams) {
-		if (sortParams == null || sortParams.length == 0) {
-			Sort defaultSort = Sort.by("score").descending().and(Sort.by("id").ascending());
-			return PageRequest.of(page, size, defaultSort);
-		}
+	private Pageable createPageable(int page, int size) {
+			return PageRequest.of(page, size);
+	}
 
-		List<Sort.Order> orders = Arrays.stream(sortParams)
-				.map(param -> param.split(",", 2))
-				.map(parts -> new Sort.Order(
-						parts.length > 1 && parts[1].equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC,
-						parts[0]
-				))
-				.toList();
-
-		return PageRequest.of(page, size, Sort.by(orders));
+	public StatsResponse getStatisticsFromUser(Long userId) {
+		var totalQuestions = answerDao.countByUserId(userId);
+		var correctAnswers = answerDao.countByUserIdAndErrorReasonIsNull(userId);
+		var totalQuizzes = totalQuestions / 5;
+		return new StatsResponse(totalQuizzes, correctAnswers, totalQuestions);
 	}
 }

@@ -1,18 +1,17 @@
 package com.example.proyecto2025_BE.model;
 
+import com.example.proyecto2025_BE.constants.UnsuccessReasons;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-
-import com.example.proyecto2025_BE.constants.UnsuccessReasons;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -33,20 +32,27 @@ public class Answer {
     @JsonIgnore
     private Long id;
     private String questionId;
-    @Transient
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
     @Enumerated(EnumType.STRING)
     private LetterOption optionSelected;
     private long millisecondsSpent;
     @JsonIgnore
     private String errorReason;
+    private LocalDate fechaRespuesta;
+    private BigDecimal score = BigDecimal.ZERO;
 
-    public BigDecimal getScoreBy(Pregunta question) {
+    public void impactScore(Pregunta question) {
         if (isSuccess(question)) {
-            return calculateScoreBy(question);
+            score =  calculateScoreBy(question);
+            return ;
         }
         errorReason = errorReason != null ? errorReason : UnsuccessReasons.INCORRECT_OPTION;
-        return BigDecimal.ZERO;
+    }
+
+    public BigDecimal getScore(){
+        return score == null ? BigDecimal.ZERO : score;
     }
 
     private BigDecimal calculateScoreBy(Pregunta question) {

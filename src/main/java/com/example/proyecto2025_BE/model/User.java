@@ -87,10 +87,6 @@ public class User {
 	@JoinColumn(name = "user_id")
 	private List<Answer> answers = new ArrayList<>();
 
-	@Builder.Default
-	@JsonView({Views.Ranking.class,Views.Score.class})
-	private BigDecimal score = BigDecimal.ZERO;
-
 	@JsonView({Views.Login.class,
 		Views.Ranking.class,
 		Views.Register.class,
@@ -122,9 +118,21 @@ public class User {
 	public void add(Answer answer) {
 		answers.add(answer);
 	}
-	
-	public void add(BigDecimal score) {
-		this.score = this.score.add(score);
+
+	@JsonView({Views.Ranking.class,Views.Score.class})
+	public BigDecimal getScore(){
+		return answers.stream()
+				.map(Answer::getScore)
+				.reduce(BigDecimal.ZERO,BigDecimal::add);
+	}
+
+	public BigDecimal getLastWeekScore(){
+		LocalDate today = LocalDate.now();
+		LocalDate lastWeek = today.minusWeeks(1);
+		return answers.stream()
+				.filter(answer -> answer.getFechaRespuesta().isAfter(lastWeek))
+				.map(Answer::getScore)
+				.reduce(BigDecimal.ZERO,BigDecimal::add);
 	}
 
 	public void actualizarRacha() {

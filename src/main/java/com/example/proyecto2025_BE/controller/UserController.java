@@ -19,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.example.proyecto2025_BE.service.StatisticService;
 import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.views.Views;
 import com.example.proyecto2025_BE.views.users.UserResponse4XX;
@@ -51,7 +50,6 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserService userService;
-	private final StatisticService statisticService;
 
 	@PostMapping
 	@JsonView(Views.Register.class)
@@ -143,7 +141,7 @@ public class UserController {
 			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
 	public ResponseEntity<StatsResponse> getStatistics(@PathVariable Long usuarioId) {
-		return ResponseEntity.ok(statisticService.getStats(usuarioId));
+		return ResponseEntity.ok(userService.getStatisticsFromUser(usuarioId));
 	}
 	
 	@GetMapping("/score/{userId}")
@@ -168,9 +166,8 @@ public class UserController {
 			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
 	ResponseEntity<Page<User>> getUsersOrderedByScoreDesc(@RequestParam(defaultValue = "0") int page,
-														  @RequestParam(defaultValue = "10") int size,
-														  @RequestParam(required = false) String[] sort) {
-		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(page,size,sort));
+														  @RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(page,size));
 	}
 
 	@GetMapping("/ranking/{userId}")
@@ -185,7 +182,7 @@ public class UserController {
 															  @RequestParam(defaultValue = "0") int page,
 															  @RequestParam(defaultValue = "10") int size, @
 															  RequestParam(required = false) String[] sort){
-		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, page,size,sort));
+		return ResponseEntity.ok(userService.getUsersOrderedByScoreFromUser(userId, page,size));
 	}
 
 	@GetMapping("/racha/{userId}")

@@ -1,17 +1,14 @@
 package com.example.proyecto2025_BE.configuration;
 
-import com.example.proyecto2025_BE.model.User;
-
-import lombok.RequiredArgsConstructor;
-
 import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.model.User;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +19,7 @@ import java.util.List;
 public class MySQLConfig {
 
 	private final UserDao userDao;
-	
+
 	@Bean
     @Transactional
     public CommandLineRunner initMySQLData() {
@@ -37,6 +34,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1990, 5, 15))
                         .joinDate(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
+                        .rachaActual(0)
                         .username("johny_doe")
                         .build();
 
@@ -49,6 +47,7 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1985, 10, 22))
                         .joinDate(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
+                        .rachaActual(0)
                         .username("jane_smithy")
                         .build();
 
@@ -61,7 +60,6 @@ public class MySQLConfig {
                         .birthDate(LocalDate.of(1996, 3, 10)) // Corrected month value
                         .joinDate(LocalDateTime.now())
                         .updatedAt(LocalDateTime.now())
-                        .score(BigDecimal.valueOf(100.00))
                         .rachaActual(0)
                         .username("user_three")
                         .build();

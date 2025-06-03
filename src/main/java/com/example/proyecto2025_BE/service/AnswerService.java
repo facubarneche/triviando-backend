@@ -1,18 +1,16 @@
 package com.example.proyecto2025_BE.service;
 
-import java.math.BigDecimal;
-
-import com.example.proyecto2025_BE.service.command.ActualizarRachaCommand;
-import com.example.proyecto2025_BE.service.command.UserInvoker;
-import org.springframework.stereotype.Service;
-
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
-
+import com.example.proyecto2025_BE.service.command.ActualizarRachaCommand;
+import com.example.proyecto2025_BE.service.command.UserInvoker;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -24,21 +22,20 @@ public class AnswerService {
 
 	@Transactional
 	public FeedbackAnswer answer(Answer answer) {
-		User user = userService.retrieve(answer.getUserId());
+
+		User user = userService.retrieve(answer.getUser().getId());
 		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
-		
-		BigDecimal score = answer.getScoreBy(question);
+		answer.setFechaRespuesta(LocalDate.now());
+		answer.impactScore(question);
 		user.add(answer);
-		user.add(score);
 		userInvoker.executeCommand(new ActualizarRachaCommand(user));
 		userService.update(user);
 
 		return FeedbackAnswer.builder()
-				.score(score)
+				.score(answer.getScore())
 				.explanation(question.getExplicacion())
 				.errorReason(answer.getErrorReason())
 				.correctOption(question.getCorrectOption())
 				.build();
 	}
-	
 }

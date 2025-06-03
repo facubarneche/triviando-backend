@@ -42,7 +42,6 @@ public class AnswerController {
     )
     public ResponseEntity<FeedbackAnswer> answer(@RequestBody Answer answer) {
 		FeedbackAnswer feedback = answerService.answer(answer);
-		
 		return ResponseEntity.ok(feedback);
     }
 }
