@@ -22,6 +22,7 @@ import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.model.prompter.Prompter;
 import com.example.proyecto2025_BE.service.LLMApiClient;
 import com.example.proyecto2025_BE.service.PreguntaService;
+import com.example.proyecto2025_BE.views.questions.QuestionResponse200;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -51,7 +52,7 @@ public class PreguntasController {
                     "Si se proporciona una userId valido, filtrará las preguntas ya respondidas por el mismo.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Listado de preguntas obtenido exitosamente",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pregunta.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionResponse200.class))),
             @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND, content = @Content)
     })
     public List<Pregunta> getPreguntas(@RequestParam(value = "userId", required = false) Long userId,
@@ -65,27 +66,11 @@ public class PreguntasController {
             description = "Devuelve una pregunta específica mediante su identificador. Lanza una excepción si no existe.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Pregunta encontrada",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pregunta.class))),
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionResponse200.class))),
             @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND, content = @Content)
     })
     public Pregunta getPreguntaById(@PathVariable String id) {
         return preguntasService.getPreguntaById(id);
-    }
-
-    @PostMapping
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "Crea una nueva pregunta",
-            description = "Recibe un objeto PreguntaRequest con los datos de la nueva pregunta a crear.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Pregunta creada exitosamente",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = Pregunta.class))),
-            @ApiResponse(responseCode = "400", description = "Datos inválidos", content = @Content)
-    })
-    public ResponseEntity<?> createPregunta(@RequestBody @Valid PreguntaRequest preguntaRequest, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors());
-        }
-        return ResponseEntity.ok(preguntasService.createPregunta(preguntaRequest));
     }
 
     @GetMapping("/topicos")
