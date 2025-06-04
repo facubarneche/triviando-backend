@@ -7,8 +7,7 @@ server:
     context-path: /api/v1
 
 llm:
-  # apiKey: ${OPENAI_API_KEY}
-  apiKey: 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
+  apiKey: ${OPENAI_API_KEY}
   modelName: gpt-4o-mini
   logRequests: true
   logResponses: true
