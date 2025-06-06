@@ -444,7 +444,7 @@ public class UserControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isNotFound());
     }
-    
+
     @Test
     @DisplayName("Cuando se loguea un usuario, y este esta registrado, obtengo dicho recurso")
     void loginTest() throws Exception {

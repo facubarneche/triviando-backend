@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.Ranking;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.views.Views;
@@ -168,6 +169,19 @@ public class UserController {
 	ResponseEntity<Page<User>> getUsersOrderedByScoreDesc(@RequestParam(defaultValue = "0") int page,
 														  @RequestParam(defaultValue = "10") int size) {
 		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(page,size));
+	}
+
+	@GetMapping("/ranking-semanal")
+	@Operation(summary = "Ranking de usuarios", description = "Devuelve el ranking semanal de usuarios")
+	@ApiResponses( value = {
+			@ApiResponse(responseCode = "200", description = "Ranking semanal obtenido",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageUserRankingResponse.class))),
+			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
+	public ResponseEntity<Page<Ranking>> getWeeklyRanking(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(userService.getWeeklyRanking(page, size));
 	}
 
 	@GetMapping("/ranking/{userId}")
