@@ -47,7 +47,7 @@ public class AnswerServiceTest {
 		
 		answerbuilder = Answer.builder()
 				.questionId("e3r4g5th4nb3rg4t")
-				.user(user);
+				.userId(user.getId());
 		
 		when(userServiceMock.retrieve(anyLong())).thenReturn(user);
 		when(preguntaServiceMock.getPreguntaById(anyString())).thenReturn(pregunta);
