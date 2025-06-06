@@ -50,10 +50,19 @@ public class UserService {
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	public User update(User user) {
-		this.retrieve(user.getId());
-		
-		return userDao.save(user);
+	public User update(User updatedUser) {
+		return userDao.findById(updatedUser.getId())
+			.map(existingUser -> {
+				Optional.ofNullable(updatedUser.getName()).ifPresent(existingUser::setName);
+                Optional.ofNullable(updatedUser.getLastName()).ifPresent(existingUser::setLastName);
+                Optional.ofNullable(updatedUser.getEmail()).ifPresent(existingUser::setEmail);
+                Optional.ofNullable(updatedUser.getPhoneNumber()).ifPresent(existingUser::setPhoneNumber);
+                Optional.ofNullable(updatedUser.getCountryCode()).ifPresent(existingUser::setCountryCode);
+                Optional.ofNullable(updatedUser.getJoinDate()).ifPresent(existingUser::setJoinDate);
+                Optional.ofNullable(updatedUser.getUsername()).ifPresent(existingUser::setUsername);
+                
+				return userDao.save(existingUser);
+			}).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
 	public void delete(Long id) {
