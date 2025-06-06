@@ -45,4 +45,40 @@ public interface UserDao extends JpaRepository<User, Long>{
 			countQuery = "SELECT COUNT(DISTINCT u.id) FROM users u LEFT JOIN answer a ON u.id = a.user_id",
 			nativeQuery = true)
 	Page<UserRankingProjection> findAllUsersWithRank(Pageable pageable);
+
+	@Query(value = """
+    SELECT 
+        ranked.id AS id,
+        u.username AS username,
+        ranked.total_score AS score,
+        ranked.position AS position
+    FROM (
+        SELECT 
+            u_inner.id,
+            SUM(a_inner.score) AS total_score,
+            ROW_NUMBER() OVER (
+                ORDER BY SUM(a_inner.score) DESC, u_inner.id ASC
+            ) AS position
+        FROM users u_inner
+        JOIN answer a_inner ON u_inner.id = a_inner.user_id
+        WHERE a_inner.fecha_respuesta >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+          AND a_inner.fecha_respuesta <  DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY)
+        GROUP BY u_inner.id
+        HAVING total_score > 0
+    ) ranked
+    JOIN users u ON u.id = ranked.id
+    """,
+			countQuery = """
+        SELECT COUNT(*) FROM (
+            SELECT u_inner.id
+            FROM users u_inner
+            JOIN answer a_inner ON u_inner.id = a_inner.user_id
+            WHERE a_inner.fecha_respuesta >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+              AND a_inner.fecha_respuesta <  DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY)
+            GROUP BY u_inner.id
+            HAVING SUM(a_inner.score) > 0
+        ) AS filtered
+    """,
+			nativeQuery = true)
+	Page<UserRankingProjection> findWeeklyRanking(Pageable pageable);
 }

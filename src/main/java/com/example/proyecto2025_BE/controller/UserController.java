@@ -2,6 +2,7 @@ package com.example.proyecto2025_BE.controller;
 
 import java.util.Map;
 
+import com.example.proyecto2025_BE.model.dto.Ranking;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -172,6 +173,19 @@ public class UserController {
 	ResponseEntity<Page<User>> getUsersOrderedByScoreDesc(@RequestParam(defaultValue = "0") int page,
 														  @RequestParam(defaultValue = "10") int size) {
 		return ResponseEntity.ok(userService.getUsersOrderedByScoreDesc(page,size));
+	}
+
+	@GetMapping("/ranking-semanal")
+	@Operation(summary = "Ranking de usuarios", description = "Devuelve el ranking semanal de usuarios")
+	@ApiResponses( value = {
+			@ApiResponse(responseCode = "200", description = "Ranking semanal obtenido",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageUserRankingResponse.class))),
+			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
+	public ResponseEntity<Page<Ranking>> getWeeklyRanking(
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(userService.getWeeklyRanking(page, size));
 	}
 
 	@GetMapping("/ranking/{userId}")

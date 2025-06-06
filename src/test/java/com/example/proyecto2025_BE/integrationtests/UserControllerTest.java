@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -428,7 +429,7 @@ public class UserControllerTest {
                         .param("size", "10"))
                 .andExpect(status().isNotFound());
     }
-    
+
     @Test
     @DisplayName("Cuando se loguea un usuario, y este esta registrado, obtengo dicho recurso")
     void loginTest() throws Exception {
