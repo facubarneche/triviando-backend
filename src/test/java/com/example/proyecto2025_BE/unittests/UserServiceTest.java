@@ -257,10 +257,8 @@ public class UserServiceTest {
         Pageable pageable = PageRequest.of(0, 5);
 
         when(userDao.findById(userId)).thenReturn(Optional.empty());
-
         // Act & Assert
         assertThrows(NotFoundException.class, () -> userService.getUsersOrderedByScoreFromUser(userId, pageable.getPageNumber(),pageable.getPageSize()));
-
         // Verify
         verify(userDao, times(1)).findById(userId);
         verify(userDao, never()).findUserRankPosition(any());
@@ -336,7 +334,7 @@ public class UserServiceTest {
 
         Page<UserRankingProjection> projectionPage = new PageImpl<>(projections, expectedPageable, sortedUsers.size());
 
-        when(userDao.findAllUsersWithRank(any(Pageable.class))).thenReturn(projectionPage);
+        when(userDao.findAllUsersWithRank(any())).thenReturn(projectionPage);
 
         Page<User> result = userService.getUsersOrderedByScoreFromUser(userId, projectionPage.getNumber(), projectionPage.getSize());
 

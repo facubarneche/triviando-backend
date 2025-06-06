@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.Ranking;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.utils.JsonViewPage;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
@@ -75,6 +77,16 @@ public class UserService {
 		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
 	}
 
+	@Transactional(readOnly = true)
+	public Page<Ranking> getWeeklyRanking(int page, int size) {
+		Pageable pageable = createPageable(page, size);
+		Page<UserRankingProjection> projectionPage = userDao.findWeeklyRanking(pageable);
+		List<Ranking> users = projectionPage.getContent().stream()
+				.map(this::convertProjectionToRankin)
+				.toList();
+		return new PageImpl<>(users, pageable, projectionPage.getTotalElements());
+	}
+
 	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size) {
 		this.retrieve(userId);
 		Integer userPosition = userDao.findUserRankPosition(userId);
@@ -88,10 +100,14 @@ public class UserService {
 	}
 
 	private User convertProjectionToUser(UserRankingProjection projection) {
+
 		User user = userDao.findById(projection.getId())
 				.orElseGet(User::new); // Fallback a un nuevo User si por alguna razón no existe
 		user.setPosition(projection.getPosition());
 		return user;
+	}
+	private Ranking convertProjectionToRankin(UserRankingProjection projection) {
+		return new Ranking(projection.getId(), projection.getUserName(),projection.getScore().doubleValue(),projection.getPosition() );
 	}
 
 	private Pageable createPageable(int page, int size) {
