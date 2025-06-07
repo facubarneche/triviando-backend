@@ -1,16 +1,14 @@
 package com.example.proyecto2025_BE.service.pregunta.strategy;
 
+import java.util.List;
+import java.util.Random;
+
 import com.example.proyecto2025_BE.configuration.PreguntaProperties;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.service.UserService;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
 
 public class UsuarioRegistradoPreguntaLoader implements PreguntaLoaderStrategy{
 

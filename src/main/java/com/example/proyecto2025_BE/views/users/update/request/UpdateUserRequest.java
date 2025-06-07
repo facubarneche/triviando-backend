@@ -10,9 +10,15 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @Schema(description = "Campos actualizables del usuario")
 public class UpdateUserRequest {
+	
+	@Schema(description = "ID del usuario", example = "12345")
+    private long id;
 
-    @Schema(description = "Nombre completo del usuario", example = "Juan Pérez")
-    private String fullName;
+	@Schema(description = "Nombre del usuario", example = "John")
+    private String name;
+    
+    @Schema(description = "Apellido del usuario", example = "Doe")
+    private String lastName;
 
     @Schema(description = "Nombre de usuario del usuario", example = "jperez")
     private String username;
@@ -28,4 +34,10 @@ public class UpdateUserRequest {
 
     @Schema(description = "Número de teléfono del usuario", example = "+5491122334455")
     private String phoneNumber;
+    
+    @Schema(description = "Código de área", example = "+54")
+    private String countryCode;
+    
+    @Schema(description = "Password del usuario", example = "4Vwby%Q%$bYq#452V4WV2W")
+    private String currentPassword;
 }

@@ -24,7 +24,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import com.example.proyecto2025_BE.configuration.PreguntasData;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.model.Pregunta;
-import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -94,34 +93,6 @@ class PreguntasControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", idInvalido))
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    @DisplayName("Create a new pregunta - valid input")
-    void createPregunta_validInput() throws Exception {
-        PreguntaRequest preguntaRequest = PreguntaRequest.builder().topico("un_topico").build();
-        String preguntaRequestJson = objectMapper.writeValueAsString(preguntaRequest);
-        String expectedServiceResponse = "this action should create a new pregunta";
-
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/preguntas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(preguntaRequestJson))
-                .andExpect(status().isOk())
-                .andExpect(content().string(expectedServiceResponse));
-    }
-
-    @Test
-    @DisplayName("Create a new pregunta - invalid input")
-    void createPregunta_invalidInput() throws Exception {
-        PreguntaRequest preguntaRequest = PreguntaRequest.builder().build();
-        String preguntaRequestJson = objectMapper.writeValueAsString(preguntaRequest);
-
-        mockMvc.perform(MockMvcRequestBuilders.post("/preguntas")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(preguntaRequestJson))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test

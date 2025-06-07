@@ -15,6 +15,7 @@ import com.example.proyecto2025_BE.utils.racha.RachaStrategy;
 import com.example.proyecto2025_BE.utils.racha.RachaStrategyFactory;
 import com.example.proyecto2025_BE.views.Views;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 import jakarta.persistence.CascadeType;
@@ -48,10 +49,10 @@ public class User {
 	private Long id;
 
 	@JsonView({Views.Login.class, Views.Register.class, Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
-	private String fullName;
-
-	@Transient
-	private int age;
+	private String name;
+	
+	@JsonView({Views.Login.class, Views.Register.class, Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
+	private String lastName;
 
 	@JsonView({Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
 	@NotBlank(groups = Views.RegisterRequest.class, message = "El email no puede estar vacío")
@@ -64,6 +65,9 @@ public class User {
 
 	@JsonView({Views.UpdateUser.class,Views.GetUser.class})
 	private String phoneNumber;
+	
+	@JsonView({Views.UpdateUser.class,Views.GetUser.class})
+	private String countryCode;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
 	@JsonView({Views.RegisterRequest.class,Views.UpdateUser.class})
@@ -72,7 +76,7 @@ public class User {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
 	@CreationTimestamp
 	@JsonView(Views.GetUser.class)
-	private LocalDateTime createdAt;
+	private LocalDateTime joinDate;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
 	@UpdateTimestamp
@@ -104,11 +108,11 @@ public class User {
 	private int position;
 
 	@JsonView(Views.GetUser.class)
+	@JsonProperty("age")
 	public Integer getAge() {
-		if (birthDate == null){
-			return null;
-		}
-		return Period.between(birthDate, LocalDate.now()).getYears();
+		return birthDate == null
+				? null
+				: Period.between(birthDate, LocalDate.now()).getYears();
 	}
 
 	public void add(Answer answer) {
@@ -143,6 +147,6 @@ public class User {
 	}
 
 	public LocalDate getUltimaActividad() {
-		return ultimaActividad == null ? createdAt.toLocalDate() : ultimaActividad;
+		return ultimaActividad == null ? joinDate.toLocalDate() : ultimaActividad;
 	}
 }

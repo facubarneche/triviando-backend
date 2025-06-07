@@ -1,27 +1,28 @@
 package com.example.proyecto2025_BE.service;
 
-import java.time.LocalDate;
-import java.util.Arrays;
+
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.dao.RespuestasDao;
+import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.exceptions.ConflictException;
+import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.Ranking;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.utils.JsonViewPage;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.*;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import com.example.proyecto2025_BE.constants.Exceptions;
-import com.example.proyecto2025_BE.dao.UserDao;
-import com.example.proyecto2025_BE.exceptions.ConflictException;
-import com.example.proyecto2025_BE.exceptions.NotFoundException;
-import com.example.proyecto2025_BE.exceptions.ValidationException;
+import lombok.RequiredArgsConstructor;
 
 
 
@@ -49,25 +50,19 @@ public class UserService {
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
-	public User update(User user, Map<String, Object> properties) {
-
-		properties.forEach((key, value) -> {
-			switch (key) {
-				case "fullName" -> user.setFullName(value.toString());
-				case "username" -> user.setUsername(value.toString());
-				case "email" -> user.setEmail(value.toString());
-				case "password" -> user.setPassword(value.toString());
-				case "birthDate" -> user.setBirthDate(LocalDate.parse(value.toString()));
-				case "phoneNumber" -> user.setPhoneNumber(value.toString());
-				default -> throw ValidationException.build("La propiedad no existe o no puede ser modificada");
-			}
-		});
-
-		return userDao.save(user);
-	}
-
-	public User update(User user) {
-		return userDao.save(user);
+	public User update(User updatedUser) {
+		return userDao.findById(updatedUser.getId())
+			.map(existingUser -> {
+				Optional.ofNullable(updatedUser.getName()).ifPresent(existingUser::setName);
+                Optional.ofNullable(updatedUser.getLastName()).ifPresent(existingUser::setLastName);
+                Optional.ofNullable(updatedUser.getEmail()).ifPresent(existingUser::setEmail);
+                Optional.ofNullable(updatedUser.getPhoneNumber()).ifPresent(existingUser::setPhoneNumber);
+                Optional.ofNullable(updatedUser.getCountryCode()).ifPresent(existingUser::setCountryCode);
+                Optional.ofNullable(updatedUser.getJoinDate()).ifPresent(existingUser::setJoinDate);
+                Optional.ofNullable(updatedUser.getUsername()).ifPresent(existingUser::setUsername);
+                
+				return userDao.save(existingUser);
+			}).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
 	public void delete(Long id) {

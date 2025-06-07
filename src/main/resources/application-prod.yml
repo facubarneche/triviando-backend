@@ -24,7 +24,7 @@ spring:
       uri: mongodb://mongodb:27017/flashcards
       auto-index-creation: true
 llm:
-  url: https://busy-smooth-sunbeam.ngrok-free.app
-  auth: Basic Z2VtbWEzOkxvc1BpYml0b3NEZUxhVW5zYW1NYW5kYW4u
+  apiKey: ${OPENAI_API_KEY}
+  modelName: gpt-4
   logRequests: false
   logResponses: false
