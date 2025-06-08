@@ -66,6 +66,7 @@ public class LLMApiClient implements ChatLanguageModel {
 		List<Pregunta> questions = questionList.questions().stream().map(question -> 
 			Pregunta.builder()
 				.topico(topic)
+				.emoji(question.emoji())
 				.enunciado(question.text())
 				.options(buildIncorrectOptions(question.options()))
 				.correctOption(buildCorrectOption(question.correctOption()))
