@@ -184,6 +184,20 @@ public class UserController {
 		return ResponseEntity.ok(userService.getWeeklyRanking(page, size));
 	}
 
+	@GetMapping("/ranking-semanal/{userId}")
+	@Operation(summary = "Ranking de usuarios", description = "Devuelve el ranking semanal de usuarios")
+	@ApiResponses( value = {
+			@ApiResponse(responseCode = "200", description = "Ranking semanal obtenido",
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = PageUserRankingResponse.class))),
+			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
+	public ResponseEntity<Page<Ranking>> getWeeklyRankingByUser(
+			@PathVariable Long userId,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(userService.getWeeklyRanking(page, size));
+	}
+
 	@GetMapping("/ranking/{userId}")
 	@JsonView(Views.Ranking.class)
 	@Operation(summary = "Obtener ranking del usuario", description = "Obtiene el ranking del usuario")
