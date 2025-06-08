@@ -77,13 +77,23 @@ public class UserService {
 	}
 
 	public Page<User> getUsersOrderedByScoreDesc(int page,int size ) {
-
 		Pageable pageable = createPageable(page, size);
 		Page<UserRankingProjection> projectionPage = userDao.findAllUsersWithRank(pageable);
 		List<User> users = projectionPage.getContent().stream()
 				.map(this::convertProjectionToUser)
 				.toList();
 		return new JsonViewPage<>(users, projectionPage.getPageable(), projectionPage.getTotalElements());
+	}
+
+	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size) {
+		this.retrieve(userId);
+		Integer userPosition = userDao.findUserRankPosition(userId);
+		if (userPosition == null || userPosition <= 0) {
+			return getUsersOrderedByScoreDesc(page,size);
+		}
+		int zeroBasedPosition = userPosition - 1;
+		int pageNumber = zeroBasedPosition / size;//3
+		return getUsersOrderedByScoreDesc(pageNumber,size);
 	}
 
 	@Transactional(readOnly = true)
@@ -96,16 +106,16 @@ public class UserService {
 		return new PageImpl<>(users, pageable, projectionPage.getTotalElements());
 	}
 
-	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size) {
+	@Transactional(readOnly = true)
+	public Page<Ranking> getWeeklyRanking(Long userId, int page, int size) {
 		this.retrieve(userId);
-		Integer userPosition = userDao.findUserRankPosition(userId);
-
+		Integer userPosition = userDao.findUserRankWeeklyPosition(userId);
 		if (userPosition == null || userPosition <= 0) {
-			return getUsersOrderedByScoreDesc(page,size);
+			return getWeeklyRanking(page,size);
 		}
 		int zeroBasedPosition = userPosition - 1;
-		int pageNumber = zeroBasedPosition / size;//3
-		return getUsersOrderedByScoreDesc(pageNumber,size);
+		int pageNumber = zeroBasedPosition / size;
+		return getWeeklyRanking(pageNumber,size);
 	}
 
 	private User convertProjectionToUser(UserRankingProjection projection) {
