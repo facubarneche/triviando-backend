@@ -75,4 +75,24 @@ public interface UserDao extends JpaRepository<User, Long>{
     """,
 			nativeQuery = true)
 	Page<UserRankingProjection> findWeeklyRanking(Pageable pageable);
+
+	@Query(value = """
+    SELECT ranked.position
+    FROM (
+        SELECT 
+            u_inner.id,
+            ROW_NUMBER() OVER (
+                ORDER BY COALESCE(SUM(a_inner.score), 0) DESC, u_inner.id ASC
+            ) AS position
+        FROM users u_inner
+        LEFT JOIN answer a_inner 
+            ON u_inner.id = a_inner.user_id
+            AND a_inner.fecha_respuesta >= DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY)
+            AND a_inner.fecha_respuesta <  DATE_ADD(DATE_SUB(CURDATE(), INTERVAL WEEKDAY(CURDATE()) DAY), INTERVAL 7 DAY)
+        GROUP BY u_inner.id
+    ) ranked
+    WHERE ranked.id = :userId
+    """, nativeQuery = true)
+	Integer findUserRankWeeklyPosition(@Param("userId") Long userId);
+
 }
