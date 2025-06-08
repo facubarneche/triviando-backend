@@ -67,6 +67,7 @@ public interface UserDao extends JpaRepository<User, Long>{
         GROUP BY u_inner.id
     ) ranked
     JOIN users u ON u.id = ranked.id
+    ORDER BY ranked.total_score DESC, ranked.id ASC
     """,
 			countQuery = """
         SELECT COUNT(*) 
