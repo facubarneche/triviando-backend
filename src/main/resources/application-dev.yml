@@ -27,8 +27,8 @@ spring:
       uri: mongodb://localhost:27017/flashcards
       auto-index-creation: true
 llm:
-  url: https://busy-smooth-sunbeam.ngrok-free.app
-  auth: Basic Z2VtbWEzOkxvc1BpYml0b3NEZUxhVW5zYW1NYW5kYW4u
+  apiKey: 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
+  modelName: gpt-4o-mini
   logRequests: true
   logResponses: true
 

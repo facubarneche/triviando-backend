@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,6 @@ import com.example.proyecto2025_BE.model.prompter.QuestionPrompter;
 import com.example.proyecto2025_BE.service.LLMApiClient;
 import com.example.proyecto2025_BE.service.ModelCommunication;
 import com.example.proyecto2025_BE.service.PreguntaService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import dev.langchain4j.service.TokenStream;
 
@@ -24,23 +24,21 @@ import dev.langchain4j.service.TokenStream;
 public class LLMApiClientTest {
 	
 	private static ModelCommunication assistantMock;
-	private static ObjectMapper objectMapperMock;
 	private static TokenStream tokenStreamMock;
+	private static QuestionList questionListMock;
 	private static LLMApiClient llmApiClient;
 	private static PreguntaService preguntaServiceMock;
 	
 	@BeforeAll
 	static void beforeAll() {
-		objectMapperMock = mock(ObjectMapper.class);
 		assistantMock = mock(ModelCommunication.class);
-		tokenStreamMock = mock(TokenStream.class);
 		preguntaServiceMock = mock(PreguntaService.class);
-		llmApiClient = new LLMApiClient(assistantMock, objectMapperMock, preguntaServiceMock);
+		llmApiClient = new LLMApiClient(assistantMock, preguntaServiceMock);
 	}
 	
 	@Test
 	void generateApiCallTest() throws Exception {
-		when(assistantMock.chatWithModel(any())).thenReturn(tokenStreamMock);
+		when(assistantMock.generateQuestions(any())).thenReturn(questionListMock);
 		when(tokenStreamMock.onPartialResponse(any())).thenReturn(tokenStreamMock);
 		when(tokenStreamMock.onCompleteResponse(any())).thenReturn(tokenStreamMock);
 		when(tokenStreamMock.onError(any())).thenReturn(tokenStreamMock);

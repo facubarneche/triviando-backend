@@ -87,7 +87,7 @@ public class PreguntasController {
 	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente",
 	                  content = @Content(mediaType = "application/json")),
 	})
-    public Mono<List<Pregunta>> generate(@RequestBody Prompter prompter) {
+    public Map<String, Number> generate(@RequestBody Prompter prompter) {
         return llmApiClient.generate(prompter);
     }
 }

@@ -1,6 +1,7 @@
 package com.example.proyecto2025_BE.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
@@ -27,7 +28,7 @@ public class LLMApiClient implements ChatLanguageModel {
 	private final PreguntaService preguntaService;
 
 	@Transactional
-	public List<Pregunta> generate(Prompter prompter) {
+	public Map<String, Number> generate(Prompter prompter) {
 		prompter.withService(preguntaService)
 			.validatePrompt();
 
@@ -44,7 +45,7 @@ public class LLMApiClient implements ChatLanguageModel {
     }
 
 	//TODO: evaluar la posibilidad de utilizar el strategy para realizar el parseo y el guardado de los datos para darle mas versatilidad a la integración
-	private List<Pregunta> saveAndMappingResponse(QuestionList questionList, String topic, String emoji) {
+	private Map<String, Number> saveAndMappingResponse(QuestionList questionList, String topic, String emoji) {
 		List<Pregunta> questions = questionList.questions().stream().map(question -> 
 			Pregunta.builder()
 				.topico(topic)
@@ -56,8 +57,10 @@ public class LLMApiClient implements ChatLanguageModel {
 				.difficulty(question.difficulty())
 				.build())
 				.toList();
-		
-		return preguntaService.saveAll(questions);
+		preguntaService.saveAll(questions);
+
+		//TODO: agregar emoji
+		return preguntaService.contarPreguntasPorTopico();
 	}
 
 	private Option buildCorrectOption(QuestionOption correctOption) {
