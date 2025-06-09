@@ -3,7 +3,13 @@ package com.example.proyecto2025_BE.controller;
 import java.util.List;
 import java.util.Map;
 
+import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.views.Views;
+import com.example.proyecto2025_BE.views.questions.requests.GenerateRequestBody;
+import com.example.proyecto2025_BE.views.users.register.request.UserRegisterRequest;
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -74,8 +80,7 @@ public class PreguntasController {
     @Operation(summary = "Cuenta la cantidad de preguntas por tópico",
             description = "Devuelve una lista con la cantidad de preguntas agrupadas por tópico.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Conteo obtenido exitosamente",
-                    content = @Content(mediaType = "application/json"))
+            @ApiResponse(responseCode = "200", description = "Conteo obtenido exitosamente")
     })
     public Map<String, Number> cantidadPreguntasPorTopico() {
         return preguntasService.contarPreguntasPorTopico();
@@ -84,9 +89,14 @@ public class PreguntasController {
     @PostMapping("/generate")
     @Operation(summary = "Generar preguntas del LLM", description = "Generacion de preguntas según tópico",
 	responses = {
-	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente",
-	                  content = @Content(mediaType = "application/json")),
+	    @ApiResponse(responseCode = "200", description = "Preguntas generadas exitosamente"),
 	})
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            description = "Datos para generar un set de preguntas sobre determinado topico",
+            required = true,
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = GenerateRequestBody.class)))
     public Map<String, Number> generate(@RequestBody Prompter prompter) {
         return llmApiClient.generate(prompter);
     }
