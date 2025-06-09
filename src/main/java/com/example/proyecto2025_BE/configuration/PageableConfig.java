@@ -20,7 +20,7 @@ public class PageableConfig implements WebMvcConfigurer {
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> resolvers) {
         PageableHandlerMethodArgumentResolver resolver = new PageableHandlerMethodArgumentResolver();
-        resolver.setMaxPageSize(20);
+        resolver.setMaxPageSize(4);
         resolver.setOneIndexedParameters(true);
         resolver.setFallbackPageable(PageRequest.of(0, 10));
         resolvers.add(resolver);
