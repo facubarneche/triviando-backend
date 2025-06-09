@@ -57,10 +57,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Balancear la carga").letter(LetterOption.A).build(),
                             Option.builder().text("Autenticar usuarios").letter(LetterOption.B).build(),
-                            Option.builder().text("Evitar fallos en cascada").letter(LetterOption.C).build(),
-                            Option.builder().text("Registrar eventos").letter(LetterOption.D).build())
+                            Option.builder().text("Registrar eventos").letter(LetterOption.C).build(),
+                            Option.builder().text("Evitar fallos en cascada").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Evitar fallos en cascada").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Evitar fallos en cascada").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -85,12 +85,13 @@ public class PreguntasData {
                     .explicacion("Actúa como un punto de entrada único para todos los clientes, simplificando el acceso a los servicios.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Almacenar datos persistentes").letter(LetterOption.A).build(),
+                            Option.builder().text("Implementar la lógica de negocio").letter(LetterOption.A).build(),
                             Option.builder().text("Gestionar la configuración de los servicios").letter(LetterOption.B).build(),
                             Option.builder().text("Actuar como un punto de entrada único").letter(LetterOption.C).build(),
-                            Option.builder().text("Implementar la lógica de negocio").letter(LetterOption.D).build())
+                            Option.builder().text("Almacenar datos persistentes").letter(LetterOption.D).build())
+                            
                     )
-                    .correctOption(Option.builder().text("Actuar como un punto de entrada único").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Actuar como un punto de entrada único").letter(LetterOption.A).build())
                     .build(),
 
 
@@ -101,12 +102,12 @@ public class PreguntasData {
                     .explicacion("Las bases de datos relacionales (SQL) no pertenecen a las categorías NoSQL.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("Clave-Valor").letter(LetterOption.A).build(),
+                            Option.builder().text("Relacional").letter(LetterOption.A).build(),
                             Option.builder().text("Documento").letter(LetterOption.B).build(),
-                            Option.builder().text("Relacional").letter(LetterOption.C).build(),
+                            Option.builder().text("Clave-Valor").letter(LetterOption.C).build(),
                             Option.builder().text("Grafo").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Relacional").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Relacional").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -162,11 +163,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
                             Option.builder().text("Clave-Valor").letter(LetterOption.A).build(),
-                            Option.builder().text("Documento").letter(LetterOption.B).build(),
-                            Option.builder().text("Columna-Familiar").letter(LetterOption.C).build(),
+                            Option.builder().text("Columna-Familiar").letter(LetterOption.B).build(),
+                            Option.builder().text("Documento").letter(LetterOption.C).build(),
                             Option.builder().text("Series de Tiempo").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Series de Tiempo").letter(LetterOption.D).build())
+                    .correctOption(Option.builder().text("Series de Tiempo").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -177,11 +178,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
                             Option.builder().text("Un archivo de configuración de red").letter(LetterOption.A).build(),
-                            Option.builder().text("Un sistema operativo virtualizado completo").letter(LetterOption.B).build(),
-                            Option.builder().text("Una instancia ejecutable de una imagen de Docker").letter(LetterOption.C).build(),
+                            Option.builder().text("Una instancia ejecutable de una imagen de Docker").letter(LetterOption.B).build(),
+                            Option.builder().text("Un sistema operativo virtualizado completo").letter(LetterOption.C).build(),
                             Option.builder().text("Un repositorio de imágenes de Docker").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una instancia ejecutable de una imagen de Docker").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una instancia ejecutable de una imagen de Docker").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -191,12 +192,12 @@ public class PreguntasData {
                     .explicacion("El Dockerfile contiene las instrucciones para construir una imagen.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("docker-compose.yml").letter(LetterOption.A).build(),
-                            Option.builder().text("Dockerfile").letter(LetterOption.B).build(),
+                            Option.builder().text("Dockerfile").letter(LetterOption.A).build(),
+                            Option.builder().text("docker-compose.yml").letter(LetterOption.B).build(),
                             Option.builder().text("container.config").letter(LetterOption.C).build(),
                             Option.builder().text("image.def").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Dockerfile").letter(LetterOption.B).build())
+                    .correctOption(Option.builder().text("Dockerfile").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -236,12 +237,12 @@ public class PreguntasData {
                     .explicacion("'docker run' inicia un contenedor a partir de una imagen.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("docker build").letter(LetterOption.A).build(),
+                            Option.builder().text("docker run").letter(LetterOption.A).build(),
                             Option.builder().text("docker start").letter(LetterOption.B).build(),
-                            Option.builder().text("docker run").letter(LetterOption.C).build(),
+                            Option.builder().text("docker build").letter(LetterOption.C).build(),
                             Option.builder().text("docker exec").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("docker run").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("docker run").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -251,12 +252,12 @@ public class PreguntasData {
                     .explicacion("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("No hay diferencia, son términos intercambiables").letter(LetterOption.A).build(),
+                            Option.builder().text("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución").letter(LetterOption.A).build(),
                             Option.builder().text("Una imagen es la instancia en ejecución, el contenedor es la plantilla").letter(LetterOption.B).build(),
-                            Option.builder().text("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución").letter(LetterOption.C).build(),
+                            Option.builder().text("No hay diferencia, son términos intercambiables").letter(LetterOption.C).build(),
                             Option.builder().text("Un contenedor solo puede tener una imagen base").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una imagen es una plantilla estática, un contenedor es una instancia en ejecución").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -268,10 +269,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("docker kill").letter(LetterOption.A).build(),
                             Option.builder().text("docker pause").letter(LetterOption.B).build(),
-                            Option.builder().text("docker stop").letter(LetterOption.C).build(),
-                            Option.builder().text("docker rm").letter(LetterOption.D).build())
+                            Option.builder().text("docker rm").letter(LetterOption.C).build(),
+                            Option.builder().text("docker stop").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("docker stop").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("docker stop").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -296,12 +297,12 @@ public class PreguntasData {
                     .explicacion("'docker rm' elimina contenedores.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("docker rmi").letter(LetterOption.A).build(),
+                            Option.builder().text("docker rm").letter(LetterOption.A).build(),
                             Option.builder().text("docker stop").letter(LetterOption.B).build(),
-                            Option.builder().text("docker rm").letter(LetterOption.C).build(),
+                            Option.builder().text("docker rmi").letter(LetterOption.C).build(),
                             Option.builder().text("docker prune").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("docker rm").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("docker rm").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -343,10 +344,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Mejorar el rendimiento del sitio web").letter(LetterOption.A).build(),
                             Option.builder().text("Asegurar la disponibilidad del servidor").letter(LetterOption.B).build(),
-                            Option.builder().text("Proporcionar cifrado para la comunicación").letter(LetterOption.C).build(),
-                            Option.builder().text("Optimizar la indexación por motores de búsqueda").letter(LetterOption.D).build())
+                            Option.builder().text("Optimizar la indexación por motores de búsqueda").letter(LetterOption.C).build(),
+                            Option.builder().text("Proporcionar cifrado para la comunicación").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Proporcionar cifrado para la comunicación").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Proporcionar cifrado para la comunicación").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -371,12 +372,12 @@ public class PreguntasData {
                     .explicacion("Una lista de las diez vulnerabilidades de seguridad web más críticas.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Un estándar para el desarrollo seguro de software").letter(LetterOption.A).build(),
+                            Option.builder().text("Una lista de las diez vulnerabilidades de seguridad web más críticas").letter(LetterOption.A).build(),
                             Option.builder().text("Una herramienta para escanear vulnerabilidades web").letter(LetterOption.B).build(),
-                            Option.builder().text("Una lista de las diez vulnerabilidades de seguridad web más críticas").letter(LetterOption.C).build(),
+                            Option.builder().text("Un estándar para el desarrollo seguro de software").letter(LetterOption.C).build(),
                             Option.builder().text("Una guía para la configuración segura de servidores web").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una lista de las diez vulnerabilidades de seguridad web más críticas").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una lista de las diez vulnerabilidades de seguridad web más críticas").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -387,14 +388,13 @@ public class PreguntasData {
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
                             Option.builder().text("Inyección de comandos").letter(LetterOption.A).build(),
-                            Option.builder().text("Cross-Site Request Forgery (CSRF)").letter(LetterOption.B).build(),
-                            Option.builder().text("Denegación de Servicio (DoS)").letter(LetterOption.C).build(),
+                            Option.builder().text("Denegación de Servicio (DoS)").letter(LetterOption.B).build(),
+                            Option.builder().text("Cross-Site Request Forgery (CSRF)").letter(LetterOption.C).build(),
                             Option.builder().text("Divulgación de información sensible").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Denegación de Servicio (DoS)").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Denegación de Servicio (DoS)").letter(LetterOption.B).build())
                     .build(),
 
-// Tópico: Computación en la Nube
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
                     .topico("Computación en la Nube")
@@ -434,10 +434,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Amazon EC2").letter(LetterOption.A).build(),
                             Option.builder().text("Amazon S3").letter(LetterOption.B).build(),
-                            Option.builder().text("Heroku").letter(LetterOption.C).build(),
-                            Option.builder().text("Microsoft Azure Virtual Machines").letter(LetterOption.D).build())
+                            Option.builder().text("Microsoft Azure Virtual Machines").letter(LetterOption.C).build(),
+                            Option.builder().text("Heroku").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Heroku").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Heroku").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -478,12 +478,12 @@ public class PreguntasData {
                     .explicacion("Un modelo donde el proveedor gestiona la infraestructura y el usuario solo se preocupa por el código.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Ejecutar servidores dedicados en la nube").letter(LetterOption.A).build(),
+                            Option.builder().text("Ejecutar código sin gestionar explícitamente servidores").letter(LetterOption.A).build(),
                             Option.builder().text("Gestionar completamente la infraestructura de servidores").letter(LetterOption.B).build(),
-                            Option.builder().text("Ejecutar código sin gestionar explícitamente servidores").letter(LetterOption.C).build(),
+                            Option.builder().text("Ejecutar servidores dedicados en la nube").letter(LetterOption.C).build(),
                             Option.builder().text("Almacenar grandes cantidades de datos no estructurados").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Ejecutar código sin gestionar explícitamente servidores").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Ejecutar código sin gestionar explícitamente servidores").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -493,12 +493,12 @@ public class PreguntasData {
                     .explicacion("Permite compartir recursos entre múltiples usuarios, reduciendo costos.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("Mayor aislamiento de recursos").letter(LetterOption.A).build(),
+                            Option.builder().text("Reducción de costos a través del uso compartido").letter(LetterOption.A).build(),
                             Option.builder().text("Mayor control sobre la infraestructura").letter(LetterOption.B).build(),
-                            Option.builder().text("Reducción de costos a través del uso compartido").letter(LetterOption.C).build(),
+                            Option.builder().text("Mayor aislamiento de recursos").letter(LetterOption.C).build(),
                             Option.builder().text("Mejor rendimiento para aplicaciones individuales").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Reducción de costos a través del uso compartido").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Reducción de costos a través del uso compartido").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -510,10 +510,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Asegurar la comunicación entre servicios").letter(LetterOption.A).build(),
                             Option.builder().text("Optimizar el almacenamiento de datos").letter(LetterOption.B).build(),
-                            Option.builder().text("Crear múltiples instancias virtuales de recursos").letter(LetterOption.C).build(),
-                            Option.builder().text("Gestionar la identidad y el acceso de los usuarios").letter(LetterOption.D).build())
+                            Option.builder().text("Gestionar la identidad y el acceso de los usuarios").letter(LetterOption.C).build(),
+                            Option.builder().text("Crear múltiples instancias virtuales de recursos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Crear múltiples instancias virtuales de recursos").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Crear múltiples instancias virtuales de recursos").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -539,11 +539,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.HIGH)
                     .options(Arrays.asList(
                             Option.builder().text("Menor necesidad de personal de TI").letter(LetterOption.A).build(),
-                            Option.builder().text("Mayor facilidad para la gestión de la seguridad").letter(LetterOption.B).build(),
-                            Option.builder().text("Complejidad de la integración con sistemas locales").letter(LetterOption.C).build(),
+                            Option.builder().text("Complejidad de la integración con sistemas locales").letter(LetterOption.B).build(),
+                            Option.builder().text("Mayor facilidad para la gestión de la seguridad").letter(LetterOption.C).build(),
                             Option.builder().text("Reducción automática de los costos operativos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Complejidad de la integración con sistemas locales").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Complejidad de la integración con sistemas locales").letter(LetterOption.B).build())
                     .build(),
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
@@ -552,12 +552,12 @@ public class PreguntasData {
                     .explicacion("El aprendizaje supervisado utiliza datos etiquetados, mientras que el no supervisado no.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("El supervisado usa más datos").letter(LetterOption.A).build(),
+                            Option.builder().text("El supervisado usa datos etiquetados").letter(LetterOption.A).build(),
                             Option.builder().text("El no supervisado es más preciso").letter(LetterOption.B).build(),
-                            Option.builder().text("El supervisado usa datos etiquetados").letter(LetterOption.C).build(),
+                            Option.builder().text("El supervisado usa más datos").letter(LetterOption.C).build(),
                             Option.builder().text("No hay una diferencia principal").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("El supervisado usa datos etiquetados").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("El supervisado usa datos etiquetados").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -568,11 +568,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
                             Option.builder().text("Regresión Lineal").letter(LetterOption.A).build(),
-                            Option.builder().text("Agrupamiento K-Medias").letter(LetterOption.B).build(),
-                            Option.builder().text("Máquinas de Vectores de Soporte (SVM)").letter(LetterOption.C).build(),
+                            Option.builder().text("Máquinas de Vectores de Soporte (SVM)").letter(LetterOption.B).build(),
+                            Option.builder().text("Agrupamiento K-Medias").letter(LetterOption.C).build(),
                             Option.builder().text("Reducción de Dimensionalidad PCA").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Máquinas de Vectores de Soporte (SVM)").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Máquinas de Vectores de Soporte (SVM)").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -688,12 +688,12 @@ public class PreguntasData {
                     .explicacion("Un campo de la IA enfocado en la interacción entre computadoras y lenguaje humano.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("La creación de interfaces gráficas de usuario").letter(LetterOption.A).build(),
+                            Option.builder().text("La interacción entre computadoras y lenguaje humano").letter(LetterOption.A).build(),
                             Option.builder().text("El diseño de algoritmos de optimización").letter(LetterOption.B).build(),
-                            Option.builder().text("La interacción entre computadoras y lenguaje humano").letter(LetterOption.C).build(),
+                            Option.builder().text("La creación de interfaces gráficas de usuario").letter(LetterOption.C).build(),
                             Option.builder().text("El análisis de grandes conjuntos de datos numéricos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("La interacción entre computadoras y lenguaje humano").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("La interacción entre computadoras y lenguaje humano").letter(LetterOption.A).build())
                     .build(),
 
 // Tópico: Inteligencia Artificial y Aprendizaje Automático (Continuación)
@@ -706,10 +706,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Un sensor para recopilar datos ambientales").letter(LetterOption.A).build(),
                             Option.builder().text("Un sistema operativo basado en la nube").letter(LetterOption.B).build(),
-                            Option.builder().text("Un programa para simular conversación humana").letter(LetterOption.C).build(),
-                            Option.builder().text("Un dispositivo para controlar el hogar inteligente").letter(LetterOption.D).build())
+                            Option.builder().text("Un dispositivo para controlar el hogar inteligente").letter(LetterOption.C).build(),
+                            Option.builder().text("Un programa para simular conversación humana").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Un programa para simular conversación humana").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Un programa para simular conversación humana").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -750,11 +750,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.HIGH)
                     .options(Arrays.asList(
                             Option.builder().text("El alto costo computacional de los modelos").letter(LetterOption.A).build(),
-                            Option.builder().text("La dificultad de interpretar los resultados de los modelos").letter(LetterOption.B).build(),
-                            Option.builder().text("Los sesgos en los datos y la toma de decisiones injustas").letter(LetterOption.C).build(),
+                            Option.builder().text("Los sesgos en los datos y la toma de decisiones injustas").letter(LetterOption.B).build(),
+                            Option.builder().text("La dificultad de interpretar los resultados de los modelos").letter(LetterOption.C).build(),
                             Option.builder().text("La falta de estándares en el desarrollo de modelos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Los sesgos en los datos y la toma de decisiones injustas").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Los sesgos en los datos y la toma de decisiones injustas").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -765,11 +765,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
                             Option.builder().text("Un algoritmo de aprendizaje no supervisado").letter(LetterOption.A).build(),
-                            Option.builder().text("Un programa para la traducción automática de idiomas").letter(LetterOption.B).build(),
-                            Option.builder().text("Un sistema que simula la experiencia de un experto humano").letter(LetterOption.C).build(),
+                            Option.builder().text("Un sistema que simula la experiencia de un experto humano").letter(LetterOption.B).build(),
+                            Option.builder().text("Un programa para la traducción automática de idiomas").letter(LetterOption.C).build(),
                             Option.builder().text("Una técnica para la visualización de grandes conjuntos de datos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Un sistema que simula la experiencia de un experto humano").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Un sistema que simula la experiencia de un experto humano").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -795,10 +795,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Un modelo que genera nuevos datos similares a los de entrenamiento").letter(LetterOption.A).build(),
                             Option.builder().text("Un modelo que aprende la probabilidad conjunta de datos y etiquetas").letter(LetterOption.B).build(),
-                            Option.builder().text("Un modelo que aprende los límites entre diferentes clases de datos").letter(LetterOption.C).build(),
-                            Option.builder().text("Un modelo que reduce la dimensionalidad de los datos").letter(LetterOption.D).build())
+                            Option.builder().text("Un modelo que reduce la dimensionalidad de los datos").letter(LetterOption.C).build(),
+                            Option.builder().text("Un modelo que aprende los límites entre diferentes clases de datos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Un modelo que aprende los límites entre diferentes clases de datos").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Un modelo que aprende los límites entre diferentes clases de datos").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -808,12 +808,12 @@ public class PreguntasData {
                     .explicacion("Un tipo de aprendizaje donde las etiquetas se generan a partir de los propios datos.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Aprendizaje sin ninguna etiqueta").letter(LetterOption.A).build(),
+                            Option.builder().text("Aprendizaje donde las etiquetas se generan de los datos").letter(LetterOption.A).build(),
                             Option.builder().text("Aprendizaje con etiquetas proporcionadas por expertos").letter(LetterOption.B).build(),
-                            Option.builder().text("Aprendizaje donde las etiquetas se generan de los datos").letter(LetterOption.C).build(),
+                            Option.builder().text("Aprendizaje sin ninguna etiqueta").letter(LetterOption.C).build(),
                             Option.builder().text("Aprendizaje que utiliza solo datos numéricos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Aprendizaje donde las etiquetas se generan de los datos").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Aprendizaje donde las etiquetas se generan de los datos").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -853,15 +853,14 @@ public class PreguntasData {
                     .explicacion("La búsqueda de cuadrícula y la búsqueda aleatoria son métodos comunes.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Validación cruzada").letter(LetterOption.A).build(),
+                            Option.builder().text("Búsqueda de cuadrícula").letter(LetterOption.A).build(),
                             Option.builder().text("Regularización L1 y L2").letter(LetterOption.B).build(),
-                            Option.builder().text("Búsqueda de cuadrícula").letter(LetterOption.C).build(),
+                            Option.builder().text("Validación cruzada").letter(LetterOption.C).build(),
                             Option.builder().text("Aumento de datos").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Búsqueda de cuadrícula").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Búsqueda de cuadrícula").letter(LetterOption.A).build())
                     .build(),
 
-            // Nuevo Tópico: Desarrollo de Software Ágil
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
                     .topico("Desarrollo de Software Ágil")
@@ -870,11 +869,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
                             Option.builder().text("Planificación exhaustiva al inicio del proyecto").letter(LetterOption.A).build(),
-                            Option.builder().text("Minimizar la documentación del software").letter(LetterOption.B).build(),
-                            Option.builder().text("Entregar valor al cliente de forma rápida y adaptativa").letter(LetterOption.C).build(),
+                            Option.builder().text("Entregar valor al cliente de forma rápida y adaptativa").letter(LetterOption.B).build(),
+                            Option.builder().text("Minimizar la documentación del software").letter(LetterOption.C).build(),
                             Option.builder().text("Seguir estrictamente un plan predefinido").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Entregar valor al cliente de forma rápida y adaptativa").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Entregar valor al cliente de forma rápida y adaptativa").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -914,12 +913,12 @@ public class PreguntasData {
                     .explicacion("Una lista priorizada de todo el trabajo que se necesita en el producto.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("El plan detallado para un Sprint").letter(LetterOption.A).build(),
+                            Option.builder().text("Una lista priorizada de todo el trabajo del producto").letter(LetterOption.A).build(),
                             Option.builder().text("Una lista de los miembros del equipo Scrum").letter(LetterOption.B).build(),
-                            Option.builder().text("Una lista priorizada de todo el trabajo del producto").letter(LetterOption.C).build(),
+                            Option.builder().text("El plan detallado para un Sprint").letter(LetterOption.C).build(),
                             Option.builder().text("El documento de diseño de la arquitectura del software").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una lista priorizada de todo el trabajo del producto").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una lista priorizada de todo el trabajo del producto").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -946,10 +945,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Un diagrama de casos de uso detallado").letter(LetterOption.A).build(),
                             Option.builder().text("Un documento de especificación técnica").letter(LetterOption.B).build(),
-                            Option.builder().text("Una descripción de funcionalidad desde la perspectiva del usuario").letter(LetterOption.C).build(),
-                            Option.builder().text("Un plan de pruebas detallado").letter(LetterOption.D).build())
+                            Option.builder().text("Un plan de pruebas detallado").letter(LetterOption.C).build(),
+                            Option.builder().text("Una descripción de funcionalidad desde la perspectiva del usuario").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una descripción de funcionalidad desde la perspectiva del usuario").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una descripción de funcionalidad desde la perspectiva del usuario").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -974,12 +973,12 @@ public class PreguntasData {
                     .explicacion("Una oportunidad para el equipo de inspeccionar y adaptar sus procesos.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Una reunión para definir los objetivos del Sprint").letter(LetterOption.A).build(),
+                            Option.builder().text("Una oportunidad para el equipo de inspeccionar y adaptar sus procesos").letter(LetterOption.A).build(),
                             Option.builder().text("Una sesión para probar el software desarrollado durante el Sprint").letter(LetterOption.B).build(),
-                            Option.builder().text("Una oportunidad para el equipo de inspeccionar y adaptar sus procesos").letter(LetterOption.C).build(),
+                            Option.builder().text("Una reunión para definir los objetivos del Sprint").letter(LetterOption.C).build(),
                             Option.builder().text("Una presentación del producto a los stakeholders").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una oportunidad para el equipo de inspeccionar y adaptar sus procesos").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una oportunidad para el equipo de inspeccionar y adaptar sus procesos").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -1021,10 +1020,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("El tiempo que un elemento permanece en una columna del tablero Kanban").letter(LetterOption.A).build(),
                             Option.builder().text("El número máximo de tareas permitidas en una columna").letter(LetterOption.B).build(),
-                            Option.builder().text("El tiempo total desde la solicitud hasta la entrega de una tarea").letter(LetterOption.C).build(),
-                            Option.builder().text("La frecuencia con la que se revisa el tablero Kanban").letter(LetterOption.D).build())
+                            Option.builder().text("La frecuencia con la que se revisa el tablero Kanban").letter(LetterOption.C).build(),
+                            Option.builder().text("El tiempo total desde la solicitud hasta la entrega de una tarea").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("El tiempo total desde la solicitud hasta la entrega de una tarea").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("El tiempo total desde la solicitud hasta la entrega de una tarea").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -1035,11 +1034,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
                             Option.builder().text("Documentar completamente cada característica antes de la entrega").letter(LetterOption.A).build(),
-                            Option.builder().text("Entregar software al final del proyecto en una gran entrega").letter(LetterOption.B).build(),
-                            Option.builder().text("Priorizar la entrega frecuente de software útil al cliente").letter(LetterOption.C).build(),
+                            Option.builder().text("Priorizar la entrega frecuente de software útil al cliente").letter(LetterOption.B).build(),
+                            Option.builder().text("Entregar software al final del proyecto en una gran entrega").letter(LetterOption.C).build(),
                             Option.builder().text("Obtener la aprobación del cliente para cada línea de código").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Priorizar la entrega frecuente de software útil al cliente").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Priorizar la entrega frecuente de software útil al cliente").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -1064,12 +1063,12 @@ public class PreguntasData {
                     .explicacion("Maximizar el valor del producto resultante del trabajo del equipo de desarrollo.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Gestionar el equipo de desarrollo y asignar tareas").letter(LetterOption.A).build(),
+                            Option.builder().text("Asegurar la calidad técnica del software desarrollado").letter(LetterOption.A).build(),
                             Option.builder().text("Facilitar las reuniones de Scrum y eliminar impedimentos").letter(LetterOption.B).build(),
-                            Option.builder().text("Maximizar el valor del producto resultante del trabajo del equipo").letter(LetterOption.C).build(),
+                            Option.builder().text("Gestionar el equipo de desarrollo y asignar tareas").letter(LetterOption.C).build(),
                             Option.builder().text("Asegurar la calidad técnica del software desarrollado").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Maximizar el valor del producto resultante del trabajo del equipo").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Maximizar el valor del producto resultante del trabajo del equipo").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -1079,12 +1078,12 @@ public class PreguntasData {
                     .explicacion("Se valoran más los individuos e interacciones que los procesos y herramientas.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("Los procesos y herramientas son más importantes que los individuos").letter(LetterOption.A).build(),
+                            Option.builder().text("Se valoran más los individuos e interacciones que los procesos").letter(LetterOption.A).build(),
                             Option.builder().text("Se valora más la documentación que el software funcionando").letter(LetterOption.B).build(),
-                            Option.builder().text("Se valoran más los individuos e interacciones que los procesos").letter(LetterOption.C).build(),
+                            Option.builder().text("Los procesos y herramientas son más importantes que los individuos").letter(LetterOption.C).build(),
                             Option.builder().text("La negociación de contratos es más importante que la colaboración").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Se valoran más los individuos e interacciones que los procesos").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Se valoran más los individuos e interacciones que los procesos").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -1096,10 +1095,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Modelo OSI").letter(LetterOption.A).build(),
                             Option.builder().text("Modelo Cliente-Servidor").letter(LetterOption.B).build(),
-                            Option.builder().text("Modelo TCP/IP").letter(LetterOption.C).build(),
-                            Option.builder().text("Modelo Peer-to-Peer").letter(LetterOption.D).build())
+                            Option.builder().text("Modelo Peer-to-Peer").letter(LetterOption.C).build(),
+                            Option.builder().text("Modelo TCP/IP").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Modelo TCP/IP").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Modelo TCP/IP").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -1109,12 +1108,12 @@ public class PreguntasData {
                     .explicacion("Los switches utilizan direcciones MAC para reenviar tramas dentro de la misma red local.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Router").letter(LetterOption.A).build(),
+                            Option.builder().text("Switch").letter(LetterOption.A).build(),
                             Option.builder().text("Firewall").letter(LetterOption.B).build(),
-                            Option.builder().text("Switch").letter(LetterOption.C).build(),
+                            Option.builder().text("Router").letter(LetterOption.C).build(),
                             Option.builder().text("Hub").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Switch").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Switch").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -1125,11 +1124,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
                             Option.builder().text("DHCP").letter(LetterOption.A).build(),
-                            Option.builder().text("DNS").letter(LetterOption.B).build(),
-                            Option.builder().text("ARP").letter(LetterOption.C).build(),
+                            Option.builder().text("ARP").letter(LetterOption.B).build(),
+                            Option.builder().text("DNS").letter(LetterOption.C).build(),
                             Option.builder().text("ICMP").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("ARP").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("ARP").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -1155,11 +1154,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
                             Option.builder().text("UDP").letter(LetterOption.A).build(),
-                            Option.builder().text("IP").letter(LetterOption.B).build(),
-                            Option.builder().text("TCP").letter(LetterOption.C).build(),
+                            Option.builder().text("TCP").letter(LetterOption.B).build(),
+                            Option.builder().text("IP").letter(LetterOption.C).build(),
                             Option.builder().text("HTTP").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("TCP").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("TCP").letter(LetterOption.B).build())
                     .build(),
 
             // Nuevo Tópico: Sistemas Operativos
@@ -1187,10 +1186,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Un archivo ejecutable almacenado en disco").letter(LetterOption.A).build(),
                             Option.builder().text("Una unidad de almacenamiento de información").letter(LetterOption.B).build(),
-                            Option.builder().text("Una instancia en ejecución de un programa").letter(LetterOption.C).build(),
-                            Option.builder().text("Un componente físico de la computadora").letter(LetterOption.D).build())
+                            Option.builder().text("Un componente físico de la computadora").letter(LetterOption.C).build(),
+                            Option.builder().text("Una instancia en ejecución de un programa").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una instancia en ejecución de un programa").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una instancia en ejecución de un programa").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -1215,12 +1214,12 @@ public class PreguntasData {
                     .explicacion("Una situación donde dos o más procesos están bloqueados esperando recursos que otros tienen.")
                     .difficulty(Difficulty.HIGH)
                     .options(Arrays.asList(
-                            Option.builder().text("Un error de programación que causa la terminación de un proceso").letter(LetterOption.A).build(),
+                            Option.builder().text("Una situación donde procesos están bloqueados esperando recursos mutuamente").letter(LetterOption.A).build(),
                             Option.builder().text("Una condición donde un proceso consume todos los recursos del sistema").letter(LetterOption.B).build(),
-                            Option.builder().text("Una situación donde procesos están bloqueados esperando recursos mutuamente").letter(LetterOption.C).build(),
+                            Option.builder().text("Un error de programación que causa la terminación de un proceso").letter(LetterOption.C).build(),
                             Option.builder().text("Un fallo de hardware que impide el acceso a la memoria").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Una situación donde procesos están bloqueados esperando recursos mutuamente").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Una situación donde procesos están bloqueados esperando recursos mutuamente").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -1230,12 +1229,12 @@ public class PreguntasData {
                     .explicacion("Organizar y gestionar el almacenamiento y acceso a los datos en disco.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("Gestionar la conexión de red").letter(LetterOption.A).build(),
+                            Option.builder().text("Organizar y gestionar el almacenamiento de datos").letter(LetterOption.A).build(),
                             Option.builder().text("Controlar los dispositivos de entrada y salida").letter(LetterOption.B).build(),
-                            Option.builder().text("Organizar y gestionar el almacenamiento de datos").letter(LetterOption.C).build(),
+                            Option.builder().text("Gestionar la conexión de red").letter(LetterOption.C).build(),
                             Option.builder().text("Administrar la memoria principal del sistema").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Organizar y gestionar el almacenamiento de datos").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Organizar y gestionar el almacenamiento de datos").letter(LetterOption.A).build())
                     .build(),
 
             // Nuevo Tópico: Desarrollo Front-end
@@ -1248,10 +1247,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("JavaScript").letter(LetterOption.A).build(),
                             Option.builder().text("CSS").letter(LetterOption.B).build(),
-                            Option.builder().text("HTML").letter(LetterOption.C).build(),
-                            Option.builder().text("Python").letter(LetterOption.D).build())
+                            Option.builder().text("Python").letter(LetterOption.C).build(),
+                            Option.builder().text("HTML").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("HTML").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("HTML").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -1263,10 +1262,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("HTML").letter(LetterOption.A).build(),
                             Option.builder().text("JavaScript").letter(LetterOption.B).build(),
-                            Option.builder().text("CSS").letter(LetterOption.C).build(),
-                            Option.builder().text("SVG").letter(LetterOption.D).build())
+                            Option.builder().text("SVG").letter(LetterOption.C).build(),
+                            Option.builder().text("CSS").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("CSS").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("CSS").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -1277,11 +1276,11 @@ public class PreguntasData {
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
                             Option.builder().text("Definir la estructura del documento").letter(LetterOption.A).build(),
-                            Option.builder().text("Aplicar estilos visuales a los elementos").letter(LetterOption.B).build(),
-                            Option.builder().text("Añadir interactividad y dinamismo").letter(LetterOption.C).build(),
+                            Option.builder().text("Añadir interactividad y dinamismo").letter(LetterOption.B).build(),
+                            Option.builder().text("Aplicar estilos visuales a los elementos").letter(LetterOption.C).build(),
                             Option.builder().text("Gestionar bases de datos del lado del cliente").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Añadir interactividad y dinamismo").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Añadir interactividad y dinamismo").letter(LetterOption.B).build())
                     .build(),
 
             Pregunta.builder()
@@ -1337,12 +1336,12 @@ public class PreguntasData {
                     .explicacion("Python, Java, Node.js y Ruby son ejemplos populares.")
                     .difficulty(Difficulty.LOW)
                     .options(Arrays.asList(
-                            Option.builder().text("HTML").letter(LetterOption.A).build(),
+                            Option.builder().text("Python").letter(LetterOption.A).build(),
                             Option.builder().text("CSS").letter(LetterOption.B).build(),
-                            Option.builder().text("Python").letter(LetterOption.C).build(),
+                            Option.builder().text("HTML").letter(LetterOption.C).build(),
                             Option.builder().text("Assembly").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Python").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Python").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -1369,10 +1368,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Un lenguaje de programación interpretado").letter(LetterOption.A).build(),
                             Option.builder().text("Un sistema de gestión de bases de datos relacional").letter(LetterOption.B).build(),
-                            Option.builder().text("Un conjunto de herramientas para construir aplicaciones del servidor").letter(LetterOption.C).build(),
-                            Option.builder().text("Una biblioteca para la manipulación del DOM").letter(LetterOption.D).build())
+                            Option.builder().text("Una biblioteca para la manipulación del DOM").letter(LetterOption.C).build(),
+                            Option.builder().text("Un conjunto de herramientas para construir aplicaciones del servidor").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Un conjunto de herramientas para construir aplicaciones del servidor").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Un conjunto de herramientas para construir aplicaciones del servidor").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
@@ -1397,12 +1396,12 @@ public class PreguntasData {
                     .explicacion("El patrón MVC (Modelo-Vista-Controlador) organiza el código de esta manera.")
                     .difficulty(Difficulty.MEDIUM)
                     .options(Arrays.asList(
-                            Option.builder().text("Arquitectura de microservicios").letter(LetterOption.A).build(),
-                            Option.builder().text("Patrón Modelo-Vista-Controlador (MVC)").letter(LetterOption.B).build(),
+                            Option.builder().text("Patrón Modelo-Vista-Controlador (MVC)").letter(LetterOption.A).build(),
+                            Option.builder().text("Arquitectura de microservicios").letter(LetterOption.B).build(),
                             Option.builder().text("Arquitectura orientada a eventos").letter(LetterOption.C).build(),
                             Option.builder().text("Patrón fachada").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Patrón Modelo-Vista-Controlador (MVC)").letter(LetterOption.B).build())
+                    .correctOption(Option.builder().text("Patrón Modelo-Vista-Controlador (MVC)").letter(LetterOption.A).build())
                     .build(),
 
             Pregunta.builder()
@@ -1444,10 +1443,10 @@ public class PreguntasData {
                     .options(Arrays.asList(
                             Option.builder().text("Herramientas para la creación de APIs RESTful").letter(LetterOption.A).build(),
                             Option.builder().text("Sistemas de gestión de colas de mensajes").letter(LetterOption.B).build(),
-                            Option.builder().text("Bibliotecas para interactuar con bases de datos relacionales").letter(LetterOption.C).build(),
-                            Option.builder().text("Servidores web para desplegar aplicaciones back-end").letter(LetterOption.D).build())
+                            Option.builder().text("Servidores web para desplegar aplicaciones back-end").letter(LetterOption.C).build(),
+                            Option.builder().text("Bibliotecas para interactuar con bases de datos relacionales").letter(LetterOption.D).build())
                     )
-                    .correctOption(Option.builder().text("Bibliotecas para interactuar con bases de datos relacionales").letter(LetterOption.C).build())
+                    .correctOption(Option.builder().text("Bibliotecas para interactuar con bases de datos relacionales").letter(LetterOption.D).build())
                     .build(),
 
             Pregunta.builder()
