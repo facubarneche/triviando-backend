@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class PreguntaServiceImpl implements PreguntaService{
+public class PreguntaServiceImpl implements PreguntaService {
 
     private final PreguntaDao preguntaDao;
     private final PreguntaLoaderFactory preguntaLoaderFactory;
@@ -71,5 +71,10 @@ public class PreguntaServiceImpl implements PreguntaService{
     public List<Pregunta> obtenerPreguntasNoRespondidasPorTopico(Long userId, String topico) {
         PreguntaLoaderStrategy preguntaLoader = preguntaLoaderFactory.getPreguntaLoader(userId);
         return preguntaLoader.cargarPreguntasNoRespondidas(topico);
+    }
+
+    @Override
+    public String getTopicFromQuestion(String topico) {
+        return preguntaDao.getFirstByTopico(topico).getEmoji();
     }
 }

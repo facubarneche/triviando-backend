@@ -31,4 +31,6 @@ public interface PreguntaDao extends MongoRepository<Pregunta, String> {
             "{ $group: { _id: '$topico', cantidadPreguntas: { $sum: 1 } } }"
     })
     List<Map<String, Object>> contarPreguntasPorTopicoExcluyendoIds(List<String> preguntasRespondidasIds);
+
+    Pregunta getFirstByTopico(String topico);
 }

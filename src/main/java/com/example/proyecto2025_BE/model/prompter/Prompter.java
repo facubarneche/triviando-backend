@@ -1,5 +1,6 @@
 package com.example.proyecto2025_BE.model.prompter;
 
+import com.example.proyecto2025_BE.service.ModelCommunication;
 import com.example.proyecto2025_BE.service.PreguntaService;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -41,4 +42,5 @@ public abstract class Prompter {
 		this.preguntaService = preguntaService;
 		return this;
 	}
+	public abstract String getEmoji(ModelCommunication assistant);
 }

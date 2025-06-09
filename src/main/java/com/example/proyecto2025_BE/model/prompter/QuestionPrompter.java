@@ -1,5 +1,6 @@
 package com.example.proyecto2025_BE.model.prompter;
 
+import com.example.proyecto2025_BE.service.ModelCommunication;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import lombok.NoArgsConstructor;
@@ -18,5 +19,10 @@ public class QuestionPrompter extends Prompter {
 	@Override
 	public void validatePrompt() {
 		
+	}
+
+	@Override
+	public String getEmoji(ModelCommunication assistant) {
+		return super.preguntaService.getTopicFromQuestion(super.topic);
 	}
 }

@@ -1,22 +1,18 @@
 package com.example.proyecto2025_BE.configuration;
 
+import dev.langchain4j.model.chat.Capability;
+import dev.langchain4j.model.openai.OpenAiChatModel;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import com.example.proyecto2025_BE.constants.LLM;
-import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
 import com.example.proyecto2025_BE.service.ModelCommunication;
 
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
-import dev.langchain4j.model.chat.StreamingChatLanguageModel;
-import dev.langchain4j.model.chat.request.ResponseFormat;
-import dev.langchain4j.model.chat.request.ResponseFormatType;
-import dev.langchain4j.model.openai.OpenAiChatRequestParameters;
-import dev.langchain4j.model.openai.OpenAiStreamingChatModel;
 import dev.langchain4j.service.AiServices;
-import dev.langchain4j.service.output.JsonSchemas;
 import lombok.Setter;
+import java.util.Set;
 
 @Setter
 @Configuration
@@ -30,31 +26,22 @@ public class LLMConfig {
 	@Bean
 	public ModelCommunication modelCommunication() {
 		return AiServices.builder(ModelCommunication.class)
-			.streamingChatLanguageModel(streamingChatLanguageModel())
+			.chatLanguageModel(chatLanguageModel())
 			.chatMemory(MessageWindowChatMemory.withMaxMessages(10))
 			.systemMessageProvider(chatMemoryId -> LLM.TEMPLATE_SYSTEM_PROMPT)
 			.build();
 	}
 	
-	private StreamingChatLanguageModel streamingChatLanguageModel() {
-		return OpenAiStreamingChatModel.builder()
+	private OpenAiChatModel chatLanguageModel() {
+		return OpenAiChatModel.builder()
 			.apiKey(apiKey)
 			.modelName(modelName)
 			.logRequests(logRequests)
 			.logResponses(logResponses)
 			.timeout(LLM.TIMEOUT)
 			.temperature(0.0)
+			.supportedCapabilities(Set.of(Capability.RESPONSE_FORMAT_JSON_SCHEMA))
 			.strictJsonSchema(true)
-			.defaultRequestParameters(OpenAiChatRequestParameters.builder()
-					.responseFormat(responseFormat())
-	                .build())
-			.build();
-	}
-	
-	private ResponseFormat responseFormat() {
-		return ResponseFormat.builder()
-			.jsonSchema(JsonSchemas.jsonSchemaFrom(QuestionList.class).get())
-			.type(ResponseFormatType.JSON)
 			.build();
 	}
 }
