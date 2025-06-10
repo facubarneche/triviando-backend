@@ -27,10 +27,11 @@ public interface PreguntaDao extends MongoRepository<Pregunta, String> {
     List<Pregunta> findPreguntasNotAnsweredByUserIdAndTopico(List<String> idsQuestionsAnsweredByUserId, String topico);
 
     @Aggregation(pipeline = {
-            "{ $match: { _id: { $nin: ?0 } } }",
-            "{ $group: { _id: '$topico', cantidadPreguntas: { $sum: 1 } } }"
+            "{ $group: { _id: '$topico', todasLasPreguntas: { $push: '$_id' } } }",
+            "{ $addFields: { cantidadPreguntas: { $size: { $filter: { input: '$todasLasPreguntas', as: 'preguntaId', cond: { $not: { $in: ['$$preguntaId', ?0] } } } } } } }"
     })
-    List<Map<String, Object>> contarPreguntasPorTopicoExcluyendoIds(List<String> preguntasRespondidasIds);
+    List<Map<String, Object>> contarPreguntasPorTopicoIncluyendoRespondidas(List<String> preguntasRespondidasIds);
 
     Pregunta getFirstByTopico(String topico);
+
 }
