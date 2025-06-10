@@ -40,7 +40,7 @@ public class UsuarioRegistradoPreguntaLoader implements PreguntaLoaderStrategy{
         }
         return random.ints(0, preguntasNoRespondidas.size())
                 .distinct()
-                .limit(cantidadPreguntas)
+                .limit(Math.min(cantidadPreguntas, preguntasNoRespondidas.size()))
                 .mapToObj(preguntasNoRespondidas::get)
                 .toList();
     }
