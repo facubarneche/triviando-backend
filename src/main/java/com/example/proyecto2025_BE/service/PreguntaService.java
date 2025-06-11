@@ -1,7 +1,6 @@
 package com.example.proyecto2025_BE.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
@@ -15,6 +14,7 @@ public interface PreguntaService {
     List<Pregunta> getPreguntasByTopico(String topico);
     List<Pregunta> saveAll(List<Pregunta> preguntas);
     List<Topics> contarPreguntasPorTopico();
+    List<Topics> contarPreguntasPorTopico(long userId);
 	boolean existsByTopic(String topic);
     List<Pregunta> obtenerPreguntasNoRespondidasPorTopico(Long userId, String topico);
     String getTopicFromQuestion(String topico);

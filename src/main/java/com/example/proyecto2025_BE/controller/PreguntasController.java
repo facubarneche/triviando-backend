@@ -76,15 +76,15 @@ public class PreguntasController {
         return preguntasService.getPreguntaById(id);
     }
 
-    @GetMapping("/topicos")
+    @GetMapping("/topicos/{userId}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Cuenta la cantidad de preguntas por tópico",
             description = "Devuelve una lista con la cantidad de preguntas agrupadas por tópico.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conteo obtenido exitosamente")
     })
-    public List<Topics> cantidadPreguntasPorTopico() {
-        return preguntasService.contarPreguntasPorTopico();
+    public List<Topics> cantidadPreguntasPorTopico(@PathVariable long userId) {
+        return preguntasService.contarPreguntasPorTopico(userId);
     }
     
     @PostMapping("/generate")

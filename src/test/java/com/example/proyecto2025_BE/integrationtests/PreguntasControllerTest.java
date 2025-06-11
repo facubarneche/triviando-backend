@@ -1,15 +1,17 @@
 package com.example.proyecto2025_BE.integrationtests;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
 
+import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.Topics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,24 +40,57 @@ class PreguntasControllerTest {
     private MockMvc mockMvc;
     @MockitoBean
     private PreguntaDao preguntaDao;
+    @MockitoBean
+    private UserDao userDao;
     @Autowired
     private ObjectMapper objectMapper;
 
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
-        String topico = "Historia";
-        List<Pregunta> preguntasHistoria = PreguntasData.PREGUNTAS.stream()
-                .filter(pregunta -> pregunta.getTopico().equals(topico))
+        String topicoExistente = PreguntasData.PREGUNTAS.getFirst().getTopico();
+        List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
+                .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
 
-        when(preguntaDao.findByTopico(topico)).thenReturn(Optional.of(preguntasHistoria));
+        when(preguntaDao.findByTopico(topicoExistente)).thenReturn(Optional.of(preguntasTopicoExistente));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
-                        .param("topico", topico))
+                        .param("topico", topicoExistente))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
-                .andExpect(content().json(objectMapper.writeValueAsString(preguntasHistoria)));
+                .andExpect(content().json(objectMapper.writeValueAsString(preguntasTopicoExistente)));
+    }
+
+
+    @Test
+    @DisplayName("Get preguntas by topico - user contesta preguntas")
+    void getPreguntasByTopico_userContestaPreguntas() throws Exception {
+        String topicoExistente = PreguntasData.PREGUNTAS.getFirst().getTopico();
+        List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
+                .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
+                .toList();
+
+        when(preguntaDao.findByTopico(topicoExistente)).thenReturn(Optional.of(preguntasTopicoExistente));
+        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder()
+                .id(1L)
+                .answers(Collections.singletonList(Answer.builder()
+                        .user(User.builder().id(1L).build())
+                        .questionId(preguntasTopicoExistente.getFirst().getId())
+                        .score(BigDecimal.valueOf(100.00))
+                        .build()))
+                .build()));
+
+        List<Pregunta> resultadoEsperado = preguntasTopicoExistente.subList(1, preguntasTopicoExistente.size());
+        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(any(), any())).thenReturn(resultadoEsperado);
+
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
+                        .param("topico", topicoExistente)
+                        .param("userId", "1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType("application/json"))
+                .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
     }
 
     @Test
@@ -106,7 +141,8 @@ class PreguntasControllerTest {
                 Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", "\uD83D\uDC0D")
         );
 
-        when(preguntaDao.contarPreguntasPorTopico()).thenReturn(resultadoDao);
+        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
+        when(preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(any())).thenReturn(resultadoDao);
 
         List<Topics> resultadoEsperado = List.of(
                 new Topics("java", 5, "☕"),
@@ -115,9 +151,16 @@ class PreguntasControllerTest {
 
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
+    }
+
+    @Test
+    @DisplayName("Get cantidad preguntas por topico  - user  contesta  un topico")
+    void getCantidadPreguntasPorTopico_userContestaUnTopico() throws Exception {
+
+
     }
 }
