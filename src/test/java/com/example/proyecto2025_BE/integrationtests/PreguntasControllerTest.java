@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import com.example.proyecto2025_BE.model.dto.Topics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,17 +101,19 @@ class PreguntasControllerTest {
     void getCantidadPreguntasPorTopico() throws Exception {
 
         List<Map<String, Object>> resultadoDao = Arrays.asList(
-                Map.of("_id", "java", "cantidadPreguntas", 5),
-                Map.of("_id", "python", "cantidadPreguntas", 10),
-                Map.of("_id", "javascript", "cantidadPreguntas", 7)
+                Map.of("_id", "java", "cantidadPreguntas", 5, "emoji", "☕"),
+                Map.of("_id", "python", "cantidadPreguntas", 10,"emoji", "\uD83D\uDC0D"),
+                Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", "\uD83D\uDC0D")
         );
 
         when(preguntaDao.contarPreguntasPorTopico()).thenReturn(resultadoDao);
 
-        Map<String, Number> resultadoEsperado = new HashMap<>();
-        resultadoEsperado.put("java", 5);
-        resultadoEsperado.put("python", 10);
-        resultadoEsperado.put("javascript", 7);
+        List<Topics> resultadoEsperado = List.of(
+                new Topics("java", 5, "☕"),
+                new Topics("python", 10, "\uD83D\uDC0D"),
+                new Topics("javascript", 7, "\uD83D\uDC0D")
+
+        );
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos"))
                 .andExpect(status().isOk())

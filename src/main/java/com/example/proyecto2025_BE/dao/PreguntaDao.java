@@ -15,7 +15,7 @@ public interface PreguntaDao extends MongoRepository<Pregunta, String> {
     Optional<List<Pregunta>> findByTopico(String topico);
 
     @Aggregation(pipeline = {
-            "{ $group: { _id: '$topico', cantidadPreguntas: { $sum: 1 } } }"
+            "{ $group: { _id: '$topico', cantidadPreguntas: { $sum: 1 }, emoji: '$emoji'} }"
     })
     List<Map<String, Object>> contarPreguntasPorTopico();
 

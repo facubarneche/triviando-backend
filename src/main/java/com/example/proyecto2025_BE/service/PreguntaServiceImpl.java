@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.example.proyecto2025_BE.model.dto.Topics;
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.dao.PreguntaDao;
@@ -49,12 +50,15 @@ public class PreguntaServiceImpl implements PreguntaService {
     }
 
     @Override
-    public Map<String, Number> contarPreguntasPorTopico() {
+    public List<Topics> contarPreguntasPorTopico() {
         return preguntaDao.contarPreguntasPorTopico().stream()
-                .collect(Collectors.toMap(
-                        m -> (String) m.get("_id"),
-                        m -> (Number) m.get("cantidadPreguntas")
-                ));
+                .map(
+topic ->
+                    new Topics(
+                            (String) topic.get("_id"),
+                            (Number) topic.get("cantidadPreguntas"),
+                            (String) topic.get("emoji"))
+                ).toList();
     }
     
     @Override

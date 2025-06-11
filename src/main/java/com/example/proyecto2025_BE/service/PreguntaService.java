@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
+import com.example.proyecto2025_BE.model.dto.Topics;
 
 public interface PreguntaService {
 
@@ -13,7 +14,7 @@ public interface PreguntaService {
     String createPregunta(PreguntaRequest preguntaRequest);
     List<Pregunta> getPreguntasByTopico(String topico);
     List<Pregunta> saveAll(List<Pregunta> preguntas);
-    Map<String, Number> contarPreguntasPorTopico();
+    List<Topics> contarPreguntasPorTopico();
 	boolean existsByTopic(String topic);
     List<Pregunta> obtenerPreguntasNoRespondidasPorTopico(Long userId, String topico);
     String getTopicFromQuestion(String topico);
