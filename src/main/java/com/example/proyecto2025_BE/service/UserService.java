@@ -41,6 +41,11 @@ public class UserService {
 			throw ConflictException.build("El usuario ya existe en el sistema");
 		}
 
+		Optional<User> fetchedByUserName = userDao.findByUsername(user.getUsername());
+		if (fetchedByUserName.isPresent()) {
+			throw ConflictException.build("El nombre de usuario ya existe en el sistema.");
+		}
+
 		return userDao.save(user);
 	}
 

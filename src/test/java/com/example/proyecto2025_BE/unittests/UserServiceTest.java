@@ -2,6 +2,7 @@ package com.example.proyecto2025_BE.unittests;
 
 import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.User;
@@ -365,6 +366,20 @@ public class UserServiceTest {
         StatsResponse statsResponse = userService.getStatisticsFromUser(anyLong());
 
         assertEquals(expectedStatsResponse, statsResponse);
+    }
+
+    @Test
+    @DisplayName("Crear usuario con username existente")
+    void createUser_UsernameExists() {
+
+        User user = User.builder()
+                .username("username")
+                .email("email")
+                .password("password")
+                .build();
+
+        when(userDao.findByUsername(anyString())).thenReturn(Optional.of(user));
+        assertThrows(ConflictException.class, () -> userService.create(user));
     }
 
     @AllArgsConstructor
