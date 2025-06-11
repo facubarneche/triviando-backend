@@ -1,26 +1,25 @@
 package com.example.proyecto2025_BE.service;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
+import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.pregunta.factory.PreguntaLoaderFactory;
 import com.example.proyecto2025_BE.service.pregunta.strategy.PreguntaLoaderStrategy;
-
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class PreguntaServiceImpl implements PreguntaService {
 
     private final PreguntaDao preguntaDao;
+    private final UserService userService;
     private final PreguntaLoaderFactory preguntaLoaderFactory;
 
     @Override
@@ -41,14 +40,6 @@ public class PreguntaServiceImpl implements PreguntaService {
     }
 
     @Override
-    public List<Pregunta> getPreguntasByTopico(String topico) {
-        return preguntaDao
-                .findByTopico(topico)
-                .flatMap(lista -> lista.isEmpty() ? Optional.empty() : Optional.of(lista))
-                .orElseThrow(() -> NotFoundException.build("No se encontraron preguntas con topico: " + topico));
-    }
-
-    @Override
     public Map<String, Number> contarPreguntasPorTopico() {
         return preguntaDao.contarPreguntasPorTopico().stream()
                 .collect(Collectors.toMap(
@@ -56,7 +47,23 @@ public class PreguntaServiceImpl implements PreguntaService {
                         m -> (Number) m.get("cantidadPreguntas")
                 ));
     }
-    
+
+
+    @Override
+    public Map<String, Number> contarPreguntasPorTopico(long userId) {
+        var user = userService.retrieve(userId);
+
+        List<String> idPreguntas = user.getAnswers().stream()
+                .map(Answer::getQuestionId)
+                .toList();
+
+        return preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(idPreguntas).stream()
+                .collect(Collectors.toMap(
+                        m -> (String) m.get("_id"),
+                        m -> (Number) m.get("cantidadPreguntas")
+                ));
+    }
+
     @Override
     public List<Pregunta> saveAll(List<Pregunta> preguntas) {
     	return preguntaDao.saveAll(preguntas);
