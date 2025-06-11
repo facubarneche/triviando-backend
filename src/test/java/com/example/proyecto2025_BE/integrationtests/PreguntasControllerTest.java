@@ -10,7 +10,9 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import com.example.proyecto2025_BE.dao.UserDao;
-import com.example.proyecto2025_BE.model.*;
+import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.Topics;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.example.proyecto2025_BE.configuration.PreguntasData;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
+import com.example.proyecto2025_BE.model.Pregunta;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -89,6 +92,7 @@ class PreguntasControllerTest {
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
     }
+
     @Test
     @DisplayName("Get preguntas by topico - topico no existente")
     void getPreguntasByTopico_topicoNoExistente() throws Exception {
@@ -132,20 +136,22 @@ class PreguntasControllerTest {
     void getCantidadPreguntasPorTopico() throws Exception {
 
         List<Map<String, Object>> resultadoDao = Arrays.asList(
-                Map.of("_id", "java", "cantidadPreguntas", 5),
-                Map.of("_id", "python", "cantidadPreguntas", 10),
-                Map.of("_id", "javascript", "cantidadPreguntas", 7)
+                Map.of("_id", "java", "cantidadPreguntas", 5, "emoji", "☕"),
+                Map.of("_id", "python", "cantidadPreguntas", 10,"emoji", "\uD83D\uDC0D"),
+                Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", "\uD83D\uDC0D")
         );
 
         when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
         when(preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(any())).thenReturn(resultadoDao);
 
-        Map<String, Number> resultadoEsperado = new HashMap<>();
-        resultadoEsperado.put("java", 5);
-        resultadoEsperado.put("python", 10);
-        resultadoEsperado.put("javascript", 7);
+        List<Topics> resultadoEsperado = List.of(
+                new Topics("java", 5, "☕"),
+                new Topics("python", 10, "\uD83D\uDC0D"),
+                new Topics("javascript", 7, "\uD83D\uDC0D")
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{userId}", 1L))
+        );
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{id}", 1L))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
