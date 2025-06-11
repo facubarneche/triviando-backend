@@ -4,6 +4,7 @@ package com.example.proyecto2025_BE.service;
 import java.util.List;
 import java.util.Optional;
 
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -56,19 +57,41 @@ public class UserService {
 	}
 
 	public User update(User updatedUser) {
-		return userDao.findById(updatedUser.getId())
-			.map(existingUser -> {
-				Optional.ofNullable(updatedUser.getName()).ifPresent(existingUser::setName);
-                Optional.ofNullable(updatedUser.getLastName()).ifPresent(existingUser::setLastName);
-                Optional.ofNullable(updatedUser.getEmail()).ifPresent(existingUser::setEmail);
-                Optional.ofNullable(updatedUser.getPhoneNumber()).ifPresent(existingUser::setPhoneNumber);
-                Optional.ofNullable(updatedUser.getCountryCode()).ifPresent(existingUser::setCountryCode);
-                Optional.ofNullable(updatedUser.getJoinDate()).ifPresent(existingUser::setJoinDate);
-                Optional.ofNullable(updatedUser.getUsername()).ifPresent(existingUser::setUsername);
-                
-				return userDao.save(existingUser);
-			}).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
+		Long userId = updatedUser.getId();
+		if (userId == null) {
+			throw new ValidationException("El ID del usuario es requerido para la actualización.");
+		}
+
+		User existingUser = userDao.findById(userId)
+				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
+
+		Optional.ofNullable(updatedUser.getUsername())
+				.filter(username -> !username.isBlank() && !username.equals(existingUser.getUsername()))
+				.ifPresent(newUsername -> {
+					userDao.findByUsername(newUsername).ifPresent(user -> {
+						throw new ValidationException("El nombre de usuario '" + newUsername + "' ya está en uso.");
+					});
+					existingUser.setUsername(newUsername);
+				});
+
+		Optional.ofNullable(updatedUser.getEmail())
+				.filter(email -> !email.equals(existingUser.getEmail()))
+				.ifPresent(newEmail -> {
+					userDao.findByEmail(newEmail).ifPresent(user -> {
+						throw new ValidationException("El email '" + newEmail + "' ya está en uso.");
+					});
+					existingUser.setEmail(newEmail);
+				});
+
+		Optional.ofNullable(updatedUser.getName()).ifPresent(existingUser::setName);
+		Optional.ofNullable(updatedUser.getLastName()).ifPresent(existingUser::setLastName);
+		Optional.ofNullable(updatedUser.getPhoneNumber()).ifPresent(existingUser::setPhoneNumber);
+		Optional.ofNullable(updatedUser.getCountryCode()).ifPresent(existingUser::setCountryCode);
+		Optional.ofNullable(updatedUser.getJoinDate()).ifPresent(existingUser::setJoinDate);
+
+		return userDao.save(existingUser);
 	}
+
 
 	public void delete(Long id) {
 		User user = retrieve(id);
