@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.Topics;
 import com.example.proyecto2025_BE.views.Views;
 import com.example.proyecto2025_BE.views.questions.requests.GenerateRequestBody;
 import com.example.proyecto2025_BE.views.users.register.request.UserRegisterRequest;
@@ -82,7 +83,7 @@ public class PreguntasController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Conteo obtenido exitosamente")
     })
-    public Map<String, Number> cantidadPreguntasPorTopico(@PathVariable long userId) {
+    public List<Topics> cantidadPreguntasPorTopico(@PathVariable long userId) {
         return preguntasService.contarPreguntasPorTopico(userId);
     }
     
@@ -97,7 +98,7 @@ public class PreguntasController {
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = GenerateRequestBody.class)))
-    public Map<String, Number> generate(@RequestBody Prompter prompter) {
+    public List<Topics> generate(@RequestBody Prompter prompter) {
         return llmApiClient.generate(prompter);
     }
 }
