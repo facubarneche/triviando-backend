@@ -33,7 +33,7 @@ public abstract class Prompter {
 	public String buildPrompt() {
 		return String.format(TEMPLATE_PROMPT, questionsQuantity(), topic.toLowerCase());
 	}
-	
+
 	protected abstract String questionsQuantity();
 	
 	public abstract void validatePrompt();
@@ -43,4 +43,8 @@ public abstract class Prompter {
 		return this;
 	}
 	public abstract String getEmoji(ModelCommunication assistant);
+
+	public boolean existsTopic() {
+		return preguntaService.existsByTopic(topic);
+	}
 }

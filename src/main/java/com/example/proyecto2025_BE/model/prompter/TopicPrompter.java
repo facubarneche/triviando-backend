@@ -20,7 +20,7 @@ public class TopicPrompter extends Prompter {
 
 	@Override
 	public void validatePrompt() {
-		if(existsTopic()) {
+		if(super.existsTopic()) {
 			throw ConflictException.build("Ya existe el tópico que se intenta crear");
 		}
 	}
@@ -29,9 +29,5 @@ public class TopicPrompter extends Prompter {
 	public String getEmoji(ModelCommunication assistant) {
 		String prompt =  String.format("Generame un emoji relacionado a el topico %s sin contenido extra (Solo el emoji)", super.topic.toLowerCase());
 		return  assistant.generateEmoji(prompt);
-	}
-
-	private boolean existsTopic() {
-		return super.preguntaService.existsByTopic(super.topic);
 	}
 }

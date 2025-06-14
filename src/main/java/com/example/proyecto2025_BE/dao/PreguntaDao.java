@@ -32,5 +32,5 @@ public interface PreguntaDao extends MongoRepository<Pregunta, String> {
     })
     List<Map<String, Object>> contarPreguntasPorTopicoIncluyendoRespondidas(List<String> preguntasRespondidasIds);
 
-    Pregunta getFirstByTopico(String topico);
+    Optional<Pregunta> getFirstByTopico(String topico);
 }
