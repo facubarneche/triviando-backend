@@ -3,6 +3,8 @@ package com.example.proyecto2025_BE.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import org.springframework.data.domain.Page;
@@ -38,13 +40,12 @@ public class UserService {
 	public User create(User user) {
 		Optional<User> fetched = userDao.findByEmail(user.getEmail());
 
-		if (fetched.isPresent()) {
-			throw ConflictException.build("El usuario ya existe en el sistema");
+		if (userDao.findByEmail(user.getEmail()).isPresent()) {
+			throw ConflictException.build("El email '" + user.getEmail() + "' ya está en uso.");
 		}
 
-		Optional<User> fetchedByUserName = userDao.findByUsername(user.getUsername());
-		if (fetchedByUserName.isPresent()) {
-			throw ConflictException.build("El nombre de usuario ya existe en el sistema.");
+		if (userDao.findByUsername(user.getUsername()).isPresent()) {
+			throw ConflictException.build("El nombre de usuario '" + user.getUsername() + "' ya está en uso.");
 		}
 
 		return userDao.save(user);
@@ -57,31 +58,7 @@ public class UserService {
 	}
 
 	public User update(User updatedUser) {
-		Long userId = updatedUser.getId();
-		if (userId == null) {
-			throw new ValidationException("El ID del usuario es requerido para la actualización.");
-		}
-
-		User existingUser = userDao.findById(userId)
-				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
-
-		Optional.ofNullable(updatedUser.getUsername())
-				.filter(username -> !username.isBlank() && !username.equals(existingUser.getUsername()))
-				.ifPresent(newUsername -> {
-					userDao.findByUsername(newUsername).ifPresent(user -> {
-						throw new ValidationException("El nombre de usuario '" + newUsername + "' ya está en uso.");
-					});
-					existingUser.setUsername(newUsername);
-				});
-
-		Optional.ofNullable(updatedUser.getEmail())
-				.filter(email -> !email.equals(existingUser.getEmail()))
-				.ifPresent(newEmail -> {
-					userDao.findByEmail(newEmail).ifPresent(user -> {
-						throw new ValidationException("El email '" + newEmail + "' ya está en uso.");
-					});
-					existingUser.setEmail(newEmail);
-				});
+		User existingUser = ValidarUsuario(updatedUser);
 
 		Optional.ofNullable(updatedUser.getName()).ifPresent(existingUser::setName);
 		Optional.ofNullable(updatedUser.getLastName()).ifPresent(existingUser::setLastName);
@@ -92,6 +69,42 @@ public class UserService {
 		return userDao.save(existingUser);
 	}
 
+	private User ValidarUsuario(User updatedUser) {
+		Long userId = updatedUser.getId();
+		if (userId == null) {
+			throw new ValidationException("El ID del usuario es requerido para la actualización.");
+		}
+
+		User existingUser = this.retrieve(userId);
+
+		validarCampoUnico(
+				updatedUser.getUsername(),
+				existingUser.getUsername(),
+				"nombre de usuario",
+				userDao::findByUsername,
+				existingUser::setUsername);
+
+		validarCampoUnico(
+				updatedUser.getEmail(),
+				existingUser.getEmail(),
+				"email",
+				userDao::findByEmail,
+				existingUser::setEmail);
+
+		return existingUser;
+	}
+
+	private <T> void validarCampoUnico(T newValue, T existingValue, String fieldName, Function<T, Optional<User>> findByMethod,
+										 Consumer<T> setterMethod) {
+		Optional.ofNullable(newValue)
+				.filter(value -> !String.valueOf(value).isBlank() && !value.equals(existingValue))
+				.ifPresent(value -> {
+					findByMethod.apply(value).ifPresent(user -> {
+						throw new ValidationException("El " + fieldName + " '" + value + "' ya está en uso.");
+					});
+					setterMethod.accept(value);
+				});
+	}
 
 	public void delete(Long id) {
 		User user = retrieve(id);
