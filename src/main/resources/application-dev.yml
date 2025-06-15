@@ -35,3 +35,7 @@ llm:
 api:
   preguntas:
     cantidad: 5
+
+#logging:
+#  level:
+#    ROOT: TRACE

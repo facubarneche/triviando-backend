@@ -1,13 +1,9 @@
 package com.example.proyecto2025_BE.service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-
 import com.example.proyecto2025_BE.model.dto.Topics;
 import org.springframework.stereotype.Service;
-
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Answer;
@@ -16,10 +12,6 @@ import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.pregunta.factory.PreguntaLoaderFactory;
 import com.example.proyecto2025_BE.service.pregunta.strategy.PreguntaLoaderStrategy;
 import lombok.RequiredArgsConstructor;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -55,7 +47,7 @@ public class PreguntaServiceImpl implements PreguntaService {
 
     @Override
     public List<Topics> contarPreguntasPorTopico() {
-        return preguntaDao.contarPreguntasPorTopico().stream()
+         return preguntaDao.contarPreguntasPorTopico().stream()
                 .map(topic ->
                         Topics.builder()
                                 .topic((String) topic.get("_id"))
