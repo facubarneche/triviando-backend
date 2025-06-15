@@ -50,7 +50,6 @@ public class PreguntaServiceImpl implements PreguntaService {
     public List<Pregunta> getPreguntasByTopico(String topico) {
         return preguntaDao
                 .findByTopico(topico)
-                .flatMap(lista -> lista.isEmpty() ? Optional.empty() : Optional.of(lista))
                 .orElseThrow(() -> NotFoundException.build("No se encontraron preguntas con topico: " + topico));
     }
 
