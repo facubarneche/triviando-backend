@@ -44,20 +44,19 @@ public class PreguntaServiceImpl implements PreguntaService {
     public List<Pregunta> getPreguntasByTopico(String topico) {
         return preguntaDao
                 .findByTopico(topico)
-                .flatMap(lista -> lista.isEmpty() ? Optional.empty() : Optional.of(lista))
                 .orElseThrow(() -> NotFoundException.build("No se encontraron preguntas con topico: " + topico));
     }
 
     @Override
     public List<Topics> contarPreguntasPorTopico() {
-        return preguntaDao.contarPreguntasPorTopico().stream()
-                .map( topic ->
-                    Topics.builder()
-                            .topic((String) topic.get("_id"))
-                            .size((Number) topic.get("cantidadPreguntas"))
-                            .emoji((String) topic.get("emoji"))
-                            .build()
-                ).toList();
+         return preguntaDao.contarPreguntasPorTopico().stream()
+                .map(topic ->
+                        Topics.builder()
+                                .topic((String) topic.get("_id"))
+                                .size((Number) topic.get("cantidadPreguntas"))
+                                .emoji((String) topic.get("emoji"))
+                                .build())
+                .toList();
     }
 
     @Override
@@ -69,11 +68,12 @@ public class PreguntaServiceImpl implements PreguntaService {
                 .toList();
 
         return preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(idPreguntas).stream()
-                .map( topic ->
-                        new Topics(
-                                (String) topic.get("_id"),
-                                (Number) topic.get("cantidadPreguntas"),
-                                (String) topic.get("emoji")))
+                .map(topic ->
+                        Topics.builder()
+                                .topic((String) topic.get("_id"))
+                                .size((Number) topic.get("cantidadPreguntas"))
+                                .emoji((String) topic.get("emoji"))
+                                .build())
                 .toList();
     }
 

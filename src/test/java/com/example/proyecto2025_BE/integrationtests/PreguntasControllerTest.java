@@ -45,6 +45,8 @@ class PreguntasControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    private final String emojiCafe = "\uD83D\uDC0D";
+
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
@@ -137,18 +139,29 @@ class PreguntasControllerTest {
 
         List<Map<String, Object>> resultadoDao = Arrays.asList(
                 Map.of("_id", "java", "cantidadPreguntas", 5, "emoji", "☕"),
-                Map.of("_id", "python", "cantidadPreguntas", 10,"emoji", "\uD83D\uDC0D"),
-                Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", "\uD83D\uDC0D")
+                Map.of("_id", "python", "cantidadPreguntas", 10,"emoji", emojiCafe),
+                Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", emojiCafe)
         );
 
         when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
         when(preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(any())).thenReturn(resultadoDao);
 
         List<Topics> resultadoEsperado = List.of(
-                new Topics("java", 5, "☕"),
-                new Topics("python", 10, "\uD83D\uDC0D"),
-                new Topics("javascript", 7, "\uD83D\uDC0D")
-
+                Topics.builder()
+                        .topic("java")
+                        .size(5)
+                        .emoji("☕")
+                        .build(),
+                Topics.builder()
+                        .topic("python")
+                        .size(10)
+                        .emoji(emojiCafe)
+                        .build(),
+                Topics.builder()
+                        .topic("javascript")
+                        .size(7)
+                        .emoji(emojiCafe)
+                        .build()
         );
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{id}", 1L))
