@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.proyecto2025_BE.model.dto.Topics;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.exceptions.InternalServerErrorException;
@@ -32,17 +33,19 @@ public class LLMApiClient implements ChatLanguageModel {
 	public List<Topics> generate(Prompter prompter) {
 		prompter.withService(preguntaService)
 			.validatePrompt();
+		QuestionList response;
+
+		String emoji = prompter.withService(preguntaService)
+				.getEmoji(assistant);
 
 		try {
-			String emoji = prompter.withService(preguntaService)
-					.getEmoji(assistant);
-
-			QuestionList response = assistant.generateQuestions(prompter.buildPrompt());
-			return saveAndMappingResponse(response, prompter.getTopic(), emoji);
+			response = assistant.generateQuestions(prompter.buildPrompt());
 		} catch (Exception e) {
 			log.error(ERROR_MESSAGE);
 			throw InternalServerErrorException.build(ERROR_MESSAGE);
 		}
+
+		return saveAndMappingResponse(response, prompter.getTopic(), emoji);
     }
 
 	//TODO: evaluar la posibilidad de utilizar el strategy para realizar el parseo y el guardado de los datos para darle mas versatilidad a la integración

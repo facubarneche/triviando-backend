@@ -70,7 +70,7 @@ public class User {
 	private String countryCode;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE)
-	@JsonView({Views.RegisterRequest.class,Views.UpdateUser.class})
+	@JsonView({Views.GetUser.class, Views.RegisterRequest.class,Views.UpdateUser.class})
 	private LocalDate birthDate;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DatePattern.DATE_TIME)
@@ -107,7 +107,6 @@ public class User {
 	@Transient
 	private int position;
 
-	@JsonView(Views.GetUser.class)
 	@JsonProperty("age")
 	public Integer getAge() {
 		return birthDate == null

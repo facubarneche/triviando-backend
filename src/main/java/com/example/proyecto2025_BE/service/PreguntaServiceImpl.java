@@ -2,6 +2,8 @@ package com.example.proyecto2025_BE.service;
 
 import java.util.List;
 import java.util.Optional;
+
+import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.dto.Topics;
 import org.springframework.stereotype.Service;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
@@ -93,6 +95,6 @@ public class PreguntaServiceImpl implements PreguntaService {
 
     @Override
     public String getTopicFromQuestion(String topico) {
-        return preguntaDao.getFirstByTopico(topico).getEmoji();
+        return preguntaDao.getFirstByTopico(topico).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND)).getEmoji();
     }
 }

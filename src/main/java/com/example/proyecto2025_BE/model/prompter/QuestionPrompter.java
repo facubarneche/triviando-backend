@@ -1,5 +1,6 @@
 package com.example.proyecto2025_BE.model.prompter;
 
+import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.service.ModelCommunication;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
@@ -18,7 +19,9 @@ public class QuestionPrompter extends Prompter {
 
 	@Override
 	public void validatePrompt() {
-		
+		if(!super.existsTopic()){
+			throw ConflictException.build("No se puede generar preguntas para un topico que no existe");
+		}
 	}
 
 	@Override
