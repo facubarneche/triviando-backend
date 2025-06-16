@@ -78,7 +78,7 @@ git push origin v1.2.0
 
 ![alt text](image.png)
 
-# Tipos de Versiones (Major/Minor/Patch)
+# Versionado semantico (Major/Minor/Patch)
 
 Se debe incrementar el número de versión según el tipo de cambios que se hayan realizado:
 
