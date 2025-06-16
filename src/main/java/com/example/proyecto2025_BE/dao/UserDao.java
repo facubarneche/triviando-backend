@@ -95,4 +95,6 @@ public interface UserDao extends JpaRepository<User, Long>{
     """, nativeQuery = true)
 	Integer findUserRankWeeklyPosition(@Param("userId") Long userId);
 
+	Optional<User> findByUsername(String username);
+
 }
