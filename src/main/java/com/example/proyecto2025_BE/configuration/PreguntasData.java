@@ -96,7 +96,7 @@ public class PreguntasData {
                             Option.builder().text("Almacenar datos persistentes").letter(LetterOption.D).build())
                             
                     )
-                    .correctOption(Option.builder().text("Actuar como un punto de entrada único").letter(LetterOption.A).build())
+                    .correctOption(Option.builder().text("Actuar como un punto de entrada único").letter(LetterOption.C).build())
                     .build(),
 
 
