@@ -1,0 +1,22 @@
+package com.example.proyecto2025_BE.views.users.ranking;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+
+@Data
+@NoArgsConstructor
+@Schema()
+public class UserRankingResponse {
+
+    @Schema(description = "ID del usuario", example = "12345")
+    private long id;
+    @Schema(description = "Puntaje del usuario", example = "400")
+    private BigDecimal score;
+    @Schema(description = "Nombre de usuario del usuario", example = "jperez")
+    private String username;
+    @Schema(description = "Posición del usuario en el ranking", example = "1")
+    private int position;
+}

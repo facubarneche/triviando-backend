@@ -1,0 +1,41 @@
+server:
+  port: 8080
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/flashcards
+    username: admin
+    password: admin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 5
+    logging:
+      level:
+        org.hibernate.SQL: DEBUG
+        org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  jpa:
+    open-in-view: false
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+      format_sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/flashcards
+      auto-index-creation: true
+llm:
+  apiKey: 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
+  modelName: gpt-4o-mini
+  logRequests: true
+  logResponses: true
+
+api:
+  preguntas:
+    cantidad: 5
+
+#logging:
+#  level:
+#    ROOT: TRACE
