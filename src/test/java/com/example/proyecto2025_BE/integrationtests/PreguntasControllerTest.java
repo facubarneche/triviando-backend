@@ -1,18 +1,17 @@
 package com.example.proyecto2025_BE.integrationtests;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.math.BigDecimal;
-import java.util.*;
-
+import com.example.proyecto2025_BE.configuration.PreguntasData;
+import com.example.proyecto2025_BE.dao.FeedbackRepository;
+import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.Feedback;
+import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +23,17 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.example.proyecto2025_BE.configuration.PreguntasData;
-import com.example.proyecto2025_BE.dao.PreguntaDao;
-import com.example.proyecto2025_BE.model.Pregunta;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.*;
+
+import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createPositiveFeedbackDTO;
+import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createNegativeFeedbackDTO;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -44,6 +50,8 @@ class PreguntasControllerTest {
     private UserDao userDao;
     @Autowired
     private ObjectMapper objectMapper;
+    @Autowired
+    private FeedbackRepository feedbackRepository;
 
     private final String emojiCafe = "\uD83D\uDC0D";
 
@@ -171,9 +179,47 @@ class PreguntasControllerTest {
     }
 
     @Test
-    @DisplayName("Get cantidad preguntas por topico  - user  contesta  un topico")
-    void getCantidadPreguntasPorTopico_userContestaUnTopico() throws Exception {
+    @DisplayName("Crear feedback positivo")
+    void crearFeedbackPositivo() throws Exception {
+        feedbackRepository.deleteAll();
+        FeedbackDTO positiveFeedbackDTO = createPositiveFeedbackDTO();
+        String feedbackDtoJson = objectMapper.writeValueAsString(positiveFeedbackDTO);
 
+        mockMvc.perform(MockMvcRequestBuilders.post("/preguntas/send-feedback")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackDtoJson))
+                .andExpect(status().isCreated());
 
+        assertEquals(1, feedbackRepository.count());
+
+        Feedback savedFeedback = feedbackRepository.findAll().getFirst();
+        assertNotNull(savedFeedback.getId());
+        assertEquals(positiveFeedbackDTO.userId(), savedFeedback.getUserId());
+        assertEquals(positiveFeedbackDTO.questionId(), savedFeedback.getQuestionId());
+        assertEquals(Feedback.FeedbackOption.POSITIVE, savedFeedback.getFeedbackType());
+        assertTrue(savedFeedback.getDescription() == null || savedFeedback.getDescription().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Crear feedback positivo")
+    void crearFeedbacknegativo() throws Exception {
+        feedbackRepository.deleteAll();
+
+        FeedbackDTO negativeFeedbackDTO = createNegativeFeedbackDTO();
+        String feedbackDtoJson = objectMapper.writeValueAsString(negativeFeedbackDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/preguntas/send-feedback")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackDtoJson))
+                .andExpect(status().isCreated());
+
+        assertEquals(1, feedbackRepository.count());
+
+        Feedback savedFeedback = feedbackRepository.findAll().getFirst();
+        assertNotNull(savedFeedback.getId());
+        assertEquals(negativeFeedbackDTO.userId(), savedFeedback.getUserId());
+        assertEquals(negativeFeedbackDTO.questionId(), savedFeedback.getQuestionId());
+        assertEquals(Feedback.FeedbackOption.NEGATIVE, savedFeedback.getFeedbackType());
+        assertEquals(negativeFeedbackDTO.description(), savedFeedback.getDescription());
     }
 }

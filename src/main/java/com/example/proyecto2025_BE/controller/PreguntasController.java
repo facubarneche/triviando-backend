@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
 import com.example.proyecto2025_BE.views.Views;
 import com.example.proyecto2025_BE.views.questions.requests.GenerateRequestBody;
@@ -100,5 +101,11 @@ public class PreguntasController {
                     schema = @Schema(implementation = GenerateRequestBody.class)))
     public List<Topics> generate(@RequestBody Prompter prompter) {
         return llmApiClient.generate(prompter);
+    }
+
+    @PostMapping("/send-feedback")
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendFeedback(@Validated @RequestBody FeedbackDTO feedbackDTO) {
+        preguntasService.saveFeedback(feedbackDTO);
     }
 }
