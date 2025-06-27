@@ -104,6 +104,10 @@ public class PreguntasController {
     }
 
     @PostMapping("/send-feedback")
+    @Operation(summary = "Enviar feedback de la pregunta", description = "Enviar feedback de la pregunta")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Feedback enviado exitosamente")
+    })
     @ResponseStatus(HttpStatus.CREATED)
     public void sendFeedback(@Validated @RequestBody FeedbackDTO feedbackDTO) {
         preguntasService.saveFeedback(feedbackDTO);
