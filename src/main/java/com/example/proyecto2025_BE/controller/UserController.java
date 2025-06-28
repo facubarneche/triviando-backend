@@ -1,9 +1,16 @@
 package com.example.proyecto2025_BE.controller;
 
+import com.example.proyecto2025_BE.model.dto.Login;
+import com.example.proyecto2025_BE.security.JwtUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -50,6 +57,9 @@ import lombok.RequiredArgsConstructor;
 @Tag(name = "User Controller", description = "API para la gestión de usuarios")
 public class UserController {
 
+	private final AuthenticationManager authenticationManager;
+	private final PasswordEncoder encoder;
+	private final JwtUtil jwtUtils;
 	private final UserService userService;
 
 	@PostMapping
@@ -63,14 +73,27 @@ public class UserController {
 					schema = @Schema(implementation = UserRegisterRequest.class)))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Usuario creado exitosamente",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserRegisterResponse.class))),
+					content = @Content(mediaType = "application/json")),
 			@ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
-	public ResponseEntity<User> create(@RequestBody
+	public Login create(@RequestBody
 									   @JsonView(Views.RegisterRequest.class)
 									   @Validated(Views.RegisterRequest.class) User user) {
+
+		this.userService.validateUsernameEmail(user);
+
+		var encodedPass = encoder.encode(user.getPassword());
+		user.setPassword(encodedPass);
+
 		var userCreated = this.userService.create(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
+
+		var token = jwtUtils.generateToken(userCreated.getUsername());
+		return Login.builder()
+				.token(token)
+				.username(userCreated.getUsername())
+				.fullname(userCreated.getFullName())
+				.id(userCreated.getId())
+				.build();
 	}
 	
 	@GetMapping("/{id}")
@@ -117,7 +140,6 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	@JsonView(Views.Login.class)
 	@Operation(summary = "Login de usuario", description = "Autentica a un usuario basado en su correo y contraseña")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(
 					description = "Credenciales del usuario para el login", required = true,
@@ -126,12 +148,26 @@ public class UserController {
 							schema = @Schema(implementation = UserLoginRequest.class)))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Usuario autenticado",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginResponse200.class))),
+					content = @Content(mediaType = "application/json")),
 			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
-	public ResponseEntity<User> login(@RequestBody @Valid User user) {
-		User logged = this.userService.findByEmailAndPassword(user);
-		return ResponseEntity.ok(logged);
+	public Login login(@RequestBody @Valid User user) {
+
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(
+						user.getUsername(),
+						user.getPassword()
+				)
+		);
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		var token = jwtUtils.generateToken(userDetails.getUsername());
+		var fetchedUser = this.userService.findByUsername(userDetails.getUsername());
+		return Login.builder()
+				.token(token)
+				.username(userDetails.getUsername())
+				.fullname(fetchedUser.getFullName())
+				.id(fetchedUser.getId())
+				.build();
 	}
 
 	@GetMapping("/statistics/{usuarioId}")

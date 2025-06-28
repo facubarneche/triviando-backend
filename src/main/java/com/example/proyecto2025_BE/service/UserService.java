@@ -37,7 +37,7 @@ public class UserService {
 	private final UserDao userDao;
 	private final RespuestasDao answerDao;
 
-	public User create(User user) {
+	public void validateUsernameEmail(User user) {
 		Optional<User> fetched = userDao.findByEmail(user.getEmail());
 
 		if (userDao.findByEmail(user.getEmail()).isPresent()) {
@@ -47,8 +47,6 @@ public class UserService {
 		if (userDao.findByUsername(user.getUsername()).isPresent()) {
 			throw ConflictException.build("El nombre de usuario '" + user.getUsername() + "' ya está en uso.");
 		}
-
-		return userDao.save(user);
 	}
 
 	@Transactional(readOnly = true)
@@ -112,8 +110,8 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public User findByEmailAndPassword(User loginInfo) {
-		return this.userDao.findByEmailAndPassword(loginInfo.getEmail(), loginInfo.getPassword())
+	public User findByUsername(String userName) {
+		return this.userDao.findByUsername(userName)
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
@@ -179,5 +177,9 @@ public class UserService {
 		var correctAnswers = answerDao.countByUserIdAndErrorReasonIsNull(userId);
 		var totalQuizzes = totalQuestions / 5;
 		return new StatsResponse(totalQuizzes, correctAnswers, totalQuestions);
+	}
+
+	public User create(User user) {
+		return this.userDao.save(user);
 	}
 }

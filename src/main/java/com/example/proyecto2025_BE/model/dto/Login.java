@@ -1,4 +1,11 @@
 package com.example.proyecto2025_BE.model.dto;
 
-public record Login() {
-}
+import lombok.Builder;
+
+@Builder
+public record Login(
+        String token,
+        String username,
+        String fullname,
+        Long id
+) { }

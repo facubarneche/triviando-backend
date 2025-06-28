@@ -107,6 +107,8 @@ public class User {
 	@Transient
 	private int position;
 
+	private String role = "ROLE_USER";
+
 	@JsonProperty("age")
 	public Integer getAge() {
 		return birthDate == null
@@ -148,4 +150,6 @@ public class User {
 	public LocalDate getUltimaActividad() {
 		return ultimaActividad == null ? joinDate.toLocalDate() : ultimaActividad;
 	}
+
+	public String getFullName() { return name + " " + lastName; }
 }
