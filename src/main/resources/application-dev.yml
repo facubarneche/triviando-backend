@@ -37,8 +37,8 @@ api:
     cantidad: 5
 
 jwt:
-  secret: ${JWT_SECRET_KEY}
-  expiration: ${JWT_EXPIRATION}
+  secret: "sL7uvGJm1AQeWv4m6qT2B9Xp5yZf8KrRdJ2lGxS7UzF9PaKjQwVmZhBkTnSrXyLp"
+  expiration: 43200000
 #logging:
 #  level:
 #    ROOT: TRACE

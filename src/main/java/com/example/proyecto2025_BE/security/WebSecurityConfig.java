@@ -48,8 +48,16 @@ public class WebSecurityConfig {
                 )
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers(HttpMethod.POST,"/api/v1/users//login").permitAll()
-                                .requestMatchers(HttpMethod.POST,"/api/v1/users").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/users/login").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/users").permitAll()
+                                .requestMatchers(
+                                        "/swagger-ui/**",
+                                        "/swagger-ui.html",
+                                        "/v3/api-docs/**",
+                                        "/api/v1/swagger-ui/**",
+                                        "/api/v1/swagger-ui.html",
+                                        "/api/v1/v3/api-docs/**"
+                                ).permitAll()
                                 .anyRequest().authenticated()
                 );
         http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
