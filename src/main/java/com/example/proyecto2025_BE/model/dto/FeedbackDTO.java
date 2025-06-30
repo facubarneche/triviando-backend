@@ -6,8 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record FeedbackDTO(String id,
-                          @NotNull(message = "El userId  no puede ser nulo ")
+public record FeedbackDTO(@NotNull(message = "El userId  no puede ser nulo ")
                           Integer userId,
                           @NotBlank(message = "El questionId no puede ser nulo o vacío")
                           String questionId,
