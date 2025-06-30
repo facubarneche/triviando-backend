@@ -107,6 +107,9 @@ public class User {
 	@Transient
 	private int position;
 
+	@JsonView({Views.GetUser.class})
+	private boolean isSubscribed = false;
+
 	@JsonProperty("age")
 	public Integer getAge() {
 		return birthDate == null
@@ -147,5 +150,9 @@ public class User {
 
 	public LocalDate getUltimaActividad() {
 		return ultimaActividad == null ? joinDate.toLocalDate() : ultimaActividad;
+	}
+
+	public void setIsSubscribed(boolean isSubscribed) {
+		this.isSubscribed = isSubscribed;
 	}
 }

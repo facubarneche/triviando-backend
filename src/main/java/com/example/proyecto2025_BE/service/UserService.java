@@ -180,4 +180,11 @@ public class UserService {
 		var totalQuizzes = totalQuestions / 5;
 		return new StatsResponse(totalQuizzes, correctAnswers, totalQuestions);
 	}
+
+	public void markUserAsSubscribed(String email) {
+		User user = userDao.findByEmail(email)
+				.orElseThrow(() -> NotFoundException.build("Usuario no encontrado para email: " + email));
+		user.setIsSubscribed(true);
+		userDao.save(user);
+	}
 }

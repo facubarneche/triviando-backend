@@ -11,3 +11,7 @@ llm:
   modelName: gpt-4o-mini
   logRequests: true
   logResponses: true
+  
+mercadopago:
+  access:
+    token: APP_USR-6924464273859360-063018-981c350234e05c7975ad665f6b8047c5-2523942300
