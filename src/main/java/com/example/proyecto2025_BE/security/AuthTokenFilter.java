@@ -1,6 +1,7 @@
 package com.example.proyecto2025_BE.security;
 
-import com.example.proyecto2025_BE.service.CustomUserDetailsService;
+import com.example.proyecto2025_BE.exceptions.InternalServerErrorException;
+import com.example.proyecto2025_BE.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +19,8 @@ public class AuthTokenFilter extends OncePerRequestFilter {
     @Autowired
     private JwtUtil jwtUtils;
     @Autowired
-    private CustomUserDetailsService userDetailsService;
+    private UserService userService;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -29,7 +31,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
             String jwt = parseJwt(request);
             if (jwt != null && jwtUtils.validateJwtToken(jwt)) {
                 String username = jwtUtils.getUsernameFromToken(jwt);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                UserDetails userDetails = userService.getUserDetailsByUsername(username);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(
                                 userDetails,
@@ -40,7 +42,7 @@ public class AuthTokenFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         } catch (Exception e) {
-            System.out.println("Cannot set user authentication: " + e);
+            throw new InternalServerErrorException("Cannot set user authentication: " + e);
         }
         filterChain.doFilter(request, response);
     }

@@ -4,7 +4,6 @@ import com.example.proyecto2025_BE.model.dto.Login;
 import com.example.proyecto2025_BE.security.JwtUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -32,11 +31,9 @@ import com.example.proyecto2025_BE.views.Views;
 import com.example.proyecto2025_BE.views.users.UserResponse4XX;
 import com.example.proyecto2025_BE.views.users.get.GetUserResponse;
 import com.example.proyecto2025_BE.views.users.login.request.UserLoginRequest;
-import com.example.proyecto2025_BE.views.users.login.response.UserLoginResponse200;
 import com.example.proyecto2025_BE.views.users.racha.UserRachaResponse;
 import com.example.proyecto2025_BE.views.users.ranking.PageUserRankingResponse;
 import com.example.proyecto2025_BE.views.users.register.request.UserRegisterRequest;
-import com.example.proyecto2025_BE.views.users.register.response.UserRegisterResponse;
 import com.example.proyecto2025_BE.views.users.score.UserScoreResponse;
 import com.example.proyecto2025_BE.views.users.update.request.UpdateUserRequest;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -63,7 +60,6 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping
-	@JsonView(Views.Register.class)
 	@Operation(summary = "Registrar usuario", description = "Se registra un nuevo usuario en el sistema")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(
 			description = "Datos del usuario para el registro",
@@ -73,12 +69,11 @@ public class UserController {
 					schema = @Schema(implementation = UserRegisterRequest.class)))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Usuario creado exitosamente",
-					content = @Content(mediaType = "application/json")),
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation =  Login.class))),
 			@ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
 	public Login create(@RequestBody
-									   @JsonView(Views.RegisterRequest.class)
-									   @Validated(Views.RegisterRequest.class) User user) {
+					   @Validated(Views.RegisterRequest.class) User user) {
 
 		this.userService.validateUsernameEmail(user);
 
@@ -89,11 +84,11 @@ public class UserController {
 
 		var token = jwtUtils.generateToken(userCreated.getUsername());
 		return Login.builder()
-				.token(token)
-				.username(userCreated.getUsername())
-				.fullname(userCreated.getFullName())
-				.id(userCreated.getId())
-				.build();
+						.token(token)
+						.username(userCreated.getUsername())
+						.fullname(userCreated.getFullName())
+						.id(userCreated.getId())
+						.build();
 	}
 	
 	@GetMapping("/{id}")
@@ -148,7 +143,7 @@ public class UserController {
 							schema = @Schema(implementation = UserLoginRequest.class)))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Usuario autenticado",
-					content = @Content(mediaType = "application/json")),
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Login.class))),
 			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
 	public Login login(@RequestBody @Valid User user) {

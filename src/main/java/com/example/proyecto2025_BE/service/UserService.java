@@ -11,6 +11,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,8 +40,6 @@ public class UserService {
 	private final RespuestasDao answerDao;
 
 	public void validateUsernameEmail(User user) {
-		Optional<User> fetched = userDao.findByEmail(user.getEmail());
-
 		if (userDao.findByEmail(user.getEmail()).isPresent()) {
 			throw ConflictException.build("El email '" + user.getEmail() + "' ya está en uso.");
 		}
@@ -111,8 +111,8 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public User findByUsername(String userName) {
-		return this.userDao.findByUsername(userName)
-				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
+		return userDao.findByUsername(userName)
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + userName));
 	}
 
 	public Page<User> getUsersOrderedByScoreDesc(int page,int size ) {
@@ -181,5 +181,15 @@ public class UserService {
 
 	public User create(User user) {
 		return this.userDao.save(user);
+	}
+
+	public UserDetails getUserDetailsByUsername(String username){
+		User user = this.findByUsername(username);
+
+		return new org.springframework.security.core.userdetails.User(
+				user.getUsername(),
+				user.getPassword(),
+				user.getAuthorities()
+		);
 	}
 }
