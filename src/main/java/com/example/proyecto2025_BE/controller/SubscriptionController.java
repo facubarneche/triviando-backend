@@ -1,25 +1,26 @@
 package com.example.proyecto2025_BE.controller;
 
-import com.example.proyecto2025_BE.service.MercadoPagoSubscriptionService;
-import com.example.proyecto2025_BE.service.UserService;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.resources.payment.Payment;
+
+import lombok.RequiredArgsConstructor;
+
+import com.example.proyecto2025_BE.service.MercadoPagoSubscriptionService;
+import com.example.proyecto2025_BE.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 public class SubscriptionController {
 
-    @Autowired
-    private MercadoPagoSubscriptionService mpService;
-
-    @Autowired
-    private UserService userService;
+    private final MercadoPagoSubscriptionService mpService;
+    private final UserService userService;
 
     @PostMapping("/start")
     public ResponseEntity<?> startSubscription(@RequestParam String email) {

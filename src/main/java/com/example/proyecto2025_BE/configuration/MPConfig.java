@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Bean;
 @Configuration
 public class MPConfig {
 
-	@Value("${mercadopago.access.token}")
+	@Value("${mercadopago.access-token}")
     private String accessToken;
 	
 	@Bean
