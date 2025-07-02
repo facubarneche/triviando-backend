@@ -23,7 +23,8 @@ public class MercadoPagoSubscriptionService {
     private static final String PLAN_DESCRIPTION = "Acceso a funcionalidades premium de la aplicación";
     private static final String PLAN_CURRENCY = "ARS";
     private static final BigDecimal PLAN_PRICE = BigDecimal.valueOf(100);
-    private static final String WEBHOOK_BASE_URL = "https://localhost:3000/payment";
+//    private static final String FE_PAYMENT_BASE_URL = "https://localhost:3000/payment";
+    private static final String FE_PAYMENT_BASE_URL = "https://longitude-turbo-retrieve-temperatures.trycloudflare.com/payment";
     
     public String createSubscriptionPreference(String userEmail) throws MPException, MPApiException {
         PreferenceClient client = new PreferenceClient();
@@ -37,9 +38,9 @@ public class MercadoPagoSubscriptionService {
                 .build();
 
         PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                .success(WEBHOOK_BASE_URL + "/success")
-                .failure(WEBHOOK_BASE_URL + "/failure")
-                .pending(WEBHOOK_BASE_URL + "/pending")
+                .success(FE_PAYMENT_BASE_URL + "/success")
+                .failure(FE_PAYMENT_BASE_URL + "/failure")
+                .pending(FE_PAYMENT_BASE_URL + "/pending")
                 .build();
 
         PreferenceRequest preferenceRequest = PreferenceRequest.builder()

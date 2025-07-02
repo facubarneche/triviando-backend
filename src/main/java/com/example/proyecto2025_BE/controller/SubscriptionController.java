@@ -1,20 +1,22 @@
 package com.example.proyecto2025_BE.controller;
 
-import com.mercadopago.exceptions.MPApiException;
-import com.mercadopago.exceptions.MPException;
-import com.mercadopago.client.payment.PaymentClient;
-import com.mercadopago.resources.payment.Payment;
-
-import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.service.MercadoPagoSubscriptionService;
 import com.example.proyecto2025_BE.service.UserService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import com.mercadopago.client.payment.PaymentClient;
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.payment.Payment;
 
-import java.util.Map;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -39,7 +41,6 @@ public class SubscriptionController {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode root = mapper.readTree(payload);
-            // Mercado Pago envía el id del pago en el campo "data.id" y el tipo de notificación en "type"
             String type = root.path("type").asText();
             if ("payment".equals(type)) {
                 Long paymentId = root.path("data").path("id").asLong();
@@ -59,22 +60,4 @@ public class SubscriptionController {
             return ResponseEntity.status(500).body("Error procesando webhook: " + e.getMessage());
         }
     }
-
-    @GetMapping("/payment/verify")
-    public ResponseEntity<?> verifyPayment(@RequestParam String payment_id) {
-        try {
-            PaymentClient paymentClient = new PaymentClient();
-            Payment payment = paymentClient.get(Long.parseLong(payment_id));
-            
-            return ResponseEntity.ok(Map.of(
-                "payment_id", payment.getId(),
-                "status", payment.getStatus(),
-                "email", payment.getPayer().getEmail(),
-                "amount", payment.getTransactionAmount()
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Error verificando pago: " + e.getMessage());
-        }
-    }
-
 } 
