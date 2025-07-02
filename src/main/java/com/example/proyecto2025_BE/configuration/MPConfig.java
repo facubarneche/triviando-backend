@@ -1,16 +1,17 @@
 package com.example.proyecto2025_BE.configuration;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
 import com.mercadopago.MercadoPagoConfig;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
+import lombok.Data;
 
+@Data
 @Configuration
+@ConfigurationProperties(prefix = "mercadopago")
 public class MPConfig {
 
-	@Value("${mercadopago.access-token}")
     private String accessToken;
 	
 	@Bean

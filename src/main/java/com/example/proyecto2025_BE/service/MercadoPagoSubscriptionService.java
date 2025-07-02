@@ -1,33 +1,31 @@
 package com.example.proyecto2025_BE.service;
 
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
-import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
-import com.mercadopago.resources.preference.Preference;
-import com.mercadopago.exceptions.MPException;
-import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.exceptions.MPApiException;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.Collections;
 
-@Service
-public class MercadoPagoSubscriptionService {
+import org.springframework.stereotype.Service;
 
-    @Value("${mercadopago.access-token}")
-    private String accessToken;
+import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
+import com.mercadopago.client.preference.PreferenceClient;
+import com.mercadopago.client.preference.PreferenceItemRequest;
+import com.mercadopago.client.preference.PreferenceRequest;
+import com.mercadopago.exceptions.MPApiException;
+import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.preference.Preference;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class MercadoPagoSubscriptionService {
 
     private static final String PLAN_TITLE = "Suscripción mensual TrivIAndo";
     private static final String PLAN_DESCRIPTION = "Acceso a funcionalidades premium de la aplicación";
     private static final String PLAN_CURRENCY = "ARS";
     private static final BigDecimal PLAN_PRICE = BigDecimal.valueOf(100);
-    private static final String WEBHOOK_BASE_URL = "https://trouble-pledge-often-electro.trycloudflare.com/api/v1/payment";
-
+    private static final String WEBHOOK_BASE_URL = "https://localhost:3000/payment";
+    
     public String createSubscriptionPreference(String userEmail) throws MPException, MPApiException {
-        MercadoPagoConfig.setAccessToken(accessToken);
         PreferenceClient client = new PreferenceClient();
 
         PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()

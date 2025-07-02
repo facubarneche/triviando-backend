@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @RestController
 @CrossOrigin(origins = "*")
 @RequiredArgsConstructor
@@ -57,4 +59,22 @@ public class SubscriptionController {
             return ResponseEntity.status(500).body("Error procesando webhook: " + e.getMessage());
         }
     }
+
+    @GetMapping("/payment/verify")
+    public ResponseEntity<?> verifyPayment(@RequestParam String payment_id) {
+        try {
+            PaymentClient paymentClient = new PaymentClient();
+            Payment payment = paymentClient.get(Long.parseLong(payment_id));
+            
+            return ResponseEntity.ok(Map.of(
+                "payment_id", payment.getId(),
+                "status", payment.getStatus(),
+                "email", payment.getPayer().getEmail(),
+                "amount", payment.getTransactionAmount()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error verificando pago: " + e.getMessage());
+        }
+    }
+
 } 

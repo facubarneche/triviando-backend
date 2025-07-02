@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-import com.example.proyecto2025_BE.exceptions.ValidationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +18,7 @@ import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.Ranking;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
@@ -184,7 +184,7 @@ public class UserService {
 	public void markUserAsSubscribed(String email) {
 		User user = userDao.findByEmail(email)
 				.orElseThrow(() -> NotFoundException.build("Usuario no encontrado para email: " + email));
-		user.setIsSubscribed(true);
+		user.setSubscribed(true);
 		userDao.save(user);
 	}
 }
