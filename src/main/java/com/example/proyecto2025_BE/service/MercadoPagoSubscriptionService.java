@@ -1,56 +1,63 @@
 package com.example.proyecto2025_BE.service;
 
-import java.math.BigDecimal;
-import java.util.Collections;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
+import com.example.proyecto2025_BE.configuration.MPSerializer;
+import com.example.proyecto2025_BE.model.mp.PaymentNotification;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
 import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
+import com.mercadopago.resources.payment.Payment;
 import com.mercadopago.resources.preference.Preference;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MercadoPagoSubscriptionService {
 
-    private static final String PLAN_TITLE = "Suscripción mensual TrivIAndo";
-    private static final String PLAN_DESCRIPTION = "Acceso a funcionalidades premium de la aplicación";
-    private static final String PLAN_CURRENCY = "ARS";
-    private static final BigDecimal PLAN_PRICE = BigDecimal.valueOf(100);
-//    private static final String FE_PAYMENT_BASE_URL = "https://localhost:3000/payment";
-    private static final String FE_PAYMENT_BASE_URL = "https://longitude-turbo-retrieve-temperatures.trycloudflare.com/payment";
+	private final UserService userService;
+    private final PreferenceClient preferenceClient;
+    private final PaymentClient paymentClient;
+    private final PreferenceRequest preferenceRequest;
     
-    public String createSubscriptionPreference(String userEmail) throws MPException, MPApiException {
-        PreferenceClient client = new PreferenceClient();
-
-        PreferenceItemRequest itemRequest = PreferenceItemRequest.builder()
-                .title(PLAN_TITLE)
-                .description(PLAN_DESCRIPTION)
-                .quantity(1)
-                .currencyId(PLAN_CURRENCY)
-                .unitPrice(PLAN_PRICE)
-                .build();
-
-        PreferenceBackUrlsRequest backUrls = PreferenceBackUrlsRequest.builder()
-                .success(FE_PAYMENT_BASE_URL + "/success")
-                .failure(FE_PAYMENT_BASE_URL + "/failure")
-                .pending(FE_PAYMENT_BASE_URL + "/pending")
-                .build();
-
-        PreferenceRequest preferenceRequest = PreferenceRequest.builder()
-                .items(Collections.singletonList(itemRequest))
-                .backUrls(backUrls)
-                .autoReturn("approved")
-                .build();
-
-        Preference preference = client.create(preferenceRequest);
+    public String createSubscriptionPreference() {
+    	Preference preference = null;
+		try {
+			preference = preferenceClient.create(preferenceRequest);
+		} catch (MPException | MPApiException e) {
+			log.error("Error en el alta de la suscripción: " + e.getMessage());
+		}
         
         return preference.getInitPoint();
+    }
+    
+    public String notifyPayment(String payload) {
+    	try {
+        	PaymentNotification notification = MPSerializer.instance()
+        			.readValue(payload, PaymentNotification.class);
+        	
+            Payment payment = paymentClient.get(notification.id());
+            
+            if ("approved".equalsIgnoreCase(payment.getStatus())) {
+                String email = payment.getPayer().getEmail();
+                if (email != null) {
+                    userService.markUserAsSubscribed(email);
+                }
+            }
+        } catch (MPException | MPApiException e) {
+        	log.error("Error procesando webhook: " + e.getMessage());
+        } catch (JsonProcessingException e) {
+        	log.error("Error parseando notification: " + e.getMessage());
+        }
+    	
+    	return "Webhook procesado correctamente";
     }
 } 
