@@ -7,12 +7,19 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import com.example.proyecto2025_BE.exceptions.ValidationException;
+import com.example.proyecto2025_BE.model.dto.Login;
+import com.example.proyecto2025_BE.security.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +45,9 @@ public class UserService {
 
 	private final UserDao userDao;
 	private final RespuestasDao answerDao;
+	private final AuthenticationManager authenticationManager;
+	private final PasswordEncoder encoder;
+	private final JwtUtil jwtUtils;
 
 	public void validateUsernameEmail(User user) {
 		if (userDao.findByEmail(user.getEmail()).isPresent()) {
@@ -179,8 +189,21 @@ public class UserService {
 		return new StatsResponse(totalQuizzes, correctAnswers, totalQuestions);
 	}
 
-	public User create(User user) {
-		return this.userDao.save(user);
+	@Transactional
+	public Login create(User user) {
+		validateUsernameEmail(user);
+		var encodedPass = encoder.encode(user.getPassword());
+		user.setPassword(encodedPass);
+
+		var userCreated = userDao.save(user);
+
+		var token = jwtUtils.generateToken(userCreated.getUsername());
+		return Login.builder()
+				.token(token)
+				.username(userCreated.getUsername())
+				.fullname(userCreated.getFullName())
+				.id(userCreated.getId())
+				.build();
 	}
 
 	public UserDetails getUserDetailsByUsername(String username){
@@ -191,5 +214,23 @@ public class UserService {
 				user.getPassword(),
 				user.getAuthorities()
 		);
+	}
+
+	public Login login(@Valid User user) {
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(
+						user.getUsername(),
+						user.getPassword()
+				)
+		);
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		var token = jwtUtils.generateToken(userDetails.getUsername());
+		var fetchedUser = findByUsername(userDetails.getUsername());
+		return Login.builder()
+				.token(token)
+				.username(userDetails.getUsername())
+				.fullname(fetchedUser.getFullName())
+				.id(fetchedUser.getId())
+				.build();
 	}
 }

@@ -1,15 +1,9 @@
 package com.example.proyecto2025_BE.controller;
 
 import com.example.proyecto2025_BE.model.dto.Login;
-import com.example.proyecto2025_BE.security.JwtUtil;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -53,10 +47,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "User Controller", description = "API para la gestión de usuarios")
 public class UserController {
-
-	private final AuthenticationManager authenticationManager;
-	private final PasswordEncoder encoder;
-	private final JwtUtil jwtUtils;
 	private final UserService userService;
 
 	@PostMapping
@@ -74,21 +64,7 @@ public class UserController {
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
 	public Login create(@RequestBody
 					   @Validated(Views.RegisterRequest.class) User user) {
-
-		this.userService.validateUsernameEmail(user);
-
-		var encodedPass = encoder.encode(user.getPassword());
-		user.setPassword(encodedPass);
-
-		var userCreated = this.userService.create(user);
-
-		var token = jwtUtils.generateToken(userCreated.getUsername());
-		return Login.builder()
-						.token(token)
-						.username(userCreated.getUsername())
-						.fullname(userCreated.getFullName())
-						.id(userCreated.getId())
-						.build();
+		return this.userService.create(user);
 	}
 	
 	@GetMapping("/{id}")
@@ -148,21 +124,7 @@ public class UserController {
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
 	public Login login(@RequestBody @Valid User user) {
 
-		Authentication authentication = authenticationManager.authenticate(
-				new UsernamePasswordAuthenticationToken(
-						user.getUsername(),
-						user.getPassword()
-				)
-		);
-		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
-		var token = jwtUtils.generateToken(userDetails.getUsername());
-		var fetchedUser = this.userService.findByUsername(userDetails.getUsername());
-		return Login.builder()
-				.token(token)
-				.username(userDetails.getUsername())
-				.fullname(fetchedUser.getFullName())
-				.id(fetchedUser.getId())
-				.build();
+		return this.userService.login(user);
 	}
 
 	@GetMapping("/statistics/{usuarioId}")

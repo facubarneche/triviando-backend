@@ -111,7 +111,8 @@ public class User {
 	private int position;
 
 	//TODO: Crear entidades para el manejo de roles y con privilegios internos
-	private List<String> privileges = Collections.emptyList();
+	@Builder.Default
+	private List<String> privileges = List.of("ROLE_USER");
 
 	@JsonProperty("age")
 	public Integer getAge() {

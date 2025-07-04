@@ -13,12 +13,15 @@ import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.Topics;
+import com.example.proyecto2025_BE.security.JwtUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,15 +40,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 class PreguntasControllerTest {
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    private static String jwtToken;
+    
+    @Autowired
     private MockMvc mockMvc;
     @MockitoBean
     private PreguntaDao preguntaDao;
-    @MockitoBean
+    @Autowired
     private UserDao userDao;
     @Autowired
     private ObjectMapper objectMapper;
-
     private final String emojiCafe = "\uD83D\uDC0D";
+    @Autowired
+    private PasswordEncoder encoder;
+
+    @BeforeEach
+    public void setUp() {
+        userDao.deleteAll();
+        var encodedPass = encoder.encode("pelele");
+        User user = User.builder()
+                .username("juanceto01")
+                .password(encodedPass)
+                .email("dsadsa@dsada.com")
+                .build();
+
+        userDao.save(user);
+
+        jwtToken = jwtUtil.generateToken(user.getUsername());
+    }
 
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
@@ -58,12 +82,13 @@ class PreguntasControllerTest {
         when(preguntaDao.findByTopico(topicoExistente)).thenReturn(Optional.of(preguntasTopicoExistente));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
-                        .param("topico", topicoExistente))
+                        .param("topico", topicoExistente)
+                        .header("Authorization", "Bearer " + jwtToken)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(preguntasTopicoExistente)));
     }
-
 
     @Test
     @DisplayName("Get preguntas by topico - user contesta preguntas")
@@ -72,16 +97,17 @@ class PreguntasControllerTest {
         List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
+        var user = userDao.findByUsername("juanceto01").get();
 
-        when(preguntaDao.findByTopico(topicoExistente)).thenReturn(Optional.of(preguntasTopicoExistente));
-        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder()
-                .id(1L)
-                .answers(Collections.singletonList(Answer.builder()
-                        .user(User.builder().id(1L).build())
+        user.setAnswers(Collections.singletonList(Answer.builder()
+                        .user(user)
                         .questionId(preguntasTopicoExistente.getFirst().getId())
                         .score(BigDecimal.valueOf(100.00))
                         .build()))
-                .build()));
+                ;
+        userDao.save(user);
+
+        when(preguntaDao.findByTopico(topicoExistente)).thenReturn(Optional.of(preguntasTopicoExistente));
 
         List<Pregunta> resultadoEsperado = preguntasTopicoExistente.subList(1, preguntasTopicoExistente.size());
         when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(any(), any())).thenReturn(resultadoEsperado);
@@ -89,7 +115,8 @@ class PreguntasControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("topico", topicoExistente)
-                        .param("userId", "1"))
+                        .param("userId", user.getId().toString())
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
@@ -103,7 +130,8 @@ class PreguntasControllerTest {
         when(preguntaDao.findByTopico(topico)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
-                        .param("topico", topico))
+                        .param("topico", topico)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json("[]"));
@@ -116,7 +144,7 @@ class PreguntasControllerTest {
 
         when(preguntaDao.findById(pregunta.getId())).thenReturn(Optional.of(pregunta));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", pregunta.getId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", pregunta.getId()).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(pregunta)));
@@ -129,7 +157,7 @@ class PreguntasControllerTest {
 
         when(preguntaDao.findById(idInvalido)).thenReturn(Optional.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", idInvalido))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", idInvalido).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
@@ -143,7 +171,6 @@ class PreguntasControllerTest {
                 Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", emojiCafe)
         );
 
-        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
         when(preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(any())).thenReturn(resultadoDao);
 
         List<Topics> resultadoEsperado = List.of(
@@ -164,16 +191,10 @@ class PreguntasControllerTest {
                         .build()
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{id}", 1L))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{id}", 1L).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
     }
 
-    @Test
-    @DisplayName("Get cantidad preguntas por topico  - user  contesta  un topico")
-    void getCantidadPreguntasPorTopico_userContestaUnTopico() throws Exception {
-
-
-    }
 }
