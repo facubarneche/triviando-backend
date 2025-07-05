@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -158,6 +158,7 @@ public class User {
 
 	public String getFullName() { return name + " " + lastName; }
 
+	@JsonIgnore
 	public Collection<? extends GrantedAuthority> getAuthorities(){
 		return this.getPrivileges().stream().map(SimpleGrantedAuthority::new).toList();
 	}

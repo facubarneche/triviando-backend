@@ -62,9 +62,10 @@ public class UserController {
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation =  Login.class))),
 			@ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
-	public Login create(@RequestBody
+	public ResponseEntity<Login> create(@RequestBody
 					   @Validated(Views.RegisterRequest.class) User user) {
-		return this.userService.create(user);
+		Login login = this.userService.create(user);
+		return ResponseEntity.status(201).body(login);
 	}
 	
 	@GetMapping("/{id}")
