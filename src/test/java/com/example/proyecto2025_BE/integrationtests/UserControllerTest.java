@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.proyecto2025_BE.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -50,6 +52,12 @@ public class UserControllerTest {
     private static final Long INEXISTENT_USER_ID = 99L;
 
     @Autowired
+    private JwtUtil jwtUtil;
+    private static String jwtToken;
+    @Autowired
+    private PasswordEncoder encoder;
+
+    @Autowired
     private MockMvc mockMvc;
     @Autowired
     private UserDao dao;
@@ -65,6 +73,14 @@ public class UserControllerTest {
         dao.deleteAll();
         dao.flush();  // Forzamos la sincronización con la base de datos
 
+        jwtToken = crearUser(
+                User.builder()
+                .username("juanceto01")
+                .email("dsadsa@dsada.com")
+                .build(),
+                "Pelele"
+        );
+
         // Configuramos el mapper
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -74,13 +90,14 @@ public class UserControllerTest {
     @Test
     @DisplayName("Cuando busco un user por id, y este existe, obtengo dicho recurso")
     void retrieveTest() throws Exception {
+
         User user = User.builder()
                 .name("Pepe")
                 .lastName("Palala")
                 .build();
         dao.save(user);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.name").value("Pepe"))
@@ -91,7 +108,7 @@ public class UserControllerTest {
     @DisplayName("Cuando busco un user por id y este no es encontrado el sistema devuelve Not Found")
     void findByIdNotFoundTest() throws Exception {
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/users/{id}", INEXISTENT_USER_ID))
+                .perform(MockMvcRequestBuilders.get("/users/{id}", INEXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
@@ -117,7 +134,8 @@ public class UserControllerTest {
         mockMvc
                 .perform(MockMvcRequestBuilders.put("/users")
                         .contentType("application/json")
-                        .content(requestBody))
+                        .content(requestBody)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNoContent());
 
         User updatedUser = dao.findById(user.getId()).orElseThrow();
@@ -476,5 +494,13 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$.name").value("Pancho"))
                 .andExpect(jsonPath("$.lastName").value("Rancho"))
                 .andExpect(jsonPath("$.username").value("pancho_rancho_1746"));
+    }
+
+    String crearUser(User user, String pass){
+        var encodedPass = encoder.encode(pass);
+        user.setPassword(encodedPass);
+
+        dao.save(user);
+        return jwtUtil.generateToken(user.getUsername());
     }
 }
