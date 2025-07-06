@@ -478,8 +478,7 @@ public class UserControllerTest {
                         .content(jsonBody))
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Pepe"))
-                .andExpect(jsonPath("$.lastName").value("Palala"))
+                .andExpect(jsonPath("$.fullname").value("Pepe Palala"))
                 .andExpect(jsonPath("$.username").value("juanceto01"));
     }
 

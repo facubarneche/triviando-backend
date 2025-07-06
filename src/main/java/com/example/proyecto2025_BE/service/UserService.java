@@ -206,16 +206,6 @@ public class UserService {
 				.build();
 	}
 
-	public UserDetails getUserDetailsByUsername(String username){
-		User user = this.findByUsername(username);
-
-		return new org.springframework.security.core.userdetails.User(
-				user.getUsername(),
-				user.getPassword(),
-				user.getAuthorities()
-		);
-	}
-
 	public Login login(@Valid User user) {
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
