@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
+import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
 import org.springframework.stereotype.Service;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
@@ -14,6 +15,7 @@ import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
 import com.example.proyecto2025_BE.service.pregunta.factory.PreguntaLoaderFactory;
 import com.example.proyecto2025_BE.service.pregunta.strategy.PreguntaLoaderStrategy;
 import lombok.RequiredArgsConstructor;
+import reactor.core.publisher.Mono;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +24,7 @@ public class PreguntaServiceImpl implements PreguntaService {
     private final PreguntaDao preguntaDao;
     private final UserService userService;
     private final PreguntaLoaderFactory preguntaLoaderFactory;
+    private final FeedbackService feedbackService;
 
     @Override
     public List<Pregunta> getAllPreguntas() {
@@ -96,5 +99,10 @@ public class PreguntaServiceImpl implements PreguntaService {
     @Override
     public String getTopicFromQuestion(String topico) {
         return preguntaDao.getFirstByTopico(topico).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND)).getEmoji();
+    }
+
+    @Override
+    public void saveFeedback(FeedbackDTO feedbackDTO) {
+        feedbackService.save(feedbackDTO);
     }
 }

@@ -1,19 +1,16 @@
 package com.example.proyecto2025_BE.integrationtests;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.math.BigDecimal;
-import java.util.*;
-
+import com.example.proyecto2025_BE.configuration.PreguntasData;
+import com.example.proyecto2025_BE.dao.FeedbackRepository;
+import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
 import com.example.proyecto2025_BE.security.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,10 +24,17 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.example.proyecto2025_BE.configuration.PreguntasData;
-import com.example.proyecto2025_BE.dao.PreguntaDao;
-import com.example.proyecto2025_BE.model.Pregunta;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
+import java.util.*;
+
+import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createPositiveFeedbackDTO;
+import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createNegativeFeedbackDTO;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @SpringBootTest
@@ -52,6 +56,9 @@ class PreguntasControllerTest {
     private UserDao userDao;
     @Autowired
     private ObjectMapper objectMapper;
+    @MockitoBean
+    private FeedbackRepository feedbackRepository;
+
     private final String emojiCafe = "\uD83D\uDC0D";
     @Autowired
     private PasswordEncoder encoder;
@@ -197,4 +204,34 @@ class PreguntasControllerTest {
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
     }
 
+    @Test
+    @DisplayName("Crear feedback positivo")
+    void crearFeedbackPositivo() throws Exception {
+        feedbackRepository.deleteAll();
+        FeedbackDTO positiveFeedbackDTO = createPositiveFeedbackDTO();
+        String feedbackDtoJson = objectMapper.writeValueAsString(positiveFeedbackDTO);
+
+
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/preguntas/send-feedback")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackDtoJson)
+                        .header("Authorization", "Bearer " + jwtToken))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("Crear feedback positivo")
+    void crearFeedbacknegativo() throws Exception {
+        feedbackRepository.deleteAll();
+
+        FeedbackDTO negativeFeedbackDTO = createNegativeFeedbackDTO();
+        String feedbackDtoJson = objectMapper.writeValueAsString(negativeFeedbackDTO);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/preguntas/send-feedback")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(feedbackDtoJson)
+                        .header("Authorization", "Bearer " + jwtToken))
+                .andExpect(status().isCreated());
+    }
 }
