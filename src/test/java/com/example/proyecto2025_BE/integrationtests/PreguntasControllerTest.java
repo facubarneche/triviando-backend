@@ -29,8 +29,7 @@ import java.util.*;
 import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createPositiveFeedbackDTO;
 import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createNegativeFeedbackDTO;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -58,15 +57,19 @@ class PreguntasControllerTest {
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
+
         String topicoExistente = PreguntasData.PREGUNTAS.getFirst().getTopico();
+        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
         List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
 
-        when(preguntaDao.findByTopico(topicoExistente)).thenReturn(Optional.of(preguntasTopicoExistente));
+        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(anyList(), any(String.class),any(Long.class))).thenReturn(preguntasTopicoExistente);
+
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
-                        .param("topico", topicoExistente))
+                        .param("topico", topicoExistente)
+                        .param("userId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(preguntasTopicoExistente)));
@@ -81,7 +84,7 @@ class PreguntasControllerTest {
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
 
-        when(preguntaDao.findByTopico(topicoExistente)).thenReturn(Optional.of(preguntasTopicoExistente));
+        when(preguntaDao.findByTopicoAndUserId(anyString(),anyLong())).thenReturn(preguntasTopicoExistente);
         when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder()
                 .id(1L)
                 .answers(Collections.singletonList(Answer.builder()
@@ -92,7 +95,7 @@ class PreguntasControllerTest {
                 .build()));
 
         List<Pregunta> resultadoEsperado = preguntasTopicoExistente.subList(1, preguntasTopicoExistente.size());
-        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(any(), any())).thenReturn(resultadoEsperado);
+        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(any(), any(),any())).thenReturn(resultadoEsperado);
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
@@ -108,10 +111,12 @@ class PreguntasControllerTest {
     void getPreguntasByTopico_topicoNoExistente() throws Exception {
         String topico = "Geografia";
 
-        when(preguntaDao.findByTopico(topico)).thenReturn(Optional.empty());
+        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(anyList(),anyString(),anyLong())).thenReturn(List.of());
+        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
-                        .param("topico", topico))
+                        .param("topico", topico)
+                        .param("userId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json("[]"));
@@ -152,7 +157,7 @@ class PreguntasControllerTest {
         );
 
         when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
-        when(preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(any())).thenReturn(resultadoDao);
+        when(preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(any(),anyLong())).thenReturn(resultadoDao);
 
         List<Topics> resultadoEsperado = List.of(
                 Topics.builder()

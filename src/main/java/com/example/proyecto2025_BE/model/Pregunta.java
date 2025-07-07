@@ -17,6 +17,7 @@ public class Pregunta {
     @Id
     private String id;
     private String topico;
+    private Long userId;
     private String emoji;
     private String enunciado;
     private List<Option> options;

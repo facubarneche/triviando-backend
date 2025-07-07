@@ -27,7 +27,7 @@ public abstract class Prompter {
 	@NotBlank
 	protected String topic;
 	@NotBlank
-	protected String promptContext;
+	protected Long userId;
 	protected PreguntaService preguntaService;
 	
 	public String buildPrompt() {
@@ -45,6 +45,6 @@ public abstract class Prompter {
 	public abstract String getEmoji(ModelCommunication assistant);
 
 	public boolean existsTopic() {
-		return preguntaService.existsByTopic(topic);
+		return preguntaService.existsByTopicAndUser(topic,userId);
 	}
 }
