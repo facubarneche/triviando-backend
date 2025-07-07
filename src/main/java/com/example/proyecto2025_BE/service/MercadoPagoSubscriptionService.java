@@ -1,12 +1,12 @@
 package com.example.proyecto2025_BE.service;
 
-import org.springframework.http.ResponseEntity;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.configuration.MPSerializer;
 import com.example.proyecto2025_BE.model.mp.PaymentNotification;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceRequest;
@@ -36,7 +36,7 @@ public class MercadoPagoSubscriptionService {
 			log.error("Error en el alta de la suscripción: " + e.getMessage());
 		}
         
-        return preference.getInitPoint();
+        return Optional.ofNullable(preference.getInitPoint()).orElse("");
     }
     
     public String notifyPayment(String payload) {
