@@ -21,5 +21,5 @@ api:
     cantidad: 5
 
 jwt:
-  secret: ${JWT_SECRET_KEY}
+  secret: clavesecretaparatesteosgodines123432e
   expiration: 43200000
