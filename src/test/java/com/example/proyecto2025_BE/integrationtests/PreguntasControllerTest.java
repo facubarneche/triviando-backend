@@ -10,6 +10,8 @@ import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
+import com.example.proyecto2025_BE.utils.PreguntaFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,8 +23,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -210,5 +214,41 @@ class PreguntasControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(feedbackDtoJson))
                 .andExpect(status().isCreated());
+    }
+
+    @Test
+    @DisplayName("Usuario carga solo sus topicos")
+    void testCargarTopicosPropios() throws Exception {
+        Long userId = 1L;
+        Long userId2 = 2L;
+        String topico1 = "topico1";
+        String topico2 = "topico2";
+        Pregunta pregunta1User1 = PreguntaFactory.crearPreguntaTest(userId, topico1);
+        Pregunta pregunta2User1 = PreguntaFactory.crearPreguntaTest(userId, topico2);
+        Pregunta pregunta1User2 = PreguntaFactory.crearPreguntaTest(userId2, topico2);
+        Pregunta pregunta2User2 = PreguntaFactory.crearPreguntaTest(userId2, topico1);
+        List<Pregunta> preguntasUser1 = List.of(pregunta1User1,pregunta2User1);
+        List<Pregunta> preguntasUser2 = List.of(pregunta1User2,pregunta2User2);
+
+        when(userDao.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
+        when(userDao.findById(userId2)).thenReturn(Optional.of(User.builder().id(userId2).build()));
+        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId)).thenReturn(preguntasUser1);
+        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId2)).thenReturn(preguntasUser2);
+
+        MvcResult resultUser1 = mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
+                        .param("userId", String.valueOf(userId)))
+                        .andExpect(status().isOk())
+                        .andReturn();
+
+        List<Pregunta> list = objectMapper.readValue(resultUser1.getResponse().getContentAsString(), new TypeReference<List<Pregunta>>() {});
+        assertTrue(list.stream().allMatch(p -> p.getUserId().equals(userId)));
+
+        MvcResult resultUser2 = mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
+                        .param("userId", String.valueOf(userId2)))
+                        .andExpect(status().isOk())
+                        .andReturn();
+
+        list = objectMapper.readValue(resultUser2.getResponse().getContentAsString(), new TypeReference<List<Pregunta>>() {});
+        assertTrue(list.stream().allMatch(p -> p.getUserId().equals(userId2)));
     }
 }

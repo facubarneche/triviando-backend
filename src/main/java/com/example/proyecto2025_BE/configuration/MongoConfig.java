@@ -11,12 +11,12 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @Profile("dev")
 public class MongoConfig {
 
-//    @Bean
-//    public CommandLineRunner clearDatabase(MongoTemplate mongoTemplate) {
-//        return args -> {
-//            mongoTemplate.getDb().drop();
-//            mongoTemplate.createCollection("preguntas");
-//            PreguntasData.PREGUNTAS.forEach(mongoTemplate::insert);
-//        };
-//    }
+    @Bean
+    public CommandLineRunner clearDatabase(MongoTemplate mongoTemplate) {
+        return args -> {
+            mongoTemplate.getDb().drop();
+            mongoTemplate.createCollection("preguntas");
+            PreguntasData.PREGUNTAS.forEach(mongoTemplate::insert);
+        };
+    }
 }
