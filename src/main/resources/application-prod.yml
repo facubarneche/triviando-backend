@@ -24,7 +24,11 @@ spring:
       uri: mongodb://mongodb:27017/flashcards
       auto-index-creation: true
 llm:
-  apiKey: ${OPENAI_API_KEY}
+  apiKey: ${AI_API_KEY}
   modelName: gpt-4
   logRequests: false
   logResponses: false
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expiration: ${JWT_EXPIRATION}

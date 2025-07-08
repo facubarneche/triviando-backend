@@ -5,11 +5,11 @@ import com.example.proyecto2025_BE.dao.FeedbackRepository;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.Answer;
-import com.example.proyecto2025_BE.model.Feedback;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
+import com.example.proyecto2025_BE.security.JwtUtil;
 import com.example.proyecto2025_BE.utils.PreguntaFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -20,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -35,6 +36,7 @@ import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createNe
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,10 +48,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class PreguntasControllerTest {
 
     @Autowired
+    private JwtUtil jwtUtil;
+
+    private static String jwtToken;
+
+    @Autowired
     private MockMvc mockMvc;
     @MockitoBean
     private PreguntaDao preguntaDao;
-    @MockitoBean
+    @Autowired
     private UserDao userDao;
     @Autowired
     private ObjectMapper objectMapper;
@@ -57,11 +64,27 @@ class PreguntasControllerTest {
     private FeedbackRepository feedbackRepository;
 
     private final String emojiCafe = "\uD83D\uDC0D";
+    @Autowired
+    private PasswordEncoder encoder;
+
+    @BeforeEach
+    public void setUp() {
+        userDao.deleteAll();
+        var encodedPass = encoder.encode("pelele");
+        User user = User.builder()
+                .username("juanceto01")
+                .password(encodedPass)
+                .email("dsadsa@dsada.com")
+                .build();
+
+        userDao.save(user);
+
+        jwtToken = jwtUtil.generateToken(user.getUsername());
+    }
 
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
-
         String topicoExistente = PreguntasData.PREGUNTAS.getFirst().getTopico();
         when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
         List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
@@ -72,8 +95,10 @@ class PreguntasControllerTest {
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
+                        .param("userId", "1")
                         .param("topico", topicoExistente)
-                        .param("userId", "1"))
+                        .header("Authorization", "Bearer " + jwtToken)
+                )
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(preguntasTopicoExistente)));
@@ -87,6 +112,15 @@ class PreguntasControllerTest {
         List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
+        var user = userDao.findByUsername("juanceto01").get();
+
+        user.setAnswers(Collections.singletonList(Answer.builder()
+                        .user(user)
+                        .questionId(preguntasTopicoExistente.getFirst().getId())
+                        .score(BigDecimal.valueOf(100.00))
+                        .build()))
+                ;
+        userDao.save(user);
 
         when(preguntaDao.findByTopicoAndUserId(anyString(),anyLong())).thenReturn(preguntasTopicoExistente);
         when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder()
@@ -104,7 +138,8 @@ class PreguntasControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("topico", topicoExistente)
-                        .param("userId", "1"))
+                        .param("userId", user.getId().toString())
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
@@ -120,7 +155,8 @@ class PreguntasControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("topico", topico)
-                        .param("userId", "1"))
+                        .param("userId", "1")
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json("[]"));
@@ -133,7 +169,8 @@ class PreguntasControllerTest {
 
         when(preguntaDao.findById(pregunta.getId())).thenReturn(Optional.of(pregunta));
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", pregunta.getId()))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", pregunta.getId())
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(objectMapper.writeValueAsString(pregunta)));
@@ -146,7 +183,8 @@ class PreguntasControllerTest {
 
         when(preguntaDao.findById(idInvalido)).thenReturn(Optional.empty());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", idInvalido))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", idInvalido)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
@@ -181,7 +219,8 @@ class PreguntasControllerTest {
                         .build()
         );
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{id}", 1L))
+        mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/topicos/{id}", 1L)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().json(objectMapper.writeValueAsString(resultadoEsperado)));
@@ -198,7 +237,8 @@ class PreguntasControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/preguntas/send-feedback")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(feedbackDtoJson))
+                        .content(feedbackDtoJson)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isCreated());
     }
 
@@ -212,7 +252,8 @@ class PreguntasControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/preguntas/send-feedback")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(feedbackDtoJson))
+                        .content(feedbackDtoJson)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isCreated());
     }
 

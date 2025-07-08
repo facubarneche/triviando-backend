@@ -27,7 +27,7 @@ spring:
       uri: mongodb://localhost:27017/flashcards_mongo
       auto-index-creation: true
 llm:
-  apiKey: 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
+  apiKey: ${AI_API_KEY}
   modelName: gpt-4o-mini
   logRequests: true
   logResponses: true
@@ -36,6 +36,9 @@ api:
   preguntas:
     cantidad: 5
 
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expiration: 43200000
 #logging:
 #  level:
 #    ROOT: TRACE
