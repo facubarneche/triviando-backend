@@ -29,7 +29,8 @@ public class MySQLConfig {
                         .name("John")
                         .lastName("Doe")
                         .email("john.doe@example.com")
-                        .password("password123")
+                        //password123
+                        .password("$2a$10$zjwijZ4Zs0hMxYZZZGRXouRsoXdXV4fxeieMURTuAPSj5cXphjd0y")
                         .phoneNumber("123-456-7890")
                         .birthDate(LocalDate.of(1990, 5, 15))
                         .joinDate(LocalDateTime.now())
@@ -42,7 +43,8 @@ public class MySQLConfig {
                         .name("Jane")
                         .lastName("Smith")
                         .email("jane.smith@example.com")
-                        .password("password456")
+                        //password123
+                        .password("$2a$10$zjwijZ4Zs0hMxYZZZGRXouRsoXdXV4fxeieMURTuAPSj5cXphjd0y")
                         .phoneNumber("987-654-3210")
                         .birthDate(LocalDate.of(1985, 10, 22))
                         .joinDate(LocalDateTime.now())
@@ -55,7 +57,8 @@ public class MySQLConfig {
                         .name("User")
                         .lastName("three")
                         .email("user3@example.com")
-                        .password("password789")
+                        //password123
+                        .password("$2a$10$zjwijZ4Zs0hMxYZZZGRXouRsoXdXV4fxeieMURTuAPSj5cXphjd0y")
                         .phoneNumber("555-123-4567")
                         .birthDate(LocalDate.of(1996, 3, 10)) // Corrected month value
                         .joinDate(LocalDateTime.now())

@@ -37,6 +37,10 @@ api:
   preguntas:
     cantidad: 5
 
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expiration: ${JWT_EXPIRATION}
+
 logging:
   level:
     root: INFO

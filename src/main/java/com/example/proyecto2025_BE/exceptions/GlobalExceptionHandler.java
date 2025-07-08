@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -64,5 +65,12 @@ public class GlobalExceptionHandler {
         ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
         HttpStatus status = responseStatus != null ? responseStatus.value() : HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(errors, status);
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<Object> handleBadCredentialsException(BadCredentialsException ex) {
+        Map<String, String> errors = new HashMap<>();
+        errors.put("error", ex.getMessage());
+        return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
     }
 }

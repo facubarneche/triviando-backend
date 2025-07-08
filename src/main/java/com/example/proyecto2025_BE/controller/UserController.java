@@ -1,8 +1,8 @@
 package com.example.proyecto2025_BE.controller;
 
+import com.example.proyecto2025_BE.model.dto.Login;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -25,11 +25,9 @@ import com.example.proyecto2025_BE.views.Views;
 import com.example.proyecto2025_BE.views.users.UserResponse4XX;
 import com.example.proyecto2025_BE.views.users.get.GetUserResponse;
 import com.example.proyecto2025_BE.views.users.login.request.UserLoginRequest;
-import com.example.proyecto2025_BE.views.users.login.response.UserLoginResponse200;
 import com.example.proyecto2025_BE.views.users.racha.UserRachaResponse;
 import com.example.proyecto2025_BE.views.users.ranking.PageUserRankingResponse;
 import com.example.proyecto2025_BE.views.users.register.request.UserRegisterRequest;
-import com.example.proyecto2025_BE.views.users.register.response.UserRegisterResponse;
 import com.example.proyecto2025_BE.views.users.score.UserScoreResponse;
 import com.example.proyecto2025_BE.views.users.update.request.UpdateUserRequest;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -40,7 +38,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -49,11 +46,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Tag(name = "User Controller", description = "API para la gestión de usuarios")
 public class UserController {
-
 	private final UserService userService;
 
 	@PostMapping
-	@JsonView(Views.Register.class)
 	@Operation(summary = "Registrar usuario", description = "Se registra un nuevo usuario en el sistema")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(
 			description = "Datos del usuario para el registro",
@@ -63,14 +58,13 @@ public class UserController {
 					schema = @Schema(implementation = UserRegisterRequest.class)))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "201", description = "Usuario creado exitosamente",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserRegisterResponse.class))),
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation =  Login.class))),
 			@ApiResponse(responseCode = "409", description = "El usuario ya existe en el sistema",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
-	public ResponseEntity<User> create(@RequestBody
-									   @JsonView(Views.RegisterRequest.class)
-									   @Validated(Views.RegisterRequest.class) User user) {
-		var userCreated = this.userService.create(user);
-		return ResponseEntity.status(HttpStatus.CREATED).body(userCreated);
+	public ResponseEntity<Login> create(@RequestBody
+					   @Validated(Views.RegisterRequest.class) User user) {
+		Login login = this.userService.create(user);
+		return ResponseEntity.status(201).body(login);
 	}
 	
 	@GetMapping("/{id}")
@@ -117,8 +111,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	@JsonView(Views.Login.class)
-	@Operation(summary = "Login de usuario", description = "Autentica a un usuario basado en su correo y contraseña")
+	@Operation(summary = "Login de usuario", description = "Autentica a un usuario basado en su nombre de usuario y contraseña")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(
 					description = "Credenciales del usuario para el login", required = true,
 					content = @Content(
@@ -126,12 +119,13 @@ public class UserController {
 							schema = @Schema(implementation = UserLoginRequest.class)))
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Usuario autenticado",
-					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserLoginResponse200.class))),
-			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
+					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Login.class))),
+			@ApiResponse(responseCode = "401", description = "Credenciales invalidas",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
-	public ResponseEntity<User> login(@RequestBody @Valid User user) {
-		User logged = this.userService.findByEmailAndPassword(user);
-		return ResponseEntity.ok(logged);
+	public ResponseEntity<Login> login(@RequestBody  @Validated(Views.LoginRequest.class) User user) {
+
+		Login login = this.userService.login(user);
+		return ResponseEntity.status(200).body(login);
 	}
 
 	@GetMapping("/statistics/{usuarioId}")
