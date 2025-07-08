@@ -38,7 +38,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -112,7 +111,7 @@ public class UserController {
 	}
 	
 	@PostMapping("/login")
-	@Operation(summary = "Login de usuario", description = "Autentica a un usuario basado en su correo y contraseña")
+	@Operation(summary = "Login de usuario", description = "Autentica a un usuario basado en su nombre de usuario y contraseña")
 	@io.swagger.v3.oas.annotations.parameters.RequestBody(
 					description = "Credenciales del usuario para el login", required = true,
 					content = @Content(
@@ -121,11 +120,12 @@ public class UserController {
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Usuario autenticado",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = Login.class))),
-			@ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND,
+			@ApiResponse(responseCode = "401", description = "Credenciales invalidas",
 					content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponse4XX.class)))})
-	public Login login(@RequestBody @Valid User user) {
+	public ResponseEntity<Login> login(@RequestBody  @Validated(Views.LoginRequest.class) User user) {
 
-		return this.userService.login(user);
+		Login login = this.userService.login(user);
+		return ResponseEntity.status(200).body(login);
 	}
 
 	@GetMapping("/statistics/{usuarioId}")

@@ -10,6 +10,8 @@ public interface Views {
 
 	public static interface RegisterRequest {}
 
+	public static interface LoginRequest {}
+
 	public static interface GetUser {}
 
 	public static interface UpdateUser {}

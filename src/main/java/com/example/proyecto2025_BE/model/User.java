@@ -63,8 +63,8 @@ public class User {
 	@Email(groups = Views.RegisterRequest.class, message = "El email no tiene un formato válido")
 	private String email;
 
-	@JsonView(Views.RegisterRequest.class)
-	@NotBlank(groups = Views.RegisterRequest.class, message = "La contraseña no puede estar vacía")
+	@JsonView({Views.RegisterRequest.class, Views.LoginRequest.class})
+	@NotBlank(groups = {Views.RegisterRequest.class, Views.LoginRequest.class}, message = "La contraseña no puede estar vacía")
 	private String password;
 
 	@JsonView({Views.UpdateUser.class,Views.GetUser.class})
@@ -95,8 +95,10 @@ public class User {
 		Views.Ranking.class,
 		Views.RegisterRequest.class,
 		Views.UpdateUser.class,
-		Views.GetUser.class})
-	@NotBlank(groups = Views.RegisterRequest.class, message = "El username no puede estar vacío")
+		Views.GetUser.class,
+		Views.LoginRequest.class
+	})
+	@NotBlank(groups = {Views.RegisterRequest.class, Views.LoginRequest.class}, message = "El username no puede estar vacío")
 	private String username;
 
 	@JsonView(Views.Racha.class)
