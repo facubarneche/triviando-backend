@@ -5,12 +5,12 @@ import com.example.proyecto2025_BE.dao.FeedbackRepository;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.Difficulty;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
 import com.example.proyecto2025_BE.security.JwtUtil;
-import com.example.proyecto2025_BE.utils.PreguntaFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,7 +56,7 @@ class PreguntasControllerTest {
     private MockMvc mockMvc;
     @MockitoBean
     private PreguntaDao preguntaDao;
-    @Autowired
+    @MockitoBean
     private UserDao userDao;
     @Autowired
     private ObjectMapper objectMapper;
@@ -67,19 +67,20 @@ class PreguntasControllerTest {
     @Autowired
     private PasswordEncoder encoder;
 
+    private User user;
+
     @BeforeEach
     public void setUp() {
-        userDao.deleteAll();
         var encodedPass = encoder.encode("pelele");
-        User user = User.builder()
+        user = User.builder()
+                .id(1L)
                 .username("juanceto01")
                 .password(encodedPass)
                 .email("dsadsa@dsada.com")
                 .build();
-
-        userDao.save(user);
-
         jwtToken = jwtUtil.generateToken(user.getUsername());
+
+        when(userDao.findByUsername(anyString())).thenReturn(Optional.of(user));
     }
 
     @Test
@@ -264,10 +265,10 @@ class PreguntasControllerTest {
         Long userId2 = 2L;
         String topico1 = "topico1";
         String topico2 = "topico2";
-        Pregunta pregunta1User1 = PreguntaFactory.crearPreguntaTest(userId, topico1);
-        Pregunta pregunta2User1 = PreguntaFactory.crearPreguntaTest(userId, topico2);
-        Pregunta pregunta1User2 = PreguntaFactory.crearPreguntaTest(userId2, topico2);
-        Pregunta pregunta2User2 = PreguntaFactory.crearPreguntaTest(userId2, topico1);
+        Pregunta pregunta1User1 = crearPreguntaTest(userId, topico1);
+        Pregunta pregunta2User1 = crearPreguntaTest(userId, topico2);
+        Pregunta pregunta1User2 = crearPreguntaTest(userId2, topico2);
+        Pregunta pregunta2User2 = crearPreguntaTest(userId2, topico1);
         List<Pregunta> preguntasUser1 = List.of(pregunta1User1,pregunta2User1);
         List<Pregunta> preguntasUser2 = List.of(pregunta1User2,pregunta2User2);
 
@@ -277,7 +278,8 @@ class PreguntasControllerTest {
         when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId2)).thenReturn(preguntasUser2);
 
         MvcResult resultUser1 = mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
-                        .param("userId", String.valueOf(userId)))
+                        .param("userId", String.valueOf(userId))
+                        .header("Authorization", "Bearer " + jwtToken))
                         .andExpect(status().isOk())
                         .andReturn();
 
@@ -285,11 +287,24 @@ class PreguntasControllerTest {
         assertTrue(list.stream().allMatch(p -> p.getUserId().equals(userId)));
 
         MvcResult resultUser2 = mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
-                        .param("userId", String.valueOf(userId2)))
+                        .param("userId", String.valueOf(userId2))
+                        .header("Authorization", "Bearer " + jwtToken))
                         .andExpect(status().isOk())
                         .andReturn();
 
         list = objectMapper.readValue(resultUser2.getResponse().getContentAsString(), new TypeReference<List<Pregunta>>() {});
         assertTrue(list.stream().allMatch(p -> p.getUserId().equals(userId2)));
+    }
+
+    private Pregunta crearPreguntaTest(Long userId, String topico) {
+
+        return Pregunta.builder()
+                .id(UUID.randomUUID().toString())
+                .topico(topico)
+                .userId(userId)
+                .options(List.of())
+                .explicacion("explicacion")
+                .difficulty(Difficulty.MEDIUM)
+                .build();
     }
 }

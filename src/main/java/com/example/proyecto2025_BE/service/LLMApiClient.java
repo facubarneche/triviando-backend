@@ -29,7 +29,7 @@ public class LLMApiClient implements ChatLanguageModel {
 
 	@Transactional
 	public List<Topics> generate(Prompter prompter) {
-//		prompter.withService(preguntaService).validatePrompt();
+		prompter.withService(preguntaService).validatePrompt();
 		QuestionList response;
 
 		String emoji = prompter.withService(preguntaService)
