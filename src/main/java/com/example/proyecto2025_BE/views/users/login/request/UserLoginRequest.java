@@ -9,8 +9,8 @@ import lombok.NoArgsConstructor;
 @Schema(description = "Representa la solicitud para iniciar sesión de un usuario existente.")
 public class UserLoginRequest {
 
-    @Schema(description = "Dirección de correo electrónico del usuario.", example = "juan.perez@example.com")
-    private String email;
+    @Schema(description = "Nombre de usuario", example = "juanceto01")
+    private String username;
 
     @Schema(description = "Contraseña del usuario.", example = "PasswordSegura123!")
     private String password;

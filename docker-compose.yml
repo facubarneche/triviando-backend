@@ -1,45 +1,39 @@
-version: '3.8'
 services:
   app:
-      build: .
-      environment:
-        - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/flashcards
-        - SPRING_DATASOURCE_USERNAME=admin
-        - SPRING_DATASOURCE_PASSWORD=admin
-        - SPRING_DATA_MONGODB_URI=mongodb://mongo-db:27017/flashcards_mongo
-      ports:
-        - "8080:8080"
-      container_name: proyecto2025-be-app
-      depends_on:
-        - mysql-db
-        - mongo-db
-      networks:
-        - flashcardsnet
+    build: .
+    container_name: proyecto2025-be-app
+    env_file: .env
+    environment:
+      - SPRING_PROFILES_ACTIVE=dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql-db
+      - mongo-db
+    networks:
+      - flashcardsnet
 
   mysql-db:
-      image: mysql:8.0
-      container_name: mysql-db
-      ports:
-        - "3306:3306"
-      environment:
-        - MYSQL_ROOT_PASSWORD=admin
-        - MYSQL_DATABASE=flashcards
-        - MYSQL_USER=admin
-        - MYSQL_PASSWORD=admin
-      volumes:
-        - mysql_data:/var/lib/mysql
-      networks:
-        - flashcardsnet
+    image: mysql:8.0
+    container_name: mysql-db
+    env_file: .env
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - flashcardsnet
 
   mongo-db:
-      image: mongo:latest
-      container_name: mongo-db
-      ports:
-        - "27017:27017"
-      volumes:
-        - mongo_data:/data/db
-      networks:
-        - flashcardsnet
+    image: mongo:latest
+    container_name: mongo-db
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - flashcardsnet
+
 
 volumes:
   mysql_data:
@@ -50,4 +44,3 @@ volumes:
 networks:
   flashcardsnet:
     name: flashcardsnet
-
