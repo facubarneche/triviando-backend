@@ -28,7 +28,7 @@ spring:
       auto-index-creation: true
 
 llm:
-  apiKey: ${AI_API_KEY}
+  apiKey: ${OPENAI_API_KEY}
   modelName: gpt-4o-mini
   logRequests: true
   logResponses: true
