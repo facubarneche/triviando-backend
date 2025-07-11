@@ -18,6 +18,7 @@ public class PreguntasData {
     public static final List<Pregunta> PREGUNTAS = Arrays.asList(
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(1L)
                     .topico("Arquitectura de Microservicios")
                     .emoji("📐")
                     .enunciado("¿Cuál es una ventaja clave de la arquitectura de microservicios?")
@@ -34,6 +35,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(1L)
                     .topico("Arquitectura de Microservicios")
                     .emoji("📐")
                     .enunciado("¿Qué patrón se utiliza comúnmente para la comunicación síncrona entre microservicios?")
@@ -50,6 +52,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(1L)
                     .topico("Arquitectura de Microservicios")
                     .emoji("📐")
                     .enunciado("¿Cuál es el propósito del patrón 'Circuit Breaker' en microservicios?")
@@ -66,6 +69,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(1L)
                     .topico("Arquitectura de Microservicios")
                     .emoji("📐")
                     .enunciado("¿Qué desafío introduce la arquitectura de microservicios en comparación con una monolítica?")
@@ -82,6 +86,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(1L)
                     .topico("Arquitectura de Microservicios")
                     .emoji("📐")
                     .enunciado("¿Qué rol juega un 'API Gateway' en una arquitectura de microservicios?")
@@ -100,6 +105,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(2L)
                     .topico("Bases de Datos NoSQL")
                     .emoji("🗂️")
                     .enunciado("¿Cuál de las siguientes NO es una categoría principal de bases de datos NoSQL?")
@@ -116,6 +122,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(2L)
                     .topico("Bases de Datos NoSQL")
                     .emoji("🗂️")
                     .enunciado("¿Qué tipo de base de datos NoSQL es ideal para almacenar datos con relaciones complejas?")
@@ -132,6 +139,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(2L)
                     .topico("Bases de Datos NoSQL")
                     .emoji("🗂️")
                     .enunciado("¿Cuál es una característica clave de las bases de datos de documentos como MongoDB?")
@@ -148,6 +156,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(2L)
                     .topico("Bases de Datos NoSQL")
                     .emoji("🗂️")
                     .enunciado("¿Qué significa el acrónimo CAP en el contexto de las bases de datos distribuidas?")
@@ -164,6 +173,7 @@ public class PreguntasData {
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
+                    .userId(2L)
                     .topico("Bases de Datos NoSQL")
                     .emoji("🗂️")
                     .enunciado("¿Qué tipo de base de datos NoSQL se optimiza para consultas de series de tiempo?")
