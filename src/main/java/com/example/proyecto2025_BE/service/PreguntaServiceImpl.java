@@ -1,21 +1,19 @@
 package com.example.proyecto2025_BE.service;
 
-import java.util.List;
-import java.util.Optional;
-
+import com.example.proyecto2025_BE.configuration.PreguntaProperties;
 import com.example.proyecto2025_BE.constants.Exceptions;
-import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
-import com.example.proyecto2025_BE.model.dto.Topics;
-import org.springframework.stereotype.Service;
 import com.example.proyecto2025_BE.dao.PreguntaDao;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Pregunta;
-import com.example.proyecto2025_BE.model.dto.PreguntaRequest;
-import com.example.proyecto2025_BE.service.pregunta.factory.PreguntaLoaderFactory;
-import com.example.proyecto2025_BE.service.pregunta.strategy.PreguntaLoaderStrategy;
+import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
+import com.example.proyecto2025_BE.model.dto.Topics;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -23,13 +21,8 @@ public class PreguntaServiceImpl implements PreguntaService {
 
     private final PreguntaDao preguntaDao;
     private final UserService userService;
-    private final PreguntaLoaderFactory preguntaLoaderFactory;
     private final FeedbackService feedbackService;
-
-    @Override
-    public List<Pregunta> getAllPreguntas() {
-        return preguntaDao.findAll();
-    }
+    private final PreguntaProperties properties;
 
     @Override
     public Pregunta getPreguntaById(String id) {
@@ -39,38 +32,14 @@ public class PreguntaServiceImpl implements PreguntaService {
     }
 
     @Override
-    public String createPregunta(PreguntaRequest preguntaRequest) {
-        return "this action should create a new pregunta";
-    }
-
-    @Override
-    public List<Pregunta> getPreguntasByTopico(String topico) {
-        return preguntaDao
-                .findByTopico(topico)
-                .orElseThrow(() -> NotFoundException.build("No se encontraron preguntas con topico: " + topico));
-    }
-
-    @Override
-    public List<Topics> contarPreguntasPorTopico() {
-         return preguntaDao.contarPreguntasPorTopico().stream()
-                .map(topic ->
-                        Topics.builder()
-                                .topic((String) topic.get("_id"))
-                                .size((Number) topic.get("cantidadPreguntas"))
-                                .emoji((String) topic.get("emoji"))
-                                .build())
-                .toList();
-    }
-
-    @Override
-    public List<Topics> contarPreguntasPorTopico(long userId) {
+    public List<Topics> contarPreguntasPorTopicoDeUsuario(Long userId) {
         var user = userService.retrieve(userId);
 
         List<String> idPreguntas = user.getAnswers().stream()
                 .map(Answer::getQuestionId)
                 .toList();
 
-        return preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(idPreguntas).stream()
+        return preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(idPreguntas,userId).stream()
                 .map(topic ->
                         Topics.builder()
                                 .topic((String) topic.get("_id"))
@@ -81,24 +50,42 @@ public class PreguntaServiceImpl implements PreguntaService {
     }
 
     @Override
-    public List<Pregunta> saveAll(List<Pregunta> preguntas) {
-    	return preguntaDao.saveAll(preguntas);
+    public void saveAll(List<Pregunta> preguntas) {
+    	preguntaDao.saveAll(preguntas);
     }
     
     @Override
-    public boolean existsByTopic(String topic) {
-    	return preguntaDao.existsByTopico(topic);
+    public boolean existsByTopicAndUser(String topic, Long userId) {
+    	return preguntaDao.existsByTopicoAndUserId(topic,userId);
     }
 
     @Override
     public List<Pregunta> obtenerPreguntasNoRespondidasPorTopico(Long userId, String topico) {
-        PreguntaLoaderStrategy preguntaLoader = preguntaLoaderFactory.getPreguntaLoader(userId);
-        return preguntaLoader.cargarPreguntasNoRespondidas(topico);
+        var cantidadPreguntas = properties.getCantidad();
+
+        User user = userService.retrieve(userId);
+
+        List<String> preguntasRespondidasIds = user.getAnswers().stream()
+                .map(Answer::getQuestionId)
+                .toList();
+
+        List<Pregunta> preguntasNoRespondidas =  preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(preguntasRespondidasIds, topico,user.getId()).stream()
+                .toList();
+
+        if (preguntasNoRespondidas.isEmpty()) {
+            return List.of();
+        }
+
+        return new Random().ints(0, preguntasNoRespondidas.size())
+                .distinct()
+                .limit(Math.min(cantidadPreguntas, preguntasNoRespondidas.size()))
+                .mapToObj(preguntasNoRespondidas::get)
+                .toList();
     }
 
     @Override
-    public String getTopicFromQuestion(String topico) {
-        return preguntaDao.getFirstByTopico(topico).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND)).getEmoji();
+    public String getTopicFromQuestion(String topic,Long userId) {
+        return preguntaDao.getFirstByTopicoAndUserId(topic,userId).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND)).getEmoji();
     }
 
     @Override

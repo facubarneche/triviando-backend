@@ -3,6 +3,9 @@ package com.example.proyecto2025_BE.model;
 
 import java.math.BigDecimal;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,11 +15,14 @@ import lombok.Data;
 @Data
 @Builder
 @Document(collection = "preguntas")
+@NoArgsConstructor
+@AllArgsConstructor
 public class Pregunta {
 
     @Id
     private String id;
     private String topico;
+    private Long userId;
     private String emoji;
     private String enunciado;
     private List<Option> options;

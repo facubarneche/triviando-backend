@@ -1,36 +1,39 @@
 package com.example.proyecto2025_BE.dao;
 
 import com.example.proyecto2025_BE.model.Pregunta;
-import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-@Repository
 public interface PreguntaDao extends MongoRepository<Pregunta, String> {
-    Optional<List<Pregunta>> findByTopico(String topico);
+    List<Pregunta> findByTopicoAndUserId(String topico, Long userId);
+    boolean existsByTopicoAndUserId(String topico, Long userId);
+
 
     @Aggregation(pipeline = {
-            "{ $group: { _id: '$topico', cantidadPreguntas: { $sum: 1 }, emoji: { $first: '$emoji' } }}"
+            "{ $match: { topico: ?1, userId: ?2, _id: { $nin: ?0 } } }"
     })
-    List<Map<String, Object>> contarPreguntasPorTopico();
-
-    boolean existsByTopico(String topic);
+    List<Pregunta> findPreguntasNotAnsweredByUserIdAndTopico(List<String> idsQuestionsAnsweredByUserId, String topico, Long userId);
 
     @Aggregation(pipeline = {
-            "{ $match: { topico: ?1, _id: { $nin: ?0 } } }"
+            "{ $match: { userId: ?0 } }",
+            "{ $group: { _id: '$topico', cantidadPreguntas: { $sum: 1 }, emoji: { $first: '$emoji' } } }"
     })
-    List<Pregunta> findPreguntasNotAnsweredByUserIdAndTopico(List<String> idsQuestionsAnsweredByUserId, String topico);
+    List<Map<String, Object>> contarPreguntasPorTopico(Long userId);
+
+
 
     @Aggregation(pipeline = {
+            "{ $match: { userId: ?1 } }",
             "{ $group: { _id: '$topico', todasLasPreguntas: { $push: '$_id' }, emoji: { $first: '$emoji' } } }",
             "{ $addFields: { cantidadPreguntas: { $size: { $filter: { input: '$todasLasPreguntas', as: 'preguntaId', cond: { $not: { $in: ['$$preguntaId', ?0] } } } } } } }"
     })
-    List<Map<String, Object>> contarPreguntasPorTopicoIncluyendoRespondidas(List<String> preguntasRespondidasIds);
+    List<Map<String, Object>> contarPreguntasPorTopicoIncluyendoRespondidas(List<String> preguntasRespondidasIds, Long userId);
 
-    Optional<Pregunta> getFirstByTopico(String topico);
+
+
+    Optional<Pregunta> getFirstByTopicoAndUserId(String topico, Long userId);
 }

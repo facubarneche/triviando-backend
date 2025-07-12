@@ -4,6 +4,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import dev.langchain4j.exception.LangChain4jException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -18,6 +22,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<Object> handleConflictException(ConflictException ex) {
@@ -72,5 +79,17 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(LangChain4jException.class)
+    public ResponseEntity<?> handleLangChain4jException(LangChain4jException ex) {
+        try {
+            Map<?, ?> errorDetails = objectMapper.readValue(ex.getMessage(), Map.class);
+            return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+        } catch (JsonProcessingException e) {
+            Map<String, Object> errors = new HashMap<>();
+            errors.put("error", ex.getMessage());
+            return new ResponseEntity<>(errors, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
