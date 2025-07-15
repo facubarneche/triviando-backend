@@ -29,7 +29,7 @@ public interface PreguntaDao extends MongoRepository<Pregunta, String> {
     @Aggregation(pipeline = {
             "{ $match: { userId: ?1 } }",
             "{ $group: { _id: '$topico', todasLasPreguntas: { $push: '$_id' }, emoji: { $first: '$emoji' } } }",
-            "{ $addFields: { cantidadPreguntas: { $size: { $filter: { input: '$todasLasPreguntas', as: 'preguntaId', cond: { $not: { $in: ['$$preguntaId', ?0] } } } } } } }"
+            "{ $addFields: { cantidadPreguntas: { $size: { $filter: { input: '$todasLasPreguntas', as: 'preguntaId', cond: { $not: { $in: [ {$toString: '$$preguntaId'}, ?0] } } } } } } }"
     })
     List<Map<String, Object>> contarPreguntasPorTopicoIncluyendoRespondidas(List<String> preguntasRespondidasIds, Long userId);
 
