@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.example.proyecto2025_BE.service.MercadoPagoSubscriptionService;
@@ -20,8 +21,8 @@ public class SubscriptionController {
     private final MercadoPagoSubscriptionService mpService;
 
     @PostMapping
-    public ResponseEntity<?> startSubscription() {
-        String initPoint = mpService.createSubscriptionPreference();
+    public ResponseEntity<?> startSubscription(@RequestParam String email) {
+        String initPoint = mpService.createSubscriptionPreference(email);
         return ResponseEntity.ok().body(initPoint);
     }
 
