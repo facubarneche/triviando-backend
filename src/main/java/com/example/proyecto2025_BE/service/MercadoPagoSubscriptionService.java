@@ -38,8 +38,8 @@ public class MercadoPagoSubscriptionService {
     	PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(Collections.singletonList(preferenceItemRequest))
                 .backUrls(preferenceBackUrlsRequest)
-                .payer(preferencePayerRequestBy(email))
                 .autoReturn("approved")
+                .externalReference(email)
                 .build();
     	
     	Preference preference = null;
@@ -53,10 +53,6 @@ public class MercadoPagoSubscriptionService {
         return Optional.ofNullable(preference.getInitPoint()).orElse("");
     }
     
-    private PreferencePayerRequest preferencePayerRequestBy(String email) {
-		return PreferencePayerRequest.builder().email(email).build();
-	}
-
 	public String notifyPayment(String payload) {
     	try {
         	PaymentNotification notification = MPSerializer.instance()
@@ -65,7 +61,7 @@ public class MercadoPagoSubscriptionService {
             Payment payment = paymentClient.get(notification.id());
             
             if ("approved".equalsIgnoreCase(payment.getStatus())) {
-                String email = payment.getPayer().getEmail();
+                String email = payment.getExternalReference();
                 if (email != null) {
                     userService.markUserAsSubscribed(email);
                 }
