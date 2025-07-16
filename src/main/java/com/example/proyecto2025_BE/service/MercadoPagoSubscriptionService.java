@@ -12,7 +12,6 @@ import com.mercadopago.client.payment.PaymentClient;
 import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
 import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferencePayerRequest;
 import com.mercadopago.client.preference.PreferenceRequest;
 import com.mercadopago.exceptions.MPApiException;
 import com.mercadopago.exceptions.MPException;
@@ -30,7 +29,6 @@ public class MercadoPagoSubscriptionService {
 	private final UserService userService;
     private final PreferenceClient preferenceClient;
     private final PaymentClient paymentClient;
-//    private final PreferenceRequest preferenceRequest;
     private final PreferenceItemRequest preferenceItemRequest;
     private final PreferenceBackUrlsRequest preferenceBackUrlsRequest;
     
