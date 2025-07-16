@@ -24,7 +24,7 @@ public class MPConfig {
     private static final String PLAN_DESCRIPTION = "Acceso a funcionalidades premium de la aplicación";
     private static final String PLAN_CURRENCY = "ARS";
     private static final BigDecimal PLAN_PRICE = BigDecimal.valueOf(100);
-    private static final String FE_BASE_URL = "https://villa-vintage-arrow-offers.trycloudflare.com/payment";
+    private static final String FE_BASE_URL = "https://villa-vintage-arrow-offers.trycloudflare.com/subscription";
 
     private String accessToken;
 	

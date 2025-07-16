@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +18,7 @@ import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
+import com.example.proyecto2025_BE.model.Account;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.Ranking;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
@@ -183,8 +183,9 @@ public class UserService {
 
 	public void markUserAsSubscribed(String email) {
 		User user = userDao.findByEmail(email)
-				.orElseThrow(() -> NotFoundException.build("Usuario no encontrado para email: " + email));
-		user.setSubscribed(true);
+				.orElseThrow(() -> NotFoundException.build("Usuario no encontrado al intentar suscribir plan premium"
+						+ " para email: " + email));
+		user.setAccount(Account.PREMIUM);
 		userDao.save(user);
 	}
 }

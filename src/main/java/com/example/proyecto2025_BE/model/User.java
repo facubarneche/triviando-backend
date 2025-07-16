@@ -108,7 +108,8 @@ public class User {
 	private int position;
 
 	@JsonView({Views.GetUser.class})
-	private boolean isSubscribed;
+	@Builder.Default
+	private Account account = Account.BASE;
 
 	@JsonProperty("age")
 	public Integer getAge() {
