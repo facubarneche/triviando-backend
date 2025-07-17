@@ -13,8 +13,10 @@ import com.mercadopago.client.preference.PreferenceClient;
 import com.mercadopago.client.preference.PreferenceItemRequest;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
 @Data
+@Slf4j
 @Configuration
 @ConfigurationProperties(prefix = "mercadopago")
 public class MPConfig {
@@ -31,6 +33,7 @@ public class MPConfig {
 	
 	@Bean
     public MercadoPagoConfig mercadoPagoConfig() {
+		log.info("ACCESS TOKEN: {}", accessToken);
         MercadoPagoConfig.setAccessToken(accessToken);
         
         return new MercadoPagoConfig();
