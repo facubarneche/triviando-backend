@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.example.proyecto2025_BE.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -46,8 +48,14 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @DisplayName("User Controller Tests")
 public class UserControllerTest {
 
-    private static final Long EXISTENT_USER_ID = 1L;
+    private static Long EXISTENT_USER_ID;
     private static final Long INEXISTENT_USER_ID = 99L;
+
+    @Autowired
+    private JwtUtil jwtUtil;
+    private static String jwtToken;
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Autowired
     private MockMvc mockMvc;
@@ -65,6 +73,17 @@ public class UserControllerTest {
         dao.deleteAll();
         dao.flush();  // Forzamos la sincronización con la base de datos
 
+        jwtToken = crearUser(
+                User.builder()
+                .username("juanceto01")
+                .name("Pepe")
+                .lastName("Palala")
+                .email("dsadsa@dsada.com")
+                .build(),
+                "Pelele"
+        );
+        EXISTENT_USER_ID = dao.findByUsername("juanceto01").get().getId();
+
         // Configuramos el mapper
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
@@ -74,13 +93,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Cuando busco un user por id, y este existe, obtengo dicho recurso")
     void retrieveTest() throws Exception {
-        User user = User.builder()
-                .name("Pepe")
-                .lastName("Palala")
-                .build();
-        dao.save(user);
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/{id}", EXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.name").value("Pepe"))
@@ -91,7 +104,7 @@ public class UserControllerTest {
     @DisplayName("Cuando busco un user por id y este no es encontrado el sistema devuelve Not Found")
     void findByIdNotFoundTest() throws Exception {
         mockMvc
-                .perform(MockMvcRequestBuilders.get("/users/{id}", INEXISTENT_USER_ID))
+                .perform(MockMvcRequestBuilders.get("/users/{id}", INEXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
@@ -117,7 +130,8 @@ public class UserControllerTest {
         mockMvc
                 .perform(MockMvcRequestBuilders.put("/users")
                         .contentType("application/json")
-                        .content(requestBody))
+                        .content(requestBody)
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNoContent());
 
         User updatedUser = dao.findById(user.getId()).orElseThrow();
@@ -149,8 +163,7 @@ public class UserControllerTest {
     @DisplayName("Error al crear un usuario con email vacío")
     void createUserWithEmptyEmailTest() throws Exception {
         User invalidUser = User.builder()
-                .name("Test")
-                .lastName("User")
+                .username("Test")
                 .email("")
                 .password("password123")
                 .joinDate(LocalDateTime.now())
@@ -286,7 +299,7 @@ public class UserControllerTest {
         when(respuestasDao.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(35);
         StatsResponse response = new StatsResponse(10, 35, 50);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(response)));
@@ -299,7 +312,7 @@ public class UserControllerTest {
         when(respuestasDao.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(0);
         StatsResponse response = new StatsResponse(0,0,0);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(content().json(mapper.writeValueAsString(response)));
@@ -326,7 +339,7 @@ public class UserControllerTest {
         dao.save(user3);
 
         // Ejecutar y verificar
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking"))
+        mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking").header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(3))))
@@ -361,7 +374,8 @@ public class UserControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", midUserId)
                         .param("page", "0")
-                        .param("size", "10"))
+                        .param("size", "10")
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.content", hasSize(greaterThan(0))))
@@ -411,7 +425,8 @@ public class UserControllerTest {
         // Prueba para el primer usuario
         mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", user1Id)
                         .param("page", "0")
-                        .param("size", "10"))
+                        .param("size", "10")
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(4))))
@@ -425,7 +440,8 @@ public class UserControllerTest {
         // Prueba para el segundo usuario
         mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", user2Id)
                         .param("page", "0")
-                        .param("size", "10"))
+                        .param("size", "10")
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType("application/json"))
                 .andExpect(jsonPath("$.content", hasSize(greaterThanOrEqualTo(4))))
@@ -441,28 +457,17 @@ public class UserControllerTest {
     void getUsersOrderedByScoreFromInexistentUserTest() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders.get("/users/ranking/{userId}", INEXISTENT_USER_ID)
                         .param("page", "0")
-                        .param("size", "10"))
+                        .param("size", "10")
+                        .header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     @DisplayName("Cuando se loguea un usuario, y este esta registrado, obtengo dicho recurso")
     void loginTest() throws Exception {
-    	User registeredUser = User.builder()
-    			.email("pancho.rancho@gmail.com")
-                .password("123456")
-                .name("Pancho")
-                .lastName("Rancho")
-                .username("pancho_rancho_1746")
-                .joinDate(LocalDateTime.now())
-    			      .build();
-    	
-    	dao.save(registeredUser);
-    	
-    	
     	User requestBody = User.builder()
-                .email("pancho.rancho@gmail.com")
-                .password("123456")
+                .username("juanceto01")
+                .password("Pelele")
                 .joinDate(LocalDateTime.now())
                 .build();
 
@@ -473,8 +478,15 @@ public class UserControllerTest {
                         .content(jsonBody))
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Pancho"))
-                .andExpect(jsonPath("$.lastName").value("Rancho"))
-                .andExpect(jsonPath("$.username").value("pancho_rancho_1746"));
+                .andExpect(jsonPath("$.fullname").value("Pepe Palala"))
+                .andExpect(jsonPath("$.username").value("juanceto01"));
+    }
+
+    String crearUser(User user, String pass){
+        var encodedPass = encoder.encode(pass);
+        user.setPassword(encodedPass);
+
+        dao.save(user);
+        return jwtUtil.generateToken(user.getUsername());
     }
 }

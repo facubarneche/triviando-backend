@@ -26,6 +26,6 @@ public class QuestionPrompter extends Prompter {
 
 	@Override
 	public String getEmoji(ModelCommunication assistant) {
-		return super.preguntaService.getTopicFromQuestion(super.topic);
+		return super.preguntaService.getTopicFromQuestion(getTopic(),getUserId());
 	}
 }

@@ -3,9 +3,9 @@ server:
 
 spring:
   datasource:
-    url:
-    username:
-    password:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
     hikari:
       maximum-pool-size: 5
@@ -19,12 +19,29 @@ spring:
     hibernate:
       ddl-auto: update
       format_sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
   data:
     mongodb:
-      uri: mongodb://mongodb:27017/flashcards
+      uri: ${SPRING_DATA_MONGODB_URI}
       auto-index-creation: true
+
 llm:
   apiKey: ${OPENAI_API_KEY}
-  modelName: gpt-4
+  modelName: gpt-4o-mini
   logRequests: false
   logResponses: false
+
+api:
+  preguntas:
+    cantidad: 5
+
+jwt:
+  secret: ${JWT_SECRET_KEY}
+  expiration: ${JWT_EXPIRATION}
+
+logging:
+  level:
+    root: INFO
+    org.springframework: WARN

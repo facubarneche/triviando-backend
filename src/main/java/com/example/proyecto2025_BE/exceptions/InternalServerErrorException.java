@@ -8,7 +8,7 @@ public class InternalServerErrorException extends RuntimeException {
 	
 	private static final long serialVersionUID = 54567123456876345L;
 
-	private InternalServerErrorException(String message) {
+	public InternalServerErrorException(String message) {
 		super(message);
 	}
 	

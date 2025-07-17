@@ -1,10 +1,8 @@
 package com.example.proyecto2025_BE.service;
 
 import java.util.List;
-import java.util.Map;
 
 import com.example.proyecto2025_BE.model.dto.Topics;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.stereotype.Service;
 
 import com.example.proyecto2025_BE.exceptions.InternalServerErrorException;
@@ -31,8 +29,7 @@ public class LLMApiClient implements ChatLanguageModel {
 
 	@Transactional
 	public List<Topics> generate(Prompter prompter) {
-		prompter.withService(preguntaService)
-			.validatePrompt();
+		prompter.withService(preguntaService).validatePrompt();
 		QuestionList response;
 
 		String emoji = prompter.withService(preguntaService)
@@ -45,14 +42,16 @@ public class LLMApiClient implements ChatLanguageModel {
 			throw InternalServerErrorException.build(ERROR_MESSAGE);
 		}
 
-		return saveAndMappingResponse(response, prompter.getTopic(), emoji);
+		return saveAndMappingResponse(response, prompter, emoji);
     }
 
 	//TODO: evaluar la posibilidad de utilizar el strategy para realizar el parseo y el guardado de los datos para darle mas versatilidad a la integración
-	private List<Topics> saveAndMappingResponse(QuestionList questionList, String topic, String emoji) {
-		List<Pregunta> questions = questionList.questions().stream().map(question -> 
+	private List<Topics> saveAndMappingResponse(QuestionList questionList, Prompter prompter, String emoji) {
+
+		List<Pregunta> questions = questionList.questions().stream().map(question ->
 			Pregunta.builder()
-				.topico(topic)
+				.topico(prompter.getTopic())
+				.userId(prompter.getUserId())
 				.emoji(emoji)
 				.enunciado(question.text())
 				.options(buildIncorrectOptions(question.options()))
@@ -64,7 +63,7 @@ public class LLMApiClient implements ChatLanguageModel {
 		preguntaService.saveAll(questions);
 
 		//TODO: agregar emoji
-		return preguntaService.contarPreguntasPorTopico();
+		return preguntaService.contarPreguntasPorTopicoDeUsuario(prompter.getUserId());
 	}
 
 	private Option buildCorrectOption(QuestionOption correctOption) {

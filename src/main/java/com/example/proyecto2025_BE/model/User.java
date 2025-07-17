@@ -5,8 +5,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -34,6 +36,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 @Data
 @Builder
@@ -45,13 +49,13 @@ public class User {
 	
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-	@JsonView({Views.Score.class, Views.Login.class,Views.Ranking.class, Views.Register.class,Views.GetUser.class})
+	@JsonView({Views.Score.class,Views.Ranking.class, Views.GetUser.class})
 	private Long id;
 
-	@JsonView({Views.Login.class, Views.Register.class, Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
+	@JsonView({Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
 	private String name;
 	
-	@JsonView({Views.Login.class, Views.Register.class, Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
+	@JsonView({Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
 	private String lastName;
 
 	@JsonView({Views.RegisterRequest.class,Views.GetUser.class,Views.UpdateUser.class})
@@ -59,8 +63,8 @@ public class User {
 	@Email(groups = Views.RegisterRequest.class, message = "El email no tiene un formato válido")
 	private String email;
 
-	@JsonView(Views.RegisterRequest.class)
-	@NotBlank(groups = Views.RegisterRequest.class, message = "La contraseña no puede estar vacía")
+	@JsonView({Views.RegisterRequest.class, Views.LoginRequest.class})
+	@NotBlank(groups = {Views.RegisterRequest.class, Views.LoginRequest.class}, message = "La contraseña no puede estar vacía")
 	private String password;
 
 	@JsonView({Views.UpdateUser.class,Views.GetUser.class})
@@ -87,13 +91,14 @@ public class User {
 	@JoinColumn(name = "user_id")
 	private List<Answer> answers = new ArrayList<>();
 
-	@JsonView({Views.Login.class,
+	@JsonView({
 		Views.Ranking.class,
-		Views.Register.class,
 		Views.RegisterRequest.class,
 		Views.UpdateUser.class,
-		Views.GetUser.class})
-	@NotBlank(groups = Views.RegisterRequest.class, message = "El username no puede estar vacío")
+		Views.GetUser.class,
+		Views.LoginRequest.class
+	})
+	@NotBlank(groups = {Views.RegisterRequest.class, Views.LoginRequest.class}, message = "El username no puede estar vacío")
 	private String username;
 
 	@JsonView(Views.Racha.class)
@@ -110,6 +115,10 @@ public class User {
 	@JsonView({Views.GetUser.class})
 	@Builder.Default
 	private Account account = Account.BASE;
+	
+	//TODO: Crear entidades para el manejo de roles y con privilegios internos
+	@Builder.Default
+	private List<String> privileges = List.of("ROLE_USER");
 
 	@JsonProperty("age")
 	public Integer getAge() {
@@ -151,5 +160,12 @@ public class User {
 
 	public LocalDate getUltimaActividad() {
 		return ultimaActividad == null ? joinDate.toLocalDate() : ultimaActividad;
+	}
+
+	public String getFullName() { return name + " " + lastName; }
+
+	@JsonIgnore
+	public Collection<? extends GrantedAuthority> getAuthorities(){
+		return this.getPrivileges().stream().map(SimpleGrantedAuthority::new).toList();
 	}
 }

@@ -1,14 +1,10 @@
 package com.example.proyecto2025_BE.controller;
 
 import java.util.List;
-import java.util.Map;
 
-import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
-import com.example.proyecto2025_BE.views.Views;
 import com.example.proyecto2025_BE.views.questions.requests.GenerateRequestBody;
-import com.example.proyecto2025_BE.views.users.register.request.UserRegisterRequest;
-import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -35,7 +31,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import reactor.core.publisher.Mono;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -58,8 +53,8 @@ public class PreguntasController {
                     content = @Content(mediaType = "application/json", schema = @Schema(implementation = QuestionResponse200.class))),
             @ApiResponse(responseCode = "404", description = Exceptions.NOT_FOUND, content = @Content)
     })
-    public List<Pregunta> getPreguntas(@RequestParam(value = "userId", required = false) Long userId,
-                                       @RequestParam(value = "topico", required = false) String topico) {
+    public List<Pregunta> getPreguntas(@RequestParam(value = "userId") Long userId,
+                                       @RequestParam(value = "topico",required = false) String topico) {
         return preguntasService.obtenerPreguntasNoRespondidasPorTopico(userId,topico);
     }
 
@@ -84,7 +79,7 @@ public class PreguntasController {
             @ApiResponse(responseCode = "200", description = "Conteo obtenido exitosamente")
     })
     public List<Topics> cantidadPreguntasPorTopico(@PathVariable long userId) {
-        return preguntasService.contarPreguntasPorTopico(userId);
+        return preguntasService.contarPreguntasPorTopicoDeUsuario(userId);
     }
     
     @PostMapping("/generate")
@@ -100,5 +95,15 @@ public class PreguntasController {
                     schema = @Schema(implementation = GenerateRequestBody.class)))
     public List<Topics> generate(@RequestBody Prompter prompter) {
         return llmApiClient.generate(prompter);
+    }
+
+    @PostMapping("/send-feedback")
+    @Operation(summary = "Enviar feedback de la pregunta", description = "Enviar feedback de la pregunta")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Feedback enviado exitosamente")
+    })
+    @ResponseStatus(HttpStatus.CREATED)
+    public void sendFeedback(@Validated @RequestBody FeedbackDTO feedbackDTO) {
+        preguntasService.saveFeedback(feedbackDTO);
     }
 }

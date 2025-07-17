@@ -34,5 +34,6 @@ build/
 
 
 docker-compose-dev.yml
-application-dev.yml
 .env
+.env
+.env.prod

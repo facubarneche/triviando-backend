@@ -5,10 +5,20 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import com.example.proyecto2025_BE.exceptions.ValidationException;
+import com.example.proyecto2025_BE.model.dto.Login;
+import com.example.proyecto2025_BE.security.JwtUtil;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +27,6 @@ import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
-import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.Account;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.Ranking;
@@ -36,10 +45,11 @@ public class UserService {
 
 	private final UserDao userDao;
 	private final RespuestasDao answerDao;
+	private final AuthenticationManager authenticationManager;
+	private final PasswordEncoder encoder;
+	private final JwtUtil jwtUtils;
 
-	public User create(User user) {
-		Optional<User> fetched = userDao.findByEmail(user.getEmail());
-
+	public void validateUsernameEmail(User user) {
 		if (userDao.findByEmail(user.getEmail()).isPresent()) {
 			throw ConflictException.build("El email '" + user.getEmail() + "' ya está en uso.");
 		}
@@ -47,8 +57,6 @@ public class UserService {
 		if (userDao.findByUsername(user.getUsername()).isPresent()) {
 			throw ConflictException.build("El nombre de usuario '" + user.getUsername() + "' ya está en uso.");
 		}
-
-		return userDao.save(user);
 	}
 
 	@Transactional(readOnly = true)
@@ -112,9 +120,9 @@ public class UserService {
 	}
 
 	@Transactional(readOnly = true)
-	public User findByEmailAndPassword(User loginInfo) {
-		return this.userDao.findByEmailAndPassword(loginInfo.getEmail(), loginInfo.getPassword())
-				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
+	public User findByUsername(String userName) {
+		return userDao.findByUsername(userName)
+				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + userName));
 	}
 
 	public Page<User> getUsersOrderedByScoreDesc(int page,int size ) {
@@ -187,5 +195,41 @@ public class UserService {
 						+ " para email: " + email));
 		user.setAccount(Account.PREMIUM);
 		userDao.save(user);
+	}
+	
+	@Transactional
+	public Login create(User user) {
+		validateUsernameEmail(user);
+		var encodedPass = encoder.encode(user.getPassword());
+		user.setPassword(encodedPass);
+
+		var userCreated = userDao.save(user);
+
+		var token = jwtUtils.generateToken(userCreated.getUsername());
+		return Login.builder()
+				.token(token)
+				.username(userCreated.getUsername())
+				.fullname(userCreated.getFullName())
+				.id(userCreated.getId())
+				.build();
+	}
+
+	@Transactional
+	public Login login(@Valid User user) {
+		Authentication authentication = authenticationManager.authenticate(
+				new UsernamePasswordAuthenticationToken(
+						user.getUsername(),
+						user.getPassword()
+				)
+		);
+		UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+		var token = jwtUtils.generateToken(userDetails.getUsername());
+		var fetchedUser = findByUsername(userDetails.getUsername());
+		return Login.builder()
+				.token(token)
+				.username(userDetails.getUsername())
+				.fullname(fetchedUser.getFullName())
+				.id(fetchedUser.getId())
+				.build();
 	}
 }

@@ -379,7 +379,7 @@ public class UserServiceTest {
                 .build();
 
         when(userDao.findByUsername(anyString())).thenReturn(Optional.of(user));
-        assertThrows(ConflictException.class, () -> userService.create(user));
+        assertThrows(ConflictException.class, () -> userService.validateUsernameEmail(user));
     }
 
     @AllArgsConstructor
