@@ -44,8 +44,10 @@ public class MercadoPagoSubscriptionService {
     	
 		try {
 			preference = preferenceClient.create(preferenceRequest);
-		} catch (MPException | MPApiException e) {
-			log.error("Error en el alta de la suscripción: " + e.getMessage());
+		} catch (MPException e) {
+			log.error("Error en el alta de la suscripción: MPException" + e.getMessage());
+		} catch (MPApiException e) {
+			log.error("Error en el alta de la suscripción: MPApiException" + e.getApiResponse().getContent());
 		}
         
         return Optional.ofNullable(preference.getInitPoint()).orElse("");
