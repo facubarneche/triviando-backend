@@ -8,3 +8,7 @@ spring:
 server:
   servlet:
     context-path: /api/v1
+
+mercadopago:
+  accessToken: ${MP_ACCESS_TOKEN}
+  feDomain: ${FE_DOMAIN}
