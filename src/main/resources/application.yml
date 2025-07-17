@@ -9,11 +9,6 @@ server:
   servlet:
     context-path: /api/v1
 
-llm:
-  apiKey: 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
-  modelName: gpt-4o-mini
-  logRequests: true
-  logResponses: true
-  
 mercadopago:
-  accessToken: APP_USR-6924464273859360-063018-981c350234e05c7975ad665f6b8047c5-2523942300
+  accessToken: ${MP_ACCESS_TOKEN}
+  feDomain: ${FE_DOMAIN}
