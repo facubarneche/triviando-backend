@@ -33,7 +33,8 @@ public class MPConfig {
 	
 	@Bean
     public MercadoPagoConfig mercadoPagoConfig() {
-		log.info("ACCESS TOKEN: {}", accessToken);
+		log.error("ACCESS TOKEN: {}", accessToken);
+		log.error("FE TOKEN: {}", feDomain);
         MercadoPagoConfig.setAccessToken(accessToken);
         
         return new MercadoPagoConfig();

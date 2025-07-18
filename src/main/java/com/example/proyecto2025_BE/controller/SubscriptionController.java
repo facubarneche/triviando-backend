@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.proyecto2025_BE.service.MercadoPagoSubscriptionService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @CrossOrigin(origins = "*")
 @RequestMapping("/suscriptions")
@@ -22,7 +24,9 @@ public class SubscriptionController {
 
     @PostMapping
     public ResponseEntity<?> startSubscription(@RequestParam String email) {
+    	log.error("Entrando por startSubscription");
         String initPoint = mpService.createSubscriptionPreference(email);
+        log.error("initPoint devuelto");
         return ResponseEntity.ok().body(initPoint);
     }
 
