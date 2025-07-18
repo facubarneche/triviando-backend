@@ -33,20 +33,26 @@ public class MercadoPagoSubscriptionService {
     private final PreferenceBackUrlsRequest preferenceBackUrlsRequest;
     
     public String createSubscriptionPreference(String email) {
+    	log.error("Por crear PreferenceRequest");
     	PreferenceRequest preferenceRequest = PreferenceRequest.builder()
                 .items(Collections.singletonList(preferenceItemRequest))
                 .backUrls(preferenceBackUrlsRequest)
                 .autoReturn("approved")
                 .externalReference(email)
                 .build();
+    	log.error("PreferenceRequest creado");
     	
     	Preference preference = null;
     	
 		try {
+			log.error("Corriendo curl hacia MP");
 			preference = preferenceClient.create(preferenceRequest);
+			log.error("Curl hacia MP ejecutado");
 		} catch (MPException e) {
+			log.error("MPException");
 			log.error("Error en el alta de la suscripción: MPException" + e.getMessage());
 		} catch (MPApiException e) {
+			log.error("MPApiException");
 			log.error("Error en el alta de la suscripción: MPApiException" + e.getApiResponse().getContent());
 		}
         
