@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.dto.Login;
 import com.example.proyecto2025_BE.security.JwtUtil;
@@ -17,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,6 +27,7 @@ import com.example.proyecto2025_BE.dao.RespuestasDao;
 import com.example.proyecto2025_BE.dao.UserDao;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
+import com.example.proyecto2025_BE.model.Account;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.Ranking;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
@@ -74,7 +73,7 @@ public class UserService {
 		Optional.ofNullable(updatedUser.getPhoneNumber()).ifPresent(existingUser::setPhoneNumber);
 		Optional.ofNullable(updatedUser.getCountryCode()).ifPresent(existingUser::setCountryCode);
 		Optional.ofNullable(updatedUser.getJoinDate()).ifPresent(existingUser::setJoinDate);
-
+		Optional.ofNullable(updatedUser.getBirthDate()).ifPresent(existingUser::setBirthDate);
 		return userDao.save(existingUser);
 	}
 
@@ -190,6 +189,14 @@ public class UserService {
 		return new StatsResponse(totalQuizzes, correctAnswers, totalQuestions);
 	}
 
+	public void markUserAsSubscribed(String email) {
+		User user = userDao.findByEmail(email)
+				.orElseThrow(() -> NotFoundException.build("Usuario no encontrado al intentar suscribir plan premium"
+						+ " para email: " + email));
+		user.setAccount(Account.PREMIUM);
+		userDao.save(user);
+	}
+	
 	@Transactional
 	public Login create(User user) {
 		validateUsernameEmail(user);

@@ -112,6 +112,10 @@ public class User {
 	@Transient
 	private int position;
 
+	@JsonView({Views.GetUser.class})
+	@Builder.Default
+	private Account account = Account.BASE;
+	
 	//TODO: Crear entidades para el manejo de roles y con privilegios internos
 	@Builder.Default
 	private List<String> privileges = List.of("ROLE_USER");
