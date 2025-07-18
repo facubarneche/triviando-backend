@@ -73,7 +73,7 @@ public class UserService {
 		Optional.ofNullable(updatedUser.getPhoneNumber()).ifPresent(existingUser::setPhoneNumber);
 		Optional.ofNullable(updatedUser.getCountryCode()).ifPresent(existingUser::setCountryCode);
 		Optional.ofNullable(updatedUser.getJoinDate()).ifPresent(existingUser::setJoinDate);
-
+		Optional.ofNullable(updatedUser.getBirthDate()).ifPresent(existingUser::setBirthDate);
 		return userDao.save(existingUser);
 	}
 
