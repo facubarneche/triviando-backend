@@ -1,4 +1,4 @@
-package com.example.proyecto2025_BE.dao;
+package com.example.proyecto2025_BE.repository;
 
 import com.example.proyecto2025_BE.model.Pregunta;
 import org.springframework.data.mongodb.repository.Aggregation;
@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public interface PreguntaDao extends MongoRepository<Pregunta, String> {
+public interface QuestionRepository extends MongoRepository<Pregunta, String> {
     List<Pregunta> findByTopicoAndUserId(String topico, Long userId);
     boolean existsByTopicoAndUserId(String topico, Long userId);
 

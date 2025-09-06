@@ -1,6 +1,6 @@
 package com.example.proyecto2025_BE.service;
 
-import com.example.proyecto2025_BE.dao.FeedbackRepository;
+import com.example.proyecto2025_BE.repository.FeedbackRepository;
 import com.example.proyecto2025_BE.model.Feedback;
 import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import lombok.RequiredArgsConstructor;

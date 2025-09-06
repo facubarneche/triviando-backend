@@ -23,8 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
-import com.example.proyecto2025_BE.dao.RespuestasDao;
-import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.repository.ResponseRepository;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Account;
@@ -43,25 +43,25 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserService {
 
-	private final UserDao userDao;
-	private final RespuestasDao answerDao;
+	private final UserRepository userRepository;
+	private final ResponseRepository answerDao;
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder encoder;
 	private final JwtUtil jwtUtils;
 
 	public void validateUsernameEmail(User user) {
-		if (userDao.findByEmail(user.getEmail()).isPresent()) {
+		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
 			throw ConflictException.build("El email '" + user.getEmail() + "' ya está en uso.");
 		}
 
-		if (userDao.findByUsername(user.getUsername()).isPresent()) {
+		if (userRepository.findByUsername(user.getUsername()).isPresent()) {
 			throw ConflictException.build("El nombre de usuario '" + user.getUsername() + "' ya está en uso.");
 		}
 	}
 
 	@Transactional(readOnly = true)
 	public User retrieve(Long id) {
-		return userDao.findById(id)
+		return userRepository.findById(id)
 				.orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND));
 	}
 
@@ -74,7 +74,7 @@ public class UserService {
 		Optional.ofNullable(updatedUser.getCountryCode()).ifPresent(existingUser::setCountryCode);
 		Optional.ofNullable(updatedUser.getJoinDate()).ifPresent(existingUser::setJoinDate);
 		Optional.ofNullable(updatedUser.getBirthDate()).ifPresent(existingUser::setBirthDate);
-		return userDao.save(existingUser);
+		return userRepository.save(existingUser);
 	}
 
 	private User ValidarUsuario(User updatedUser) {
@@ -89,14 +89,14 @@ public class UserService {
 				updatedUser.getUsername(),
 				existingUser.getUsername(),
 				"nombre de usuario",
-				userDao::findByUsername,
+				userRepository::findByUsername,
 				existingUser::setUsername);
 
 		validarCampoUnico(
 				updatedUser.getEmail(),
 				existingUser.getEmail(),
 				"email",
-				userDao::findByEmail,
+				userRepository::findByEmail,
 				existingUser::setEmail);
 
 		return existingUser;
@@ -116,18 +116,18 @@ public class UserService {
 
 	public void delete(Long id) {
 		User user = retrieve(id);
-		userDao.delete(user);
+		userRepository.delete(user);
 	}
 
 	@Transactional(readOnly = true)
 	public User findByUsername(String userName) {
-		return userDao.findByUsername(userName)
+		return userRepository.findByUsername(userName)
 				.orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + userName));
 	}
 
 	public Page<User> getUsersOrderedByScoreDesc(int page,int size ) {
 		Pageable pageable = createPageable(page, size);
-		Page<UserRankingProjection> projectionPage = userDao.findAllUsersWithRank(pageable);
+		Page<UserRankingProjection> projectionPage = userRepository.findAllUsersWithRank(pageable);
 		List<User> users = projectionPage.getContent().stream()
 				.map(this::convertProjectionToUser)
 				.toList();
@@ -136,7 +136,7 @@ public class UserService {
 
 	public Page<User> getUsersOrderedByScoreFromUser(Long userId, int page,int size) {
 		this.retrieve(userId);
-		Integer userPosition = userDao.findUserRankPosition(userId);
+		Integer userPosition = userRepository.findUserRankPosition(userId);
 		if (userPosition == null || userPosition <= 0) {
 			return getUsersOrderedByScoreDesc(page,size);
 		}
@@ -148,7 +148,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Page<Ranking> getWeeklyRanking(int page, int size) {
 		Pageable pageable = createPageable(page, size);
-		Page<UserRankingProjection> projectionPage = userDao.findWeeklyRanking(pageable);
+		Page<UserRankingProjection> projectionPage = userRepository.findWeeklyRanking(pageable);
 		List<Ranking> users = projectionPage.getContent().stream()
 				.map(this::convertProjectionToRankin)
 				.toList();
@@ -158,7 +158,7 @@ public class UserService {
 	@Transactional(readOnly = true)
 	public Page<Ranking> getWeeklyRanking(Long userId, int page, int size) {
 		this.retrieve(userId);
-		Integer userPosition = userDao.findUserRankWeeklyPosition(userId);
+		Integer userPosition = userRepository.findUserRankWeeklyPosition(userId);
 		if (userPosition == null || userPosition <= 0) {
 			return getWeeklyRanking(page,size);
 		}
@@ -169,7 +169,7 @@ public class UserService {
 
 	private User convertProjectionToUser(UserRankingProjection projection) {
 
-		User user = userDao.findById(projection.getId())
+		User user = userRepository.findById(projection.getId())
 				.orElseGet(User::new); // Fallback a un nuevo User si por alguna razón no existe
 		user.setPosition(projection.getPosition());
 		return user;
@@ -190,11 +190,11 @@ public class UserService {
 	}
 
 	public void markUserAsSubscribed(String email) {
-		User user = userDao.findByEmail(email)
+		User user = userRepository.findByEmail(email)
 				.orElseThrow(() -> NotFoundException.build("Usuario no encontrado al intentar suscribir plan premium"
 						+ " para email: " + email));
 		user.setAccount(Account.PREMIUM);
-		userDao.save(user);
+		userRepository.save(user);
 	}
 	
 	@Transactional
@@ -203,7 +203,7 @@ public class UserService {
 		var encodedPass = encoder.encode(user.getPassword());
 		user.setPassword(encodedPass);
 
-		var userCreated = userDao.save(user);
+		var userCreated = userRepository.save(user);
 
 		var token = jwtUtils.generateToken(userCreated.getUsername());
 		return Login.builder()

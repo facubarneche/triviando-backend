@@ -1,6 +1,6 @@
 package com.example.proyecto2025_BE.unittests;
 
-import com.example.proyecto2025_BE.dao.RespuestasDao;
+import com.example.proyecto2025_BE.repository.ResponseRepository;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.*;
 import com.example.proyecto2025_BE.service.AnswerService;
@@ -27,14 +27,14 @@ public class AnswerServiceTest {
 	private static AnswerService answerService;
     private static Option correctOption;
 	private static Answer.AnswerBuilder answerbuilder;
-	private static RespuestasDao answerRepository;
+	private static ResponseRepository answerRepository;
 
     @BeforeAll
 	static void beforeAll() {
         UserService userServiceMock = mock(UserService.class);
         PreguntaService preguntaServiceMock = mock(PreguntaService.class);
         UserInvoker userInvoker = mock(UserInvoker.class);
-		answerRepository = mock(RespuestasDao.class);
+		answerRepository = mock(ResponseRepository.class);
 		answerService = new AnswerService(userServiceMock, preguntaServiceMock, userInvoker,answerRepository);
 		
 		User user = User.builder()

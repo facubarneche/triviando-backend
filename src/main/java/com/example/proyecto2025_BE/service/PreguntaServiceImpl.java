@@ -2,7 +2,7 @@ package com.example.proyecto2025_BE.service;
 
 import com.example.proyecto2025_BE.configuration.PreguntaProperties;
 import com.example.proyecto2025_BE.constants.Exceptions;
-import com.example.proyecto2025_BE.dao.PreguntaDao;
+import com.example.proyecto2025_BE.repository.QuestionRepository;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Pregunta;
@@ -19,14 +19,14 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class PreguntaServiceImpl implements PreguntaService {
 
-    private final PreguntaDao preguntaDao;
+    private final QuestionRepository questionRepository;
     private final UserService userService;
     private final FeedbackService feedbackService;
     private final PreguntaProperties properties;
 
     @Override
     public Pregunta getPreguntaById(String id) {
-        return preguntaDao
+        return questionRepository
                 .findById(id)
                 .orElseThrow(() -> NotFoundException.build("No se encontro la pregunta con id: " + id));
     }
@@ -39,7 +39,7 @@ public class PreguntaServiceImpl implements PreguntaService {
                 .map(Answer::getQuestionId)
                 .toList();
 
-        return preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(idPreguntas,userId).stream()
+        return questionRepository.contarPreguntasPorTopicoIncluyendoRespondidas(idPreguntas,userId).stream()
                 .map(topic ->
                         Topics.builder()
                                 .topic((String) topic.get("_id"))
@@ -51,12 +51,12 @@ public class PreguntaServiceImpl implements PreguntaService {
 
     @Override
     public void saveAll(List<Pregunta> preguntas) {
-    	preguntaDao.saveAll(preguntas);
+    	questionRepository.saveAll(preguntas);
     }
     
     @Override
     public boolean existsByTopicAndUser(String topic, Long userId) {
-    	return preguntaDao.existsByTopicoAndUserId(topic,userId);
+    	return questionRepository.existsByTopicoAndUserId(topic,userId);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class PreguntaServiceImpl implements PreguntaService {
                 .map(Answer::getQuestionId)
                 .toList();
 
-        List<Pregunta> preguntasNoRespondidas =  preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(preguntasRespondidasIds, topico,user.getId()).stream()
+        List<Pregunta> preguntasNoRespondidas =  questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(preguntasRespondidasIds, topico,user.getId()).stream()
                 .toList();
 
         if (preguntasNoRespondidas.isEmpty()) {
@@ -85,7 +85,7 @@ public class PreguntaServiceImpl implements PreguntaService {
 
     @Override
     public String getTopicFromQuestion(String topic,Long userId) {
-        return preguntaDao.getFirstByTopicoAndUserId(topic,userId).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND)).getEmoji();
+        return questionRepository.getFirstByTopicoAndUserId(topic,userId).orElseThrow(() -> NotFoundException.build(Exceptions.NOT_FOUND)).getEmoji();
     }
 
     @Override

@@ -1,9 +1,9 @@
 package com.example.proyecto2025_BE.integrationtests;
 
 import com.example.proyecto2025_BE.configuration.PreguntasData;
-import com.example.proyecto2025_BE.dao.FeedbackRepository;
-import com.example.proyecto2025_BE.dao.PreguntaDao;
-import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.repository.FeedbackRepository;
+import com.example.proyecto2025_BE.repository.QuestionRepository;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Difficulty;
 import com.example.proyecto2025_BE.model.Pregunta;
@@ -27,7 +27,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -36,7 +35,6 @@ import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createNe
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -55,9 +53,9 @@ class PreguntasControllerTest {
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
-    private PreguntaDao preguntaDao;
+    private QuestionRepository questionRepository;
     @MockitoBean
-    private UserDao userDao;
+    private UserRepository userRepository;
     @Autowired
     private ObjectMapper objectMapper;
     @MockitoBean
@@ -80,19 +78,19 @@ class PreguntasControllerTest {
                 .build();
         jwtToken = jwtUtil.generateToken(user.getUsername());
 
-        when(userDao.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
     }
 
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
         String topicoExistente = PreguntasData.PREGUNTAS.getFirst().getTopico();
-        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
         List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
 
-        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(anyList(), any(String.class),any(Long.class))).thenReturn(preguntasTopicoExistente);
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(anyList(), any(String.class),any(Long.class))).thenReturn(preguntasTopicoExistente);
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
@@ -113,7 +111,7 @@ class PreguntasControllerTest {
         List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
-        var user = userDao.findByUsername("juanceto01").get();
+        var user = userRepository.findByUsername("juanceto01").get();
 
         user.setAnswers(Collections.singletonList(Answer.builder()
                         .user(user)
@@ -121,10 +119,10 @@ class PreguntasControllerTest {
                         .score(BigDecimal.valueOf(100.00))
                         .build()))
                 ;
-        userDao.save(user);
+        userRepository.save(user);
 
-        when(preguntaDao.findByTopicoAndUserId(anyString(),anyLong())).thenReturn(preguntasTopicoExistente);
-        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder()
+        when(questionRepository.findByTopicoAndUserId(anyString(),anyLong())).thenReturn(preguntasTopicoExistente);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder()
                 .id(1L)
                 .answers(Collections.singletonList(Answer.builder()
                         .user(User.builder().id(1L).build())
@@ -134,7 +132,7 @@ class PreguntasControllerTest {
                 .build()));
 
         List<Pregunta> resultadoEsperado = preguntasTopicoExistente.subList(1, preguntasTopicoExistente.size());
-        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(any(), any(),any())).thenReturn(resultadoEsperado);
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(any(), any(),any())).thenReturn(resultadoEsperado);
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
@@ -151,8 +149,8 @@ class PreguntasControllerTest {
     void getPreguntasByTopico_topicoNoExistente() throws Exception {
         String topico = "Geografia";
 
-        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(anyList(),anyString(),anyLong())).thenReturn(List.of());
-        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(anyList(),anyString(),anyLong())).thenReturn(List.of());
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("topico", topico)
@@ -168,7 +166,7 @@ class PreguntasControllerTest {
     void getPreguntaById_IDValid() throws Exception {
         Pregunta pregunta = PreguntasData.PREGUNTAS.getFirst();
 
-        when(preguntaDao.findById(pregunta.getId())).thenReturn(Optional.of(pregunta));
+        when(questionRepository.findById(pregunta.getId())).thenReturn(Optional.of(pregunta));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", pregunta.getId())
                         .header("Authorization", "Bearer " + jwtToken))
@@ -182,7 +180,7 @@ class PreguntasControllerTest {
     void getPreguntaById_IDInValid() throws Exception {
         String idInvalido = "ID_QUE_NO_EXISTE";
 
-        when(preguntaDao.findById(idInvalido)).thenReturn(Optional.empty());
+        when(questionRepository.findById(idInvalido)).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas/{id}", idInvalido)
                         .header("Authorization", "Bearer " + jwtToken))
@@ -199,8 +197,8 @@ class PreguntasControllerTest {
                 Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", emojiCafe)
         );
 
-        when(userDao.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
-        when(preguntaDao.contarPreguntasPorTopicoIncluyendoRespondidas(any(),anyLong())).thenReturn(resultadoDao);
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
+        when(questionRepository.contarPreguntasPorTopicoIncluyendoRespondidas(any(),anyLong())).thenReturn(resultadoDao);
 
         List<Topics> resultadoEsperado = List.of(
                 Topics.builder()
@@ -272,10 +270,10 @@ class PreguntasControllerTest {
         List<Pregunta> preguntasUser1 = List.of(pregunta1User1,pregunta2User1);
         List<Pregunta> preguntasUser2 = List.of(pregunta1User2,pregunta2User2);
 
-        when(userDao.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
-        when(userDao.findById(userId2)).thenReturn(Optional.of(User.builder().id(userId2).build()));
-        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId)).thenReturn(preguntasUser1);
-        when(preguntaDao.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId2)).thenReturn(preguntasUser2);
+        when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
+        when(userRepository.findById(userId2)).thenReturn(Optional.of(User.builder().id(userId2).build()));
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId)).thenReturn(preguntasUser1);
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId2)).thenReturn(preguntasUser2);
 
         MvcResult resultUser1 = mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("userId", String.valueOf(userId))

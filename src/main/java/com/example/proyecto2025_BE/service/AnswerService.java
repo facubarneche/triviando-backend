@@ -1,6 +1,6 @@
 package com.example.proyecto2025_BE.service;
 
-import com.example.proyecto2025_BE.dao.RespuestasDao;
+import com.example.proyecto2025_BE.repository.ResponseRepository;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.FeedbackAnswer;
@@ -21,7 +21,7 @@ public class AnswerService {
 	private final UserService userService;
 	private final PreguntaService preguntaService;
 	private final UserInvoker userInvoker;
-	private final RespuestasDao answerRepository;
+	private final ResponseRepository answerRepository;
 
 	@Transactional
 	public FeedbackAnswer answer(Answer answer) {
@@ -31,7 +31,7 @@ public class AnswerService {
 		Answer answered = answerRepository.findByUserIdAndQuestionId(user.getId(), answer.getQuestionId());
 
 		if(answered != null) {
-			throw new ValidationException("Esta pregunta ya fue respondida");
+			throw new ValidationException("Esta pregunta ya ha sido respondida");
 		}
 
 		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
