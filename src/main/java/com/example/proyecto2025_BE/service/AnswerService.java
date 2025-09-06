@@ -1,5 +1,7 @@
 package com.example.proyecto2025_BE.service;
 
+import com.example.proyecto2025_BE.dao.RespuestasDao;
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.FeedbackAnswer;
 import com.example.proyecto2025_BE.model.Pregunta;
@@ -19,13 +21,21 @@ public class AnswerService {
 	private final UserService userService;
 	private final PreguntaService preguntaService;
 	private final UserInvoker userInvoker;
+	private final RespuestasDao answerRepository;
 
 	@Transactional
 	public FeedbackAnswer answer(Answer answer) {
 
 		User user = userService.retrieve(answer.getUser().getId());
+
+		Answer answered = answerRepository.findByUserIdAndQuestionId(user.getId(), answer.getQuestionId());
+
+		if(answered != null) {
+			throw new ValidationException("Esta pregunta ya fue respondida");
+		}
+
 		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
-		answer.setFechaRespuesta(LocalDate.now());
+		answer.setResponseDate(LocalDate.now());
 		answer.impactScore(question);
 		user.add(answer);
 		userInvoker.executeCommand(new ActualizarRachaCommand(user));

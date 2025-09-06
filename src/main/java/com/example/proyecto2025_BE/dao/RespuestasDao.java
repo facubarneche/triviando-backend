@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface RespuestasDao extends JpaRepository<Answer, Long> {
 
-    Integer countByUserId(Long usuarioId);
+    Integer countByUserId(Long userId);
     Integer countByUserIdAndErrorReasonIsNull(Long userId);
+    Answer findByUserIdAndQuestionId(Long userId, String questionId);
 }

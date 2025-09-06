@@ -142,7 +142,7 @@ public class User {
 		LocalDate today = LocalDate.now();
 		LocalDate lastWeek = today.minusWeeks(1);
 		return answers.stream()
-				.filter(answer -> answer.getFechaRespuesta().isAfter(lastWeek))
+				.filter(answer -> answer.getResponseDate().isAfter(lastWeek))
 				.map(Answer::getScore)
 				.reduce(BigDecimal.ZERO,BigDecimal::add);
 	}
