@@ -227,9 +227,10 @@ public class UserService {
 		var fetchedUser = findByUsername(userDetails.getUsername());
 		return Login.builder()
 				.token(token)
-				.username(userDetails.getUsername())
+				.username(fetchedUser.getUsername())
 				.fullname(fetchedUser.getFullName())
 				.id(fetchedUser.getId())
+				.account(fetchedUser.getAccount())
 				.build();
 	}
 }
