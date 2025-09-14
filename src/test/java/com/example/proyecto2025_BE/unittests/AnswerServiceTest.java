@@ -1,5 +1,7 @@
 package com.example.proyecto2025_BE.unittests;
 
+import com.example.proyecto2025_BE.repository.ResponseRepository;
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.*;
 import com.example.proyecto2025_BE.service.AnswerService;
 import com.example.proyecto2025_BE.service.PreguntaService;
@@ -12,6 +14,7 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,13 +27,15 @@ public class AnswerServiceTest {
 	private static AnswerService answerService;
     private static Option correctOption;
 	private static Answer.AnswerBuilder answerbuilder;
+	private static ResponseRepository answerRepository;
 
     @BeforeAll
 	static void beforeAll() {
         UserService userServiceMock = mock(UserService.class);
         PreguntaService preguntaServiceMock = mock(PreguntaService.class);
         UserInvoker userInvoker = mock(UserInvoker.class);
-		answerService = new AnswerService(userServiceMock, preguntaServiceMock, userInvoker);
+		answerRepository = mock(ResponseRepository.class);
+		answerService = new AnswerService(userServiceMock, preguntaServiceMock, userInvoker,answerRepository);
 		
 		User user = User.builder()
 				.id(1L)
@@ -109,16 +114,27 @@ public class AnswerServiceTest {
 		
 		assertEquals(BigDecimal.ZERO, feedback.getScore());
 	}
-	
+
+	@Test
+	@DisplayName("Check answer the same questions twice")
+	void answerQuestionTwice() {
+		Answer answer = answerbuilder.millisecondsSpent(10000)
+				.optionSelected(correctOption.getLetter())
+				.build();
+		when(answerRepository.findByUserIdAndQuestionId(1L, answer.getQuestionId())).thenReturn(answer);
+
+		assertThrows(ValidationException.class, () -> answerService.answer(answer));
+	}
+
 	@Test
 	@DisplayName("Check feedback includes correct option")
 	void feedbackIncludesCorrectOptionTest() {
 		Answer answer = answerbuilder.millisecondsSpent(29999)
 				.optionSelected(correctOption.getLetter())
 				.build();
-		
+
 		FeedbackAnswer feedback = answerService.answer(answer);
-		
+
 		assertEquals(correctOption, feedback.getCorrectOption());
 		assertEquals(LetterOption.A, feedback.getCorrectOption().getLetter());
 	}

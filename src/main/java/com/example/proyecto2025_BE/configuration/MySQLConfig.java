@@ -1,6 +1,6 @@
 package com.example.proyecto2025_BE.configuration;
 
-import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -18,13 +18,13 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MySQLConfig {
 
-	private final UserDao userDao;
+	private final UserRepository userRepository;
 
 	@Bean
     @Transactional
     public CommandLineRunner initMySQLData() {
         return args -> {
-            if (userDao.count() == 0) {
+            if (userRepository.count() == 0) {
                 User user1 = User.builder()
                         .name("John")
                         .lastName("Doe")
@@ -67,7 +67,7 @@ public class MySQLConfig {
                         .username("user_three")
                         .build();
 
-                userDao.saveAll(List.of(user1, user2, user3));
+                userRepository.saveAll(List.of(user1, user2, user3));
             }
         };
     }

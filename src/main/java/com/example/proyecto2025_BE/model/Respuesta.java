@@ -20,5 +20,5 @@ public class Respuesta {
     private String preguntaId;
     @Indexed
     private boolean correcta;
-    private LocalDate fechaRespuesta;
+    private LocalDate responseDate;
 }

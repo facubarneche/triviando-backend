@@ -40,7 +40,7 @@ public class Answer {
     private long millisecondsSpent;
     @JsonIgnore
     private String errorReason;
-    private LocalDate fechaRespuesta;
+    private LocalDate responseDate;
     private BigDecimal score = BigDecimal.ZERO;
 
     public void impactScore(Pregunta question) {

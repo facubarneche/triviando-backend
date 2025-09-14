@@ -1,7 +1,7 @@
 package com.example.proyecto2025_BE.unittests;
 
-import com.example.proyecto2025_BE.dao.RespuestasDao;
-import com.example.proyecto2025_BE.dao.UserDao;
+import com.example.proyecto2025_BE.repository.ResponseRepository;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Answer;
@@ -29,10 +29,10 @@ import static org.mockito.Mockito.*;
 public class UserServiceTest {
 
     @Mock
-    private UserDao userDao;
+    private UserRepository userRepository;
 
     @Mock
-    private RespuestasDao answerDao;
+    private ResponseRepository answerDao;
 
     @InjectMocks
     private UserService userService;
@@ -142,11 +142,11 @@ public class UserServiceTest {
     @BeforeEach
     void setUp() {
         users = createUsers();
-        getSortedUsers().forEach(u -> when(userDao.findById(u.getId())).thenReturn(Optional.of(u)));
+        getSortedUsers().forEach(u -> when(userRepository.findById(u.getId())).thenReturn(Optional.of(u)));
     }
     @AfterEach
     void tearDown() {
-        Mockito.reset(userDao);
+        Mockito.reset(userRepository);
     }
 
     private List<User> getSortedUsers() {
@@ -179,12 +179,12 @@ public class UserServiceTest {
                 .forEach(u -> {
                     int position = findUserPosition(u.getId()) + 1;
                     projections.add(new UserRankingProjectionImpl(u.getId(), u.getUsername(), u.getScore(), position));
-                    when(userDao.findById(u.getId())).thenReturn(Optional.of(u));
+                    when(userRepository.findById(u.getId())).thenReturn(Optional.of(u));
                 });
 
         Page<UserRankingProjection> projectionPage = new PageImpl<>(projections, pageable, sortedUsers.size());
 
-        when(userDao.findAllUsersWithRank(pageable)).thenReturn(projectionPage);
+        when(userRepository.findAllUsersWithRank(pageable)).thenReturn(projectionPage);
 
         Page<User> result = userService.getUsersOrderedByScoreDesc(pageable.getPageNumber(), pageable.getPageSize());
 
@@ -198,7 +198,7 @@ public class UserServiceTest {
             int posicion = result.getContent().indexOf(user);
             assertEquals(posicion + 1, user.getPosition());
         });
-        verify(userDao, times(1)).findAllUsersWithRank(pageable);
+        verify(userRepository, times(1)).findAllUsersWithRank(pageable);
     }
 
     @Test
@@ -211,11 +211,11 @@ public class UserServiceTest {
 
         testUserRankingScenario(userId, userPosition, pageable);
 
-        verify(userDao, times(2)).findById(userId); // Once for the target user itself, once for projection conversion
-        verify(userDao, times(1)).findUserRankPosition(userId);
+        verify(userRepository, times(2)).findById(userId); // Once for the target user itself, once for projection conversion
+        verify(userRepository, times(1)).findUserRankPosition(userId);
 
         Pageable expectedPageable = PageRequest.of(pageNumber, pageable.getPageSize());
-        verify(userDao, times(1)).findAllUsersWithRank(expectedPageable);
+        verify(userRepository, times(1)).findAllUsersWithRank(expectedPageable);
     }
 
     @Test
@@ -231,9 +231,9 @@ public class UserServiceTest {
 
         testUserRankingScenario(userId, userPosition, pageable);
 
-        verify(userDao, times(2)).findById(userId); // Una vez para el usuario objetivo, otra para la conversión de proyección
-        verify(userDao, times(1)).findUserRankPosition(userId);
-        verify(userDao, times(1)).findAllUsersWithRank(PageRequest.of(0, 5));
+        verify(userRepository, times(2)).findById(userId); // Una vez para el usuario objetivo, otra para la conversión de proyección
+        verify(userRepository, times(1)).findUserRankPosition(userId);
+        verify(userRepository, times(1)).findAllUsersWithRank(PageRequest.of(0, 5));
     }
 
     @Test
@@ -246,9 +246,9 @@ public class UserServiceTest {
 
         testUserRankingScenario(userId, userPosition, pageable);
 
-        verify(userDao, times(2)).findById(userId);
-        verify(userDao, times(1)).findUserRankPosition(userId);
-        verify(userDao, times(1)).findAllUsersWithRank(any(Pageable.class));
+        verify(userRepository, times(2)).findById(userId);
+        verify(userRepository, times(1)).findUserRankPosition(userId);
+        verify(userRepository, times(1)).findAllUsersWithRank(any(Pageable.class));
     }
 
     @Test
@@ -257,13 +257,13 @@ public class UserServiceTest {
         Long userId = 999L;
         Pageable pageable = PageRequest.of(0, 5);
 
-        when(userDao.findById(userId)).thenReturn(Optional.empty());
+        when(userRepository.findById(userId)).thenReturn(Optional.empty());
         // Act & Assert
         assertThrows(NotFoundException.class, () -> userService.getUsersOrderedByScoreFromUser(userId, pageable.getPageNumber(),pageable.getPageSize()));
         // Verify
-        verify(userDao, times(1)).findById(userId);
-        verify(userDao, never()).findUserRankPosition(any());
-        verify(userDao, never()).findAllUsersWithRank(any(Pageable.class));
+        verify(userRepository, times(1)).findById(userId);
+        verify(userRepository, never()).findUserRankPosition(any());
+        verify(userRepository, never()).findAllUsersWithRank(any(Pageable.class));
     }
 
     @Test
@@ -307,7 +307,7 @@ public class UserServiceTest {
 
         assertTrue(position3 < position12);
         getSortedUsers().forEach(user ->
-                when(userDao.findById(user.getId())).thenReturn(Optional.of(user))
+                when(userRepository.findById(user.getId())).thenReturn(Optional.of(user))
         );
 
         testUserRankingScenario(userId3, position3, pageable);
@@ -316,7 +316,7 @@ public class UserServiceTest {
 
     private void testUserRankingScenario(Long userId, int userPosition, Pageable basePageable) {
 
-        when(userDao.findUserRankPosition(userId)).thenReturn(userPosition);
+        when(userRepository.findUserRankPosition(userId)).thenReturn(userPosition);
 
         int pageNumber = userPosition / basePageable.getPageSize();
         Pageable expectedPageable = PageRequest.of(pageNumber, basePageable.getPageSize());
@@ -335,7 +335,7 @@ public class UserServiceTest {
 
         Page<UserRankingProjection> projectionPage = new PageImpl<>(projections, expectedPageable, sortedUsers.size());
 
-        when(userDao.findAllUsersWithRank(any())).thenReturn(projectionPage);
+        when(userRepository.findAllUsersWithRank(any())).thenReturn(projectionPage);
 
         Page<User> result = userService.getUsersOrderedByScoreFromUser(userId, projectionPage.getNumber(), projectionPage.getSize());
 
@@ -378,7 +378,7 @@ public class UserServiceTest {
                 .password("password")
                 .build();
 
-        when(userDao.findByUsername(anyString())).thenReturn(Optional.of(user));
+        when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
         assertThrows(ConflictException.class, () -> userService.validateUsernameEmail(user));
     }
 
