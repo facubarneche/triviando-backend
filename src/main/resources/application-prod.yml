@@ -34,8 +34,10 @@ llm:
   logResponses: false
 
 api:
-  preguntas:
-    cantidad: 5
+  questions:
+    questions-per-topic: 5
+    max-topics-free-per-day: 2
+    max-questions-free-per-day: 25
 
 jwt:
   secret: ${JWT_SECRET_KEY}

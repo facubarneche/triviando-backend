@@ -2,12 +2,17 @@ spring:
   profiles:
     active: dev
   config:
-      import: optional:file:.env[.properties]
-
+    import: optional:file:.env[.properties]
 
 server:
   servlet:
     context-path: /api/v1
+
+api:
+  questions:
+    questions-per-topic: 5
+    max-topics-free-per-day: 5
+    max-questions-free-per-day: 100
 
 mercadopago:
   accessToken: ${MP_ACCESS_TOKEN}

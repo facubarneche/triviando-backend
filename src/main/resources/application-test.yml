@@ -16,10 +16,6 @@ spring:
     pathmatch:
       matching-strategy: ant_path_matcher
 
-api:
-  preguntas:
-    cantidad: 5
-
 jwt:
   secret: clavesecretaparatesteosgodines123432e
   expiration: 43200000

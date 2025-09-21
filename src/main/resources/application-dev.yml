@@ -33,10 +33,6 @@ llm:
   logRequests: true
   logResponses: true
 
-api:
-  preguntas:
-    cantidad: 5
-
 jwt:
   secret: ${JWT_SECRET_KEY}
   expiration: 43200000

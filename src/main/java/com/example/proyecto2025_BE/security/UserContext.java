@@ -1,24 +1,27 @@
 package com.example.proyecto2025_BE.security;
 
 import com.example.proyecto2025_BE.model.Account;
+import com.example.proyecto2025_BE.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class UserContext {
 
+    private final UserService userService;
+
     public Account getContextRole() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Jwt jwt = (Jwt) auth.getPrincipal();
-        String role = jwt.getClaimAsString("role");
-        return Account.valueOf(role);
+        String username = auth.getName();
+        return userService.findByUsername(username).getAccount();
     }
 
     public Long getContextUserId() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        Jwt jwt = (Jwt) auth.getPrincipal();
-        return jwt.getClaim("userId");
+        String username = auth.getName();
+        return userService.findByUsername(username).getId();
     }
 }
