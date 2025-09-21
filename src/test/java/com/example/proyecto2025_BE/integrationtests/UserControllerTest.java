@@ -1,24 +1,14 @@
 package com.example.proyecto2025_BE.integrationtests;
 
-import static org.hamcrest.Matchers.closeTo;
-import static org.hamcrest.Matchers.greaterThan;
-import static org.hamcrest.Matchers.greaterThanOrEqualTo;
-import static org.hamcrest.Matchers.hasItem;
-import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.example.proyecto2025_BE.model.Answer;
+import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.model.dto.StatsResponse;
+import com.example.proyecto2025_BE.repository.ResponseRepository;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.security.JwtUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,14 +23,17 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import com.example.proyecto2025_BE.repository.ResponseRepository;
-import com.example.proyecto2025_BE.repository.UserRepository;
-import com.example.proyecto2025_BE.model.Answer;
-import com.example.proyecto2025_BE.model.User;
-import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.hamcrest.Matchers.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -48,12 +41,11 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 @DisplayName("User Controller Tests")
 public class UserControllerTest {
 
-    private static Long EXISTENT_USER_ID;
     private static final Long INEXISTENT_USER_ID = 99L;
-
+    private static Long EXISTENT_USER_ID;
+    private static String jwtToken;
     @Autowired
     private JwtUtil jwtUtil;
-    private static String jwtToken;
     @Autowired
     private PasswordEncoder encoder;
 
@@ -75,11 +67,11 @@ public class UserControllerTest {
 
         jwtToken = crearUser(
                 User.builder()
-                .username("juanceto01")
-                .name("Pepe")
-                .lastName("Palala")
-                .email("dsadsa@dsada.com")
-                .build(),
+                        .username("juanceto01")
+                        .name("Pepe")
+                        .lastName("Palala")
+                        .email("dsadsa@dsada.com")
+                        .build(),
                 "Pelele"
         );
         EXISTENT_USER_ID = dao.findByUsername("juanceto01").get().getId();
@@ -113,18 +105,18 @@ public class UserControllerTest {
     @DirtiesContext
     void updateTest() throws Exception {
         User user = User.builder()
-        		.name("Pepe")
+                .name("Pepe")
                 .lastName("Palala")
                 .build();
-        
+
         user = dao.save(user);
-        
+
         Map<String, Object> map = new HashMap<>();
         map.put("id", user.getId().toString());
         map.put("name", "Emiliano");
         map.put("lastName", "Emil");
         map.put("phoneNumber", "1234567890");
-        
+
         String requestBody = mapper.writeValueAsString(map);
 
         mockMvc
@@ -183,7 +175,7 @@ public class UserControllerTest {
     @DisplayName("Error al crear un usuario con email inválido")
     void createUserWithInvalidEmailFormatTest() throws Exception {
         User invalidUser = User.builder()
-        		.name("Test")
+                .name("Test")
                 .lastName("User")
                 .email("invalid-email")
                 .password("password123")
@@ -204,7 +196,7 @@ public class UserControllerTest {
     @DisplayName("Error al crear un usuario con nombre vacío")
     void createUserWithEmptyFullNameTest() throws Exception {
         User invalidUser = User.builder()
-        		.name("")
+                .name("")
                 .lastName("")
                 .email("test@example.com")
                 .password("password123")
@@ -225,7 +217,7 @@ public class UserControllerTest {
     @DisplayName("Error al crear un usuario con contraseña vacía")
     void createUserWithEmptyPasswordTest() throws Exception {
         User invalidUser = User.builder()
-        		.name("Test")
+                .name("Test")
                 .lastName("User")
                 .email("test@example.com")
                 .password("")
@@ -310,7 +302,7 @@ public class UserControllerTest {
     void estadisticasInexistentUserTest() throws Exception {
         when(responseRepository.countByUserId(EXISTENT_USER_ID)).thenReturn(0);
         when(responseRepository.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(0);
-        StatsResponse response = new StatsResponse(0,0,0);
+        StatsResponse response = new StatsResponse(0, 0, 0);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
                 .andExpect(status().isOk())
@@ -465,7 +457,7 @@ public class UserControllerTest {
     @Test
     @DisplayName("Cuando se loguea un usuario, y este esta registrado, obtengo dicho recurso")
     void loginTest() throws Exception {
-    	User requestBody = User.builder()
+        User requestBody = User.builder()
                 .username("juanceto01")
                 .password("Pelele")
                 .joinDate(LocalDateTime.now())
@@ -478,15 +470,22 @@ public class UserControllerTest {
                         .content(jsonBody))
                 .andExpect(content().contentType("application/json"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.fullname").value("Pepe Palala"))
-                .andExpect(jsonPath("$.username").value("juanceto01"));
+                .andExpect(jsonPath("$.token").exists())
+                .andExpect(jsonPath("$.token").isString());
     }
 
-    String crearUser(User user, String pass){
+    String crearUser(User user, String pass) {
         var encodedPass = encoder.encode(pass);
         user.setPassword(encodedPass);
 
         dao.save(user);
-        return jwtUtil.generateToken(user.getUsername());
+        return jwtUtil.generateToken(
+                Map.of(
+                        "id", user.getId(),
+                        "fullname", user.getFullName(),
+                        "account", user.getAccount()
+                ),
+                user.getUsername()
+        );
     }
 }

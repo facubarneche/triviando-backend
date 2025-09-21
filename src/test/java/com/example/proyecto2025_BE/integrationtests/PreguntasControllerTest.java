@@ -1,15 +1,15 @@
 package com.example.proyecto2025_BE.integrationtests;
 
 import com.example.proyecto2025_BE.configuration.PreguntasData;
-import com.example.proyecto2025_BE.repository.FeedbackRepository;
-import com.example.proyecto2025_BE.repository.QuestionRepository;
-import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Difficulty;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
+import com.example.proyecto2025_BE.repository.FeedbackRepository;
+import com.example.proyecto2025_BE.repository.QuestionRepository;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.security.JwtUtil;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -30,9 +30,9 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.math.BigDecimal;
 import java.util.*;
 
-import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createPositiveFeedbackDTO;
 import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createNegativeFeedbackDTO;
-import static org.junit.jupiter.api.Assertions.*;
+import static com.example.proyecto2025_BE.unittests.FeedbackServiceTest.createPositiveFeedbackDTO;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -45,11 +45,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DisplayName("Preguntas Controller Test")
 class PreguntasControllerTest {
 
+    private static String jwtToken;
+    private final String emojiCafe = "\uD83D\uDC0D";
     @Autowired
     private JwtUtil jwtUtil;
-
-    private static String jwtToken;
-
     @Autowired
     private MockMvc mockMvc;
     @MockitoBean
@@ -60,8 +59,6 @@ class PreguntasControllerTest {
     private ObjectMapper objectMapper;
     @MockitoBean
     private FeedbackRepository feedbackRepository;
-
-    private final String emojiCafe = "\uD83D\uDC0D";
     @Autowired
     private PasswordEncoder encoder;
 
@@ -76,7 +73,14 @@ class PreguntasControllerTest {
                 .password(encodedPass)
                 .email("dsadsa@dsada.com")
                 .build();
-        jwtToken = jwtUtil.generateToken(user.getUsername());
+        jwtToken = jwtUtil.generateToken(
+                Map.of(
+                        "id", user.getId(),
+                        "fullname", user.getFullName(),
+                        "account", user.getAccount()
+                ),
+                user.getUsername()
+        );
 
         when(userRepository.findByUsername(anyString())).thenReturn(Optional.of(user));
     }
@@ -90,7 +94,7 @@ class PreguntasControllerTest {
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
 
-        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(anyList(), any(String.class),any(Long.class))).thenReturn(preguntasTopicoExistente);
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(anyList(), any(String.class), any(Long.class))).thenReturn(preguntasTopicoExistente);
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
@@ -114,14 +118,14 @@ class PreguntasControllerTest {
         var user = userRepository.findByUsername("juanceto01").get();
 
         user.setAnswers(Collections.singletonList(Answer.builder()
-                        .user(user)
-                        .questionId(preguntasTopicoExistente.getFirst().getId())
-                        .score(BigDecimal.valueOf(100.00))
-                        .build()))
-                ;
+                .user(user)
+                .questionId(preguntasTopicoExistente.getFirst().getId())
+                .score(BigDecimal.valueOf(100.00))
+                .build()))
+        ;
         userRepository.save(user);
 
-        when(questionRepository.findByTopicoAndUserId(anyString(),anyLong())).thenReturn(preguntasTopicoExistente);
+        when(questionRepository.findByTopicoAndUserId(anyString(), anyLong())).thenReturn(preguntasTopicoExistente);
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder()
                 .id(1L)
                 .answers(Collections.singletonList(Answer.builder()
@@ -132,7 +136,7 @@ class PreguntasControllerTest {
                 .build()));
 
         List<Pregunta> resultadoEsperado = preguntasTopicoExistente.subList(1, preguntasTopicoExistente.size());
-        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(any(), any(),any())).thenReturn(resultadoEsperado);
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(any(), any(), any())).thenReturn(resultadoEsperado);
 
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
@@ -149,7 +153,7 @@ class PreguntasControllerTest {
     void getPreguntasByTopico_topicoNoExistente() throws Exception {
         String topico = "Geografia";
 
-        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(anyList(),anyString(),anyLong())).thenReturn(List.of());
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(anyList(), anyString(), anyLong())).thenReturn(List.of());
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
 
         mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
@@ -193,12 +197,12 @@ class PreguntasControllerTest {
 
         List<Map<String, Object>> resultadoDao = Arrays.asList(
                 Map.of("_id", "java", "cantidadPreguntas", 5, "emoji", "☕"),
-                Map.of("_id", "python", "cantidadPreguntas", 10,"emoji", emojiCafe),
+                Map.of("_id", "python", "cantidadPreguntas", 10, "emoji", emojiCafe),
                 Map.of("_id", "javascript", "cantidadPreguntas", 7, "emoji", emojiCafe)
         );
 
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
-        when(questionRepository.contarPreguntasPorTopicoIncluyendoRespondidas(any(),anyLong())).thenReturn(resultadoDao);
+        when(questionRepository.contarPreguntasPorTopicoIncluyendoRespondidas(any(), anyLong())).thenReturn(resultadoDao);
 
         List<Topics> resultadoEsperado = List.of(
                 Topics.builder()
@@ -231,7 +235,6 @@ class PreguntasControllerTest {
         feedbackRepository.deleteAll();
         FeedbackDTO positiveFeedbackDTO = createPositiveFeedbackDTO();
         String feedbackDtoJson = objectMapper.writeValueAsString(positiveFeedbackDTO);
-
 
 
         mockMvc.perform(MockMvcRequestBuilders.post("/preguntas/send-feedback")
@@ -267,30 +270,32 @@ class PreguntasControllerTest {
         Pregunta pregunta2User1 = crearPreguntaTest(userId, topico2);
         Pregunta pregunta1User2 = crearPreguntaTest(userId2, topico2);
         Pregunta pregunta2User2 = crearPreguntaTest(userId2, topico1);
-        List<Pregunta> preguntasUser1 = List.of(pregunta1User1,pregunta2User1);
-        List<Pregunta> preguntasUser2 = List.of(pregunta1User2,pregunta2User2);
+        List<Pregunta> preguntasUser1 = List.of(pregunta1User1, pregunta2User1);
+        List<Pregunta> preguntasUser2 = List.of(pregunta1User2, pregunta2User2);
 
         when(userRepository.findById(userId)).thenReturn(Optional.of(User.builder().id(userId).build()));
         when(userRepository.findById(userId2)).thenReturn(Optional.of(User.builder().id(userId2).build()));
-        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId)).thenReturn(preguntasUser1);
-        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(List.of(),null,userId2)).thenReturn(preguntasUser2);
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(List.of(), null, userId)).thenReturn(preguntasUser1);
+        when(questionRepository.findPreguntasNotAnsweredByUserIdAndTopico(List.of(), null, userId2)).thenReturn(preguntasUser2);
 
         MvcResult resultUser1 = mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("userId", String.valueOf(userId))
                         .header("Authorization", "Bearer " + jwtToken))
-                        .andExpect(status().isOk())
-                        .andReturn();
+                .andExpect(status().isOk())
+                .andReturn();
 
-        List<Pregunta> list = objectMapper.readValue(resultUser1.getResponse().getContentAsString(), new TypeReference<List<Pregunta>>() {});
+        List<Pregunta> list = objectMapper.readValue(resultUser1.getResponse().getContentAsString(), new TypeReference<List<Pregunta>>() {
+        });
         assertTrue(list.stream().allMatch(p -> p.getUserId().equals(userId)));
 
         MvcResult resultUser2 = mockMvc.perform(MockMvcRequestBuilders.get("/preguntas")
                         .param("userId", String.valueOf(userId2))
                         .header("Authorization", "Bearer " + jwtToken))
-                        .andExpect(status().isOk())
-                        .andReturn();
+                .andExpect(status().isOk())
+                .andReturn();
 
-        list = objectMapper.readValue(resultUser2.getResponse().getContentAsString(), new TypeReference<List<Pregunta>>() {});
+        list = objectMapper.readValue(resultUser2.getResponse().getContentAsString(), new TypeReference<List<Pregunta>>() {
+        });
         assertTrue(list.stream().allMatch(p -> p.getUserId().equals(userId2)));
     }
 
