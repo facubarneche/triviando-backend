@@ -2,7 +2,6 @@ package com.example.proyecto2025_BE.model.prompter;
 
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.service.ModelCommunication;
-import com.example.proyecto2025_BE.service.PreguntaService;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 
 import lombok.NoArgsConstructor;

@@ -1,22 +1,15 @@
 package com.example.proyecto2025_BE.unittests;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.List;
 
 import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
+import com.example.proyecto2025_BE.service.QuestionService;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 
-import com.example.proyecto2025_BE.model.prompter.QuestionPrompter;
-import com.example.proyecto2025_BE.service.LLMApiClient;
+import com.example.proyecto2025_BE.service.LLMApiClientService;
 import com.example.proyecto2025_BE.service.ModelCommunication;
-import com.example.proyecto2025_BE.service.PreguntaService;
+import com.example.proyecto2025_BE.service.IQuestion;
 
 import dev.langchain4j.service.TokenStream;
 
@@ -26,14 +19,15 @@ public class LLMApiClientTest {
 	private static ModelCommunication assistantMock;
 	private static TokenStream tokenStreamMock;
 	private static QuestionList questionListMock;
-	private static LLMApiClient llmApiClient;
-	private static PreguntaService preguntaServiceMock;
+	private static LLMApiClientService llmApiClientService;
+	private static IQuestion IQuestionMock;
+	private static QuestionService questionService;
 	
 	@BeforeAll
 	static void beforeAll() {
 		assistantMock = mock(ModelCommunication.class);
-		preguntaServiceMock = mock(PreguntaService.class);
-		llmApiClient = new LLMApiClient(assistantMock, preguntaServiceMock);
+		IQuestionMock = mock(IQuestion.class);
+		llmApiClientService = new LLMApiClientService(assistantMock, IQuestionMock, questionService);
 	}
 	
 //	@Test

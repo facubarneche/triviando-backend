@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class AnswerService {
 	
 	private final UserService userService;
-	private final PreguntaService preguntaService;
+	private final IQuestion IQuestion;
 	private final UserInvoker userInvoker;
 	private final ResponseRepository answerRepository;
 
@@ -34,7 +34,7 @@ public class AnswerService {
 			throw new ValidationException("Esta pregunta ya ha sido respondida");
 		}
 
-		Pregunta question = preguntaService.getPreguntaById(answer.getQuestionId());
+		Pregunta question = IQuestion.getPreguntaById(answer.getQuestionId());
 		answer.setResponseDate(LocalDate.now());
 		answer.impactScore(question);
 		user.add(answer);

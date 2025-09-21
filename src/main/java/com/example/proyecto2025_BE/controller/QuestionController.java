@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.prompter.Prompter;
-import com.example.proyecto2025_BE.service.LLMApiClient;
-import com.example.proyecto2025_BE.service.PreguntaService;
+import com.example.proyecto2025_BE.service.LLMApiClientService;
+import com.example.proyecto2025_BE.service.IQuestion;
 import com.example.proyecto2025_BE.views.questions.QuestionResponse200;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,10 +37,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/preguntas")
 @Tag(name = "Preguntas Controller", description = "API para la gestión de preguntas")
-public class PreguntasController {
+public class QuestionController {
 
-    private final PreguntaService preguntasService;
-    private final LLMApiClient llmApiClient;
+    private final IQuestion preguntasService;
+    private final LLMApiClientService llmApiClientService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -94,7 +94,7 @@ public class PreguntasController {
                     mediaType = "application/json",
                     schema = @Schema(implementation = GenerateRequestBody.class)))
     public List<Topics> generate(@RequestBody Prompter prompter) {
-        return llmApiClient.generate(prompter);
+        return llmApiClientService.generate(prompter);
     }
 
     @PostMapping("/send-feedback")

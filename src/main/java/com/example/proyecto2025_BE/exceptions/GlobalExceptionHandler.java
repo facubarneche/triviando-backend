@@ -69,6 +69,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Object> handleValidationException(ValidationException ex) {
         Map<String, String> errors = new HashMap<>();
         errors.put("error", ex.getMessage());
+        log.warn("Validation error: {}", ex.getMessage());
         ResponseStatus responseStatus = ex.getClass().getAnnotation(ResponseStatus.class);
         HttpStatus status = responseStatus != null ? responseStatus.value() : HttpStatus.BAD_REQUEST;
         return new ResponseEntity<>(errors, status);
@@ -85,6 +86,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleLangChain4jException(LangChain4jException ex) {
         try {
             Map<?, ?> errorDetails = objectMapper.readValue(ex.getMessage(), Map.class);
+            log.error("LangChain4j error: {}", ex.getMessage());
             return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
         } catch (JsonProcessingException e) {
             Map<String, Object> errors = new HashMap<>();

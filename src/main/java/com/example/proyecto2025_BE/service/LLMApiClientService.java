@@ -2,10 +2,17 @@ package com.example.proyecto2025_BE.service;
 
 import java.util.List;
 
+import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.dto.Topics;
+import dev.langchain4j.exception.LangChain4jException;
+
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
-import com.example.proyecto2025_BE.exceptions.InternalServerErrorException;
+
 import com.example.proyecto2025_BE.model.Option;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
@@ -20,30 +27,35 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class LLMApiClient implements ChatLanguageModel {
+public class LLMApiClientService implements ChatLanguageModel {
 	
 	private static final String ERROR_MESSAGE = "Error in LLM response deserialization";
 	
 	private final ModelCommunication assistant;
-	private final PreguntaService preguntaService;
+	private final IQuestion IQuestion;
+	private final QuestionService questionService;
 
 	@Transactional
 	public List<Topics> generate(Prompter prompter) {
-		prompter.withService(preguntaService).validatePrompt();
+		prompter.withService(IQuestion).validatePrompt();
+
+		if (!questionService.canCreateTopic(prompter.getUserId())) {
+			throw new ValidationException(
+					"Has alcanzado el límite de tópicos diarios de tu plan actual. Para crear más, actualiza a un plan Premium."
+			);
+		}
+
 		QuestionList response;
-
-		String emoji = prompter.withService(preguntaService)
-				.getEmoji(assistant);
-
 		try {
 			response = assistant.generateQuestions(prompter.buildPrompt());
 		} catch (Exception e) {
-			log.error(ERROR_MESSAGE);
-			throw InternalServerErrorException.build(ERROR_MESSAGE);
+			log.error(ERROR_MESSAGE, e);
+			throw new LangChain4jException(ERROR_MESSAGE, e);
 		}
 
+		String emoji = prompter.withService(IQuestion).getEmoji(assistant);
 		return saveAndMappingResponse(response, prompter, emoji);
-    }
+	}
 
 	//TODO: evaluar la posibilidad de utilizar el strategy para realizar el parseo y el guardado de los datos para darle mas versatilidad a la integración
 	private List<Topics> saveAndMappingResponse(QuestionList questionList, Prompter prompter, String emoji) {
@@ -60,10 +72,9 @@ public class LLMApiClient implements ChatLanguageModel {
 				.difficulty(question.difficulty())
 				.build())
 				.toList();
-		preguntaService.saveAll(questions);
+		IQuestion.saveAll(questions);
 
-		//TODO: agregar emoji
-		return preguntaService.contarPreguntasPorTopicoDeUsuario(prompter.getUserId());
+		return IQuestion.contarPreguntasPorTopicoDeUsuario(prompter.getUserId());
 	}
 
 	private Option buildCorrectOption(QuestionOption correctOption) {

@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @ActiveProfiles("test")
 @DisplayName("Preguntas Controller Test")
-class PreguntasControllerTest {
+class QuestionControllerTest {
 
     @Autowired
     private JwtUtil jwtUtil;

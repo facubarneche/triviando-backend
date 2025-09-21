@@ -2,10 +2,12 @@ package com.example.proyecto2025_BE.model;
 
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -30,6 +32,8 @@ public class Pregunta {
     private Option correctOption;
     private String explicacion;
     private Difficulty difficulty;
+    @CreatedDate
+    private LocalDateTime createdAt;
     
     public BigDecimal difficultyFactor() {
     	return difficulty.getDifficultyFactor();

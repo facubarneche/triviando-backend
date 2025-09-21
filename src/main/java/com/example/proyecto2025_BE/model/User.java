@@ -114,7 +114,7 @@ public class User {
 
 	@JsonView({Views.GetUser.class})
 	@Builder.Default
-	private Account account = Account.BASE;
+	private Account account = Account.FREE;
 	
 	//TODO: Crear entidades para el manejo de roles y con privilegios internos
 	@Builder.Default

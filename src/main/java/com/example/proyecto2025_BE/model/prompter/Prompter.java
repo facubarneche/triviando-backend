@@ -1,7 +1,7 @@
 package com.example.proyecto2025_BE.model.prompter;
 
 import com.example.proyecto2025_BE.service.ModelCommunication;
-import com.example.proyecto2025_BE.service.PreguntaService;
+import com.example.proyecto2025_BE.service.IQuestion;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -28,7 +28,7 @@ public abstract class Prompter {
 	protected String topic;
 	@NotBlank
 	protected Long userId;
-	protected PreguntaService preguntaService;
+	protected IQuestion IQuestion;
 	
 	public String buildPrompt() {
 		return String.format(TEMPLATE_PROMPT, questionsQuantity(), topic.toLowerCase());
@@ -38,13 +38,13 @@ public abstract class Prompter {
 	
 	public abstract void validatePrompt();
 	
-	public Prompter withService(PreguntaService preguntaService) {
-		this.preguntaService = preguntaService;
+	public Prompter withService(IQuestion IQuestion) {
+		this.IQuestion = IQuestion;
 		return this;
 	}
 	public abstract String getEmoji(ModelCommunication assistant);
 
 	public boolean existsTopic() {
-		return preguntaService.existsByTopicAndUser(topic,userId);
+		return IQuestion.existsByTopicAndUser(topic,userId);
 	}
 }

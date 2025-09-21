@@ -4,7 +4,7 @@ import com.example.proyecto2025_BE.repository.ResponseRepository;
 import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.*;
 import com.example.proyecto2025_BE.service.AnswerService;
-import com.example.proyecto2025_BE.service.PreguntaService;
+import com.example.proyecto2025_BE.service.IQuestion;
 import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.service.command.UserInvoker;
 import org.junit.jupiter.api.BeforeAll;
@@ -32,10 +32,10 @@ public class AnswerServiceTest {
     @BeforeAll
 	static void beforeAll() {
         UserService userServiceMock = mock(UserService.class);
-        PreguntaService preguntaServiceMock = mock(PreguntaService.class);
+        IQuestion IQuestionMock = mock(IQuestion.class);
         UserInvoker userInvoker = mock(UserInvoker.class);
 		answerRepository = mock(ResponseRepository.class);
-		answerService = new AnswerService(userServiceMock, preguntaServiceMock, userInvoker,answerRepository);
+		answerService = new AnswerService(userServiceMock, IQuestionMock, userInvoker,answerRepository);
 		
 		User user = User.builder()
 				.id(1L)
@@ -55,7 +55,7 @@ public class AnswerServiceTest {
 				.user(user);
 		
 		when(userServiceMock.retrieve(anyLong())).thenReturn(user);
-		when(preguntaServiceMock.getPreguntaById(anyString())).thenReturn(pregunta);
+		when(IQuestionMock.getPreguntaById(anyString())).thenReturn(pregunta);
 	}
 	
 	@BeforeEach

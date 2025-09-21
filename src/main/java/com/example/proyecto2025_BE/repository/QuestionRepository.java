@@ -4,6 +4,7 @@ import com.example.proyecto2025_BE.model.Pregunta;
 import org.springframework.data.mongodb.repository.Aggregation;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -23,6 +24,8 @@ public interface QuestionRepository extends MongoRepository<Pregunta, String> {
             "{ $group: { _id: '$topico', cantidadPreguntas: { $sum: 1 }, emoji: { $first: '$emoji' } } }"
     })
     List<Map<String, Object>> contarPreguntasPorTopico(Long userId);
+
+    List<Pregunta> findByUserIdAndCreatedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
 
 

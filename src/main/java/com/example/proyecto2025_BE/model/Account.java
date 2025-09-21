@@ -6,6 +6,6 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum Account {
-	BASE,
+	FREE,
 	PREMIUM
 }
