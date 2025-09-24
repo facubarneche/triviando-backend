@@ -25,7 +25,6 @@ public abstract class Prompter {
 
     @NotBlank
     protected String topic;
-    @NotBlank
     protected Long userId;
     protected IQuestion question;
 
