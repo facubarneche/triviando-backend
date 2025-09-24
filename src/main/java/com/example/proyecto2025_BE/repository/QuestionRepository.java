@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public interface QuestionRepository extends MongoRepository<Pregunta, String> {
     List<Pregunta> findByTopicoAndUserId(String topico, Long userId);
+
     boolean existsByTopicoAndUserId(String topico, Long userId);
 
 
@@ -27,7 +28,12 @@ public interface QuestionRepository extends MongoRepository<Pregunta, String> {
 
     List<Pregunta> findByUserIdAndCreatedAtBetween(Long userId, LocalDateTime start, LocalDateTime end);
 
-
+    @Aggregation(pipeline = {
+            "{ '$match': { 'userId': ?0, 'createdAt': { $gte: ?1, $lt: ?2 } } }",
+            "{ '$group': { '_id': '$topico' } }",
+            "{ '$count': 'distinctTopics' }"
+    })
+    Integer countDistinctTopics(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
     @Aggregation(pipeline = {
             "{ $match: { userId: ?1 } }",
@@ -35,7 +41,6 @@ public interface QuestionRepository extends MongoRepository<Pregunta, String> {
             "{ $addFields: { cantidadPreguntas: { $size: { $filter: { input: '$todasLasPreguntas', as: 'preguntaId', cond: { $not: { $in: [ {$toString: '$$preguntaId'}, ?0] } } } } } } }"
     })
     List<Map<String, Object>> contarPreguntasPorTopicoIncluyendoRespondidas(List<String> preguntasRespondidasIds, Long userId);
-
 
 
     Optional<Pregunta> getFirstByTopicoAndUserId(String topico, Long userId);

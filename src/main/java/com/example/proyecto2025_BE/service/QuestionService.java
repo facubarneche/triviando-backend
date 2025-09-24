@@ -3,7 +3,6 @@ package com.example.proyecto2025_BE.service;
 import com.example.proyecto2025_BE.configuration.QuestionProperties;
 import com.example.proyecto2025_BE.constants.Exceptions;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
-import com.example.proyecto2025_BE.model.Account;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.User;
@@ -13,7 +12,6 @@ import com.example.proyecto2025_BE.repository.QuestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Random;
@@ -25,7 +23,7 @@ public class QuestionService implements IQuestion {
     private final QuestionRepository questionRepository;
     private final UserService userService;
     private final FeedbackService feedbackService;
-    private final QuestionProperties properties;
+    private final QuestionProperties questionProperties;
 
     @Override
     public Pregunta getPreguntaById(String id) {
@@ -64,7 +62,7 @@ public class QuestionService implements IQuestion {
 
     @Override
     public List<Pregunta> obtenerPreguntasNoRespondidasPorTopico(Long userId, String topico) {
-        var cantidadPreguntas = properties.getQuestionsPerTopic();
+        var cantidadPreguntas = questionProperties.getQuestionsPerTopic();
 
         User user = userService.retrieve(userId);
 
@@ -97,13 +95,14 @@ public class QuestionService implements IQuestion {
     }
 
     @Override
-    public Boolean canCreateTopic(Account role, Long userId) {
-        if (Account.PREMIUM.equals(role)) return true;
+    public Boolean canCreateTopic(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
+        Integer totalTopics = questionRepository.countDistinctTopics(userId, startOfDay, endOfDay);
+        return (totalTopics != null ? totalTopics : 0) < questionProperties.getMaxTopicsFreePerDay();
+    }
 
-        LocalDateTime startOfDay = LocalDate.now().atStartOfDay();
-        LocalDateTime endOfDay = startOfDay.plusDays(1);
+    @Override
+    public Boolean canCreateQuestion(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay) {
         List<Pregunta> userTopics = questionRepository.findByUserIdAndCreatedAtBetween(userId, startOfDay, endOfDay);
-
-        return userTopics.size() <= properties.getMaxTopicsFreePerDay();
+        return userTopics.size() < questionProperties.getMaxQuestionsFreePerDay();
     }
 }

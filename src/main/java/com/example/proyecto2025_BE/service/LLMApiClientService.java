@@ -1,6 +1,5 @@
 package com.example.proyecto2025_BE.service;
 
-import com.example.proyecto2025_BE.exceptions.ValidationException;
 import com.example.proyecto2025_BE.model.Account;
 import com.example.proyecto2025_BE.model.Option;
 import com.example.proyecto2025_BE.model.Pregunta;
@@ -32,16 +31,12 @@ public class LLMApiClientService implements ChatLanguageModel {
 
 
     @Transactional
-    public List<Topics> generate(Prompter prompter) {
-        // Obtenemos el JWT del contexto de seguridad para obtener el role de los claims
-        Account role = userContext.getContextRole();
+    public List<Topics> generate(Prompter prompter, Account role, Long userId) {
+        Prompter prompt = prompter.withService(IQuestion);
+        prompt.validatePrompt();
 
-        prompter.withService(IQuestion).validatePrompt();
-
-        if (!questionService.canCreateTopic(role, prompter.getUserId())) {
-            throw new ValidationException(
-                    "Has alcanzado el límite de tópicos diarios de tu plan actual. Para crear más, actualiza a un plan Premium."
-            );
+        if (Account.FREE.equals(role)) {
+            prompt.validateGeneration(userId);
         }
 
         QuestionList response;
@@ -52,7 +47,7 @@ public class LLMApiClientService implements ChatLanguageModel {
             throw new LangChain4jException(ERROR_MESSAGE, e);
         }
 
-        String emoji = prompter.withService(IQuestion).getEmoji(assistant);
+        String emoji = prompt.getEmoji(assistant);
         return saveAndMappingResponse(response, prompter, emoji);
     }
 
