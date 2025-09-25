@@ -11,8 +11,8 @@ server:
 api:
   questions:
     questions-per-topic: 5
-    max-topics-free-per-day: 1
-    max-questions-free-per-day: 15
+    max-topics-free-per-day: 5
+    max-questions-free-per-day: 100
 
 mercadopago:
   accessToken: ${MP_ACCESS_TOKEN}
