@@ -1,17 +1,13 @@
 package com.example.proyecto2025_BE.configuration;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
-
-import org.springframework.stereotype.Component;
-
 import com.example.proyecto2025_BE.model.Difficulty;
 import com.example.proyecto2025_BE.model.LetterOption;
 import com.example.proyecto2025_BE.model.Option;
 import com.example.proyecto2025_BE.model.Pregunta;
 
-import lombok.RequiredArgsConstructor;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
 public class PreguntasData {
 
@@ -97,11 +93,95 @@ public class PreguntasData {
                             Option.builder().text("Gestionar la configuración de los servicios").letter(LetterOption.B).build(),
                             Option.builder().text("Actuar como un punto de entrada único").letter(LetterOption.C).build(),
                             Option.builder().text("Almacenar datos persistentes").letter(LetterOption.D).build())
-                            
+
                     )
                     .correctOption(Option.builder().text("Actuar como un punto de entrada único").letter(LetterOption.C).build())
                     .build(),
 
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(1L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Qué significa JVM en el ecosistema de Java?")
+                    .explicacion("La Java Virtual Machine ejecuta el bytecode compilado y lo convierte en instrucciones para el sistema operativo.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("Java Variable Manager").letter(LetterOption.A).build(),
+                            Option.builder().text("Java Virtual Machine").letter(LetterOption.B).build(),
+                            Option.builder().text("Java Visual Module").letter(LetterOption.C).build(),
+                            Option.builder().text("Java Value Mapper").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Java Virtual Machine").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(1L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Cuál es la diferencia principal entre JDK y JRE?")
+                    .explicacion("El JDK incluye el compilador y herramientas de desarrollo, mientras que el JRE solo permite ejecutar aplicaciones.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("JDK ejecuta, JRE compila").letter(LetterOption.A).build(),
+                            Option.builder().text("JDK incluye compilador, JRE solo ejecuta").letter(LetterOption.B).build(),
+                            Option.builder().text("JRE es más nuevo que JDK").letter(LetterOption.C).build(),
+                            Option.builder().text("Son equivalentes").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("JDK incluye compilador, JRE solo ejecuta").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(1L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Qué modificador de acceso permite el uso dentro del mismo paquete pero no fuera de él?")
+                    .explicacion("El modificador 'default' (sin palabra clave) limita el acceso al paquete.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("private").letter(LetterOption.A).build(),
+                            Option.builder().text("protected").letter(LetterOption.B).build(),
+                            Option.builder().text("default").letter(LetterOption.C).build(),
+                            Option.builder().text("public").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("default").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(1L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Cuál de los siguientes tipos de datos primitivos ocupa 64 bits?")
+                    .explicacion("En Java, 'long' y 'double' utilizan 64 bits.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("int").letter(LetterOption.A).build(),
+                            Option.builder().text("short").letter(LetterOption.B).build(),
+                            Option.builder().text("long").letter(LetterOption.C).build(),
+                            Option.builder().text("byte").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("long").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(1L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Qué interfaz funcional se utiliza en Java para representar una operación que acepta un argumento y no devuelve resultado?")
+                    .explicacion("La interfaz Consumer<T> representa una operación que toma un argumento y no devuelve nada.")
+                    .difficulty(Difficulty.HIGH)
+                    .options(Arrays.asList(
+                            Option.builder().text("Supplier<T>").letter(LetterOption.A).build(),
+                            Option.builder().text("Consumer<T>").letter(LetterOption.B).build(),
+                            Option.builder().text("Function<T,R>").letter(LetterOption.C).build(),
+                            Option.builder().text("Predicate<T>").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Consumer<T>").letter(LetterOption.B).build())
+                    .build(),
 
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
@@ -186,6 +266,91 @@ public class PreguntasData {
                             Option.builder().text("Series de Tiempo").letter(LetterOption.D).build())
                     )
                     .correctOption(Option.builder().text("Series de Tiempo").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(2L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Qué palabra clave se usa para heredar una clase en Java?")
+                    .explicacion("La palabra clave 'extends' se utiliza para heredar de otra clase.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("inherits").letter(LetterOption.A).build(),
+                            Option.builder().text("extends").letter(LetterOption.B).build(),
+                            Option.builder().text("implements").letter(LetterOption.C).build(),
+                            Option.builder().text("super").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("extends").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(2L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Qué interfaz debe implementar una clase para que sus objetos sean comparables de forma natural?")
+                    .explicacion("La interfaz Comparable<T> define el método compareTo.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Comparator<T>").letter(LetterOption.A).build(),
+                            Option.builder().text("Comparable<T>").letter(LetterOption.B).build(),
+                            Option.builder().text("Equals<T>").letter(LetterOption.C).build(),
+                            Option.builder().text("Hashable<T>").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Comparable<T>").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(2L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Qué característica introdujo Java 8 para facilitar la programación funcional?")
+                    .explicacion("Las expresiones lambda y las interfaces funcionales fueron una de las grandes novedades de Java 8.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Templates").letter(LetterOption.A).build(),
+                            Option.builder().text("Delegates").letter(LetterOption.B).build(),
+                            Option.builder().text("Expresiones lambda").letter(LetterOption.C).build(),
+                            Option.builder().text("Macros").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Expresiones lambda").letter(LetterOption.C).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(2L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Cuál es el valor por defecto de una variable de instancia de tipo boolean en Java?")
+                    .explicacion("En Java, los boolean de instancia tienen valor por defecto false.")
+                    .difficulty(Difficulty.LOW)
+                    .options(Arrays.asList(
+                            Option.builder().text("true").letter(LetterOption.A).build(),
+                            Option.builder().text("false").letter(LetterOption.B).build(),
+                            Option.builder().text("null").letter(LetterOption.C).build(),
+                            Option.builder().text("0").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("false").letter(LetterOption.B).build())
+                    .build(),
+
+            Pregunta.builder()
+                    .id(UUID.randomUUID().toString())
+                    .userId(2L)
+                    .topico("Java")
+                    .emoji("☕")
+                    .enunciado("¿Qué tipo de clase no puede ser instanciada directamente en Java?")
+                    .explicacion("Las clases abstractas no se pueden instanciar directamente, solo extender.")
+                    .difficulty(Difficulty.MEDIUM)
+                    .options(Arrays.asList(
+                            Option.builder().text("Final").letter(LetterOption.A).build(),
+                            Option.builder().text("Static").letter(LetterOption.B).build(),
+                            Option.builder().text("Abstracta").letter(LetterOption.C).build(),
+                            Option.builder().text("Privada").letter(LetterOption.D).build())
+                    )
+                    .correctOption(Option.builder().text("Abstracta").letter(LetterOption.C).build())
                     .build()
-            );
+    );
 }

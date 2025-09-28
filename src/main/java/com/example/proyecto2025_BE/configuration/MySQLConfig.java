@@ -1,7 +1,8 @@
 package com.example.proyecto2025_BE.configuration;
 
-import com.example.proyecto2025_BE.repository.UserRepository;
+import com.example.proyecto2025_BE.model.Account;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
@@ -18,9 +19,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MySQLConfig {
 
-	private final UserRepository userRepository;
+    private final UserRepository userRepository;
 
-	@Bean
+    @Bean
     @Transactional
     public CommandLineRunner initMySQLData() {
         return args -> {
@@ -37,6 +38,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .rachaActual(0)
                         .username("johny_doe")
+                        .account(Account.PREMIUM)
                         .build();
 
                 User user2 = User.builder()
@@ -51,6 +53,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .rachaActual(0)
                         .username("jane_smithy")
+                        .account(Account.FREE)
                         .build();
 
                 User user3 = User.builder()
@@ -65,6 +68,7 @@ public class MySQLConfig {
                         .updatedAt(LocalDateTime.now())
                         .rachaActual(0)
                         .username("user_three")
+                        .account(Account.FREE)
                         .build();
 
                 userRepository.saveAll(List.of(user1, user2, user3));
