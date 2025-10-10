@@ -3,7 +3,7 @@ package com.example.proyecto2025_BE.integrationtests;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
-import com.example.proyecto2025_BE.repository.ResponseRepository;
+import com.example.proyecto2025_BE.repository.AnswerRepository;
 import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.security.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,7 +57,7 @@ public class UserControllerTest {
     private ObjectMapper mapper;
 
     @MockitoBean
-    private ResponseRepository responseRepository;
+    private AnswerRepository answerRepository;
 
     @BeforeEach
     void beforeEach() {
@@ -287,8 +287,8 @@ public class UserControllerTest {
     @Test
     @DisplayName("Estadisticas de un user que ha respondido preguntas")
     void estadisticasTest() throws Exception {
-        when(responseRepository.countByUserId(EXISTENT_USER_ID)).thenReturn(50);
-        when(responseRepository.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(35);
+        when(answerRepository.countByUserId(EXISTENT_USER_ID)).thenReturn(50);
+        when(answerRepository.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(35);
         StatsResponse response = new StatsResponse(10, 35, 50);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))
@@ -300,8 +300,8 @@ public class UserControllerTest {
     @Test
     @DisplayName("Estadisticas de un user que no ha respondido preguntas")
     void estadisticasInexistentUserTest() throws Exception {
-        when(responseRepository.countByUserId(EXISTENT_USER_ID)).thenReturn(0);
-        when(responseRepository.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(0);
+        when(answerRepository.countByUserId(EXISTENT_USER_ID)).thenReturn(0);
+        when(answerRepository.countByUserIdAndErrorReasonIsNull(EXISTENT_USER_ID)).thenReturn(0);
         StatsResponse response = new StatsResponse(0, 0, 0);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/users/statistics/{id}", EXISTENT_USER_ID).header("Authorization", "Bearer " + jwtToken))

@@ -1,6 +1,6 @@
 package com.example.proyecto2025_BE.integrationtests;
 
-import com.example.proyecto2025_BE.configuration.PreguntasData;
+import com.example.proyecto2025_BE.configuration.QuestionData;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.Difficulty;
 import com.example.proyecto2025_BE.model.Pregunta;
@@ -88,9 +88,9 @@ class QuestionControllerTest {
     @Test
     @DisplayName("Get preguntas by topico - topico existente")
     void getPreguntasByTopico_topicoExistente() throws Exception {
-        String topicoExistente = PreguntasData.PREGUNTAS.getFirst().getTopico();
+        String topicoExistente = QuestionData.QUESTIONS.getFirst().getTopico();
         when(userRepository.findById(anyLong())).thenReturn(Optional.of(User.builder().id(1L).build()));
-        List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
+        List<Pregunta> preguntasTopicoExistente = QuestionData.QUESTIONS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
 
@@ -111,8 +111,8 @@ class QuestionControllerTest {
     @Test
     @DisplayName("Get preguntas by topico - user contesta preguntas")
     void getPreguntasByTopico_userContestaPreguntas() throws Exception {
-        String topicoExistente = PreguntasData.PREGUNTAS.getFirst().getTopico();
-        List<Pregunta> preguntasTopicoExistente = PreguntasData.PREGUNTAS.stream()
+        String topicoExistente = QuestionData.QUESTIONS.getFirst().getTopico();
+        List<Pregunta> preguntasTopicoExistente = QuestionData.QUESTIONS.stream()
                 .filter(pregunta -> pregunta.getTopico().equals(topicoExistente))
                 .toList();
         var user = userRepository.findByUsername("juanceto01").get();
@@ -168,7 +168,7 @@ class QuestionControllerTest {
     @Test
     @DisplayName("Get preguntas by Id - Id existente")
     void getPreguntaById_IDValid() throws Exception {
-        Pregunta pregunta = PreguntasData.PREGUNTAS.getFirst();
+        Pregunta pregunta = QuestionData.QUESTIONS.getFirst();
 
         when(questionRepository.findById(pregunta.getId())).thenReturn(Optional.of(pregunta));
 

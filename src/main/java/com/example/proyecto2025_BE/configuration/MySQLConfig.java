@@ -1,7 +1,9 @@
 package com.example.proyecto2025_BE.configuration;
 
 import com.example.proyecto2025_BE.model.Account;
+import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.User;
+import com.example.proyecto2025_BE.repository.AnswerRepository;
 import com.example.proyecto2025_BE.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
@@ -13,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Configuration
 @Profile("dev")
@@ -20,6 +23,7 @@ import java.util.List;
 public class MySQLConfig {
 
     private final UserRepository userRepository;
+    private final AnswerRepository answerRepository;
 
     @Bean
     @Transactional
@@ -73,6 +77,14 @@ public class MySQLConfig {
 
                 userRepository.saveAll(List.of(user1, user2, user3));
             }
+
+            if (answerRepository.count() == 0 && userRepository.count() >= 3) {
+                List<Answer> answersUser1 = AnswerData.ANSWERS(1L);
+                List<Answer> answersUser2 = AnswerData.ANSWERS(2L, 10);
+                List<Answer> answersUser3 = AnswerData.ANSWERS(3L, 5);
+                answerRepository.saveAll(Stream.of(answersUser1, answersUser2, answersUser3).flatMap(List::stream).toList());
+            }
         };
+
     }
 }

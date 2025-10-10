@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public class PreguntasData {
+public class QuestionData {
 
-    public static final List<Pregunta> PREGUNTAS = Arrays.asList(
+    public static final List<Pregunta> QUESTIONS = Arrays.asList(
             Pregunta.builder()
                     .id(UUID.randomUUID().toString())
                     .userId(1L)

@@ -4,7 +4,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.config.EnableMongoAuditing;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
@@ -17,8 +16,8 @@ public class MongoConfig {
     public CommandLineRunner clearDatabase(MongoTemplate mongoTemplate) {
         return args -> {
             mongoTemplate.getDb().drop();
-            mongoTemplate.createCollection("preguntas");
-            PreguntasData.PREGUNTAS.forEach(mongoTemplate::insert);
+            mongoTemplate.createCollection("questions");
+            QuestionData.QUESTIONS.forEach(mongoTemplate::insert);
         };
     }
 }

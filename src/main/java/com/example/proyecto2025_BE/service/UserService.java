@@ -11,7 +11,7 @@ import com.example.proyecto2025_BE.model.dto.Ranking;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
 import com.example.proyecto2025_BE.model.dto.login.LoginRequestDTO;
 import com.example.proyecto2025_BE.model.dto.login.LoginResponseDTO;
-import com.example.proyecto2025_BE.repository.ResponseRepository;
+import com.example.proyecto2025_BE.repository.AnswerRepository;
 import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.security.JwtUtil;
 import com.example.proyecto2025_BE.utils.JsonViewPage;
@@ -43,7 +43,7 @@ import java.util.function.Function;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final ResponseRepository responseRepository;
+    private final AnswerRepository answerRepository;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder encoder;
     private final JwtUtil jwtUtils;
@@ -183,8 +183,8 @@ public class UserService {
     }
 
     public StatsResponse getStatisticsFromUser(Long userId) {
-        var totalQuestions = responseRepository.countByUserId(userId);
-        var correctAnswers = responseRepository.countByUserIdAndErrorReasonIsNull(userId);
+        var totalQuestions = answerRepository.countByUserId(userId);
+        var correctAnswers = answerRepository.countByUserIdAndErrorReasonIsNull(userId);
         var totalQuizzes = totalQuestions / 5;
         return new StatsResponse(totalQuizzes, correctAnswers, totalQuestions);
     }

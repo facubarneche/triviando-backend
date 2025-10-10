@@ -1,22 +1,28 @@
 package com.example.proyecto2025_BE.unittests;
 
-import com.example.proyecto2025_BE.repository.ResponseRepository;
-import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.exceptions.ConflictException;
 import com.example.proyecto2025_BE.exceptions.NotFoundException;
 import com.example.proyecto2025_BE.model.Answer;
 import com.example.proyecto2025_BE.model.User;
 import com.example.proyecto2025_BE.model.dto.StatsResponse;
+import com.example.proyecto2025_BE.repository.AnswerRepository;
+import com.example.proyecto2025_BE.repository.UserRepository;
 import com.example.proyecto2025_BE.service.UserService;
 import com.example.proyecto2025_BE.utils.UserRankingProjection;
 import lombok.AllArgsConstructor;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -32,12 +38,13 @@ public class UserServiceTest {
     private UserRepository userRepository;
 
     @Mock
-    private ResponseRepository answerDao;
+    private AnswerRepository answerDao;
 
     @InjectMocks
     private UserService userService;
 
     private List<User> users;
+
     private List<User> createUsers() {
         return Arrays.asList(
                 User.builder()
@@ -144,6 +151,7 @@ public class UserServiceTest {
         users = createUsers();
         getSortedUsers().forEach(u -> when(userRepository.findById(u.getId())).thenReturn(Optional.of(u)));
     }
+
     @AfterEach
     void tearDown() {
         Mockito.reset(userRepository);
@@ -259,7 +267,7 @@ public class UserServiceTest {
 
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
         // Act & Assert
-        assertThrows(NotFoundException.class, () -> userService.getUsersOrderedByScoreFromUser(userId, pageable.getPageNumber(),pageable.getPageSize()));
+        assertThrows(NotFoundException.class, () -> userService.getUsersOrderedByScoreFromUser(userId, pageable.getPageNumber(), pageable.getPageSize()));
         // Verify
         verify(userRepository, times(1)).findById(userId);
         verify(userRepository, never()).findUserRankPosition(any());

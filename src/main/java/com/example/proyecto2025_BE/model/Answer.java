@@ -34,6 +34,7 @@ public class Answer {
     private String questionId;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @Enumerated(EnumType.STRING)
     private User user;
     @Enumerated(EnumType.STRING)
     private LetterOption optionSelected;
@@ -45,13 +46,13 @@ public class Answer {
 
     public void impactScore(Pregunta question) {
         if (isSuccess(question)) {
-            score =  calculateScoreBy(question);
-            return ;
+            score = calculateScoreBy(question);
+            return;
         }
         errorReason = errorReason != null ? errorReason : UnsuccessReasons.INCORRECT_OPTION;
     }
 
-    public BigDecimal getScore(){
+    public BigDecimal getScore() {
         return score == null ? BigDecimal.ZERO : score;
     }
 
