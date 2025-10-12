@@ -13,15 +13,17 @@ public class UserContext {
 
     private final UserService userService;
 
-    public Account getContextRole() {
+    private String getContextUsername() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        return userService.findByUsername(username).getAccount();
+        return auth.getName();
+    }
+
+    //TODO: Obtener de los claims del token
+    public Account getContextRole() {
+        return userService.findByUsername(this.getContextUsername()).getAccount();
     }
 
     public Long getContextUserId() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        return userService.findByUsername(username).getId();
+        return userService.findByUsername(this.getContextUsername()).getId();
     }
 }
