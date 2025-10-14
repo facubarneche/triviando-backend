@@ -29,7 +29,7 @@ spring:
 
 llm:
   apiKey: ${OPENAI_API_KEY}
-  modelName: gpt-4.1-nano
+  modelName: GPT_4_1_NANO
   logRequests: true
   logResponses: true
 

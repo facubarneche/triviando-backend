@@ -29,7 +29,7 @@ spring:
 
 llm:
   apiKey: ${OPENAI_API_KEY}
-  modelName: gpt-4o-mini
+  modelName: GPT_4O_MINI
   logRequests: false
   logResponses: false
 
