@@ -19,7 +19,7 @@ import java.util.Set;
 @ConfigurationProperties(prefix = "llm")
 public class LLMConfig {
     private String apiKey;
-    private PrompterModel modelName;
+    private PrompterModel modelName = PrompterModel.GPT_4_1_NANO;
     private boolean logRequests;
     private boolean logResponses;
 
@@ -33,6 +33,9 @@ public class LLMConfig {
     }
 
     private OpenAiChatModel chatLanguageModel() {
+        if (modelName == null) {
+            throw new IllegalStateException("llm.modelName no está configurado");
+        }
         return OpenAiChatModel.builder()
                 .apiKey(apiKey)
                 .modelName(modelName.getValue())
