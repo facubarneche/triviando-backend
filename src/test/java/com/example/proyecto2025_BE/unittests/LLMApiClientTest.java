@@ -7,6 +7,7 @@ import com.example.proyecto2025_BE.model.dto.llm.Question;
 import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
 import com.example.proyecto2025_BE.model.dto.llm.QuestionOption;
 import com.example.proyecto2025_BE.model.prompter.Prompter;
+import com.example.proyecto2025_BE.security.CustomUserDetails;
 import com.example.proyecto2025_BE.service.IQuestion;
 import com.example.proyecto2025_BE.service.LLMApiClientService;
 import com.example.proyecto2025_BE.service.ModelCommunication;
@@ -60,10 +61,13 @@ public class LLMApiClientTest {
         doNothing().when(prompter).validateGeneration(anyLong());
         doNothing().when(prompter).validatePrompt();
 
-        // Mockear la respuesta del assistant
+        // Mockear assistant y CustomUserDetails
         when(assistant.generateQuestions(anyString())).thenReturn(mockQuestions);
+        CustomUserDetails userDetails = mock(CustomUserDetails.class);
+        when(userDetails.getAccount()).thenReturn(Account.FREE);
+        when(userDetails.getId()).thenReturn(1L);
 
-        List<?> result = llmService.generate(prompter, Account.FREE, 1L);
+        List<?> result = llmService.generate(prompter, userDetails);
 
         assertNotNull(result);
         verify(prompter, times(1)).validatePrompt();
