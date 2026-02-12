@@ -1,12 +1,11 @@
 package com.example.proyecto2025_BE.controller;
 
 import com.example.proyecto2025_BE.constants.Exceptions;
-import com.example.proyecto2025_BE.model.Account;
 import com.example.proyecto2025_BE.model.Pregunta;
 import com.example.proyecto2025_BE.model.dto.FeedbackDTO;
 import com.example.proyecto2025_BE.model.dto.Topics;
 import com.example.proyecto2025_BE.model.prompter.Prompter;
-import com.example.proyecto2025_BE.security.UserContext;
+import com.example.proyecto2025_BE.security.CustomUserDetails;
 import com.example.proyecto2025_BE.service.IQuestion;
 import com.example.proyecto2025_BE.service.LLMApiClientService;
 import com.example.proyecto2025_BE.views.questions.QuestionResponse200;
@@ -19,6 +18,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,15 +33,6 @@ public class QuestionController {
 
     private final IQuestion preguntasService;
     private final LLMApiClientService llmApiClientService;
-    private final UserContext userContext;
-
-    private Account getRole() {
-        return userContext.getContextRole();
-    }
-
-    private Long getUserId() {
-        return userContext.getContextUserId();
-    }
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -94,8 +85,8 @@ public class QuestionController {
             content = @Content(
                     mediaType = "application/json",
                     schema = @Schema(implementation = GenerateRequestBody.class)))
-    public List<Topics> generate(@RequestBody Prompter prompter) {
-        return llmApiClientService.generate(prompter, this.getRole(), this.getUserId());
+    public List<Topics> generate(@RequestBody Prompter prompter, @AuthenticationPrincipal CustomUserDetails userDetails) {
+        return llmApiClientService.generate(prompter, userDetails);
     }
 
     @PostMapping("/send-feedback")

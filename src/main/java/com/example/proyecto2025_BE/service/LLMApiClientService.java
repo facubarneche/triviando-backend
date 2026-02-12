@@ -7,6 +7,7 @@ import com.example.proyecto2025_BE.model.dto.Topics;
 import com.example.proyecto2025_BE.model.dto.llm.QuestionList;
 import com.example.proyecto2025_BE.model.dto.llm.QuestionOption;
 import com.example.proyecto2025_BE.model.prompter.Prompter;
+import com.example.proyecto2025_BE.security.CustomUserDetails;
 import dev.langchain4j.exception.LangChain4jException;
 import dev.langchain4j.model.chat.ChatLanguageModel;
 import jakarta.transaction.Transactional;
@@ -27,7 +28,9 @@ public class LLMApiClientService implements ChatLanguageModel {
     private final IQuestion IQuestion;
 
     @Transactional
-    public List<Topics> generate(Prompter prompter, Account role, Long userId) {
+    public List<Topics> generate(Prompter prompter, CustomUserDetails userDetails) {
+        Long userId = userDetails.getId();
+        Account role = userDetails.getAccount();
         Prompter prompt = prompter.withService(IQuestion);
         prompt.setUserId(userId);
         prompt.validatePrompt();

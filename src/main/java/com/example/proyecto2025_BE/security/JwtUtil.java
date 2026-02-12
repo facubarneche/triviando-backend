@@ -1,10 +1,12 @@
 package com.example.proyecto2025_BE.security;
 
+import com.example.proyecto2025_BE.model.Account;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -23,6 +25,7 @@ public class JwtUtil {
     public void init() {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes(StandardCharsets.UTF_8));
     }
+
     // Generate JWT token
     public String generateToken(Map<String, Object> claims, String username) {
         return Jwts.builder()
@@ -33,6 +36,7 @@ public class JwtUtil {
                 .signWith(this.key)
                 .compact();
     }
+
     // Get username from JWT token
     public String getUsernameFromToken(String token) {
         return Jwts.parser()
@@ -42,6 +46,36 @@ public class JwtUtil {
                 .getPayload()
                 .getSubject();
     }
+
+    // Get all claims from JWT token
+    public Claims getAllClaimsFromToken(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    // Get userId from JWT token claims
+    public Long getUserIdFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        Object id = claims.get("id");
+        if (id instanceof Number) {
+            return ((Number) id).longValue();
+        }
+        return null;
+    }
+
+    // Get account type from JWT token claims
+    public Account getAccountFromToken(String token) {
+        Claims claims = getAllClaimsFromToken(token);
+        String accountStr = (String) claims.get("account");
+        if (accountStr != null) {
+            return Account.valueOf(accountStr);
+        }
+        return null;
+    }
+
     // Validate JWT token
     public boolean validateJwtToken(String token) {
         try {
